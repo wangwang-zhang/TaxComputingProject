@@ -6,7 +6,7 @@ public class TaxComputingServiceImpl : ITaxComputingService
     {
         if (salary <= 5000)
             return 0;
-        double tax = (salary - 5000) * 0.03;
+        double tax = (salary * month - 5000 * month) * 0.03;
         return tax;
     }
 }
