@@ -2,11 +2,12 @@ namespace TaxComputingProject.Services;
 
 public class TaxComputingServiceImpl : ITaxComputingService
 {
+    const int SalaryThreshold = 5000;
     public double ComputeTaxBySalaryAndMonth(double salary, int month)
     {
-        if (salary <= 5000)
+        if (salary <= SalaryThreshold)
             return 0;
-        double tax = (salary * month - 5000 * month) * 0.03;
+        double tax = (salary * month - SalaryThreshold * month) * 0.03;
         return tax;
     }
 
