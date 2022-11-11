@@ -1,5 +1,10 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=2239bd68_002D4500_002D41a4_002D953d_002D71d08ae20ba7/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TaxComputingServiceTest #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=2239bd68_002D4500_002D41a4_002D953d_002D71d08ae20ba7/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="TaxComputingServiceTest #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;xUnit::6B1DA463-8986-4E98-B724-E57EDE5A870A::net6.0::TaxComputingProjectTest.ServicesTest.TaxComputingServiceTest&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=6f5854c0_002D1cd9_002D4c67_002D8fcf_002D94dfd4169799/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Should_Return_Correct_Tax_Rate_By_Total_Salary_Removed_Threshold" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
     &lt;TestId&gt;xUnit::6B1DA463-8986-4E98-B724-E57EDE5A870A::net6.0::TaxComputingProjectTest.ServicesTest.TaxComputingServiceTest&lt;/TestId&gt;
   &lt;/TestAncestor&gt;

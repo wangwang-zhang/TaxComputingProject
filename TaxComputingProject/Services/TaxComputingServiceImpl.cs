@@ -11,17 +11,17 @@ public class TaxComputingServiceImpl : ITaxComputingService
         return tax;
     }
 
-    public double MatchTaxRateByTotalSalaryRemovedSalaryThreshold(double salary)
+    public double[] MatchTaxRateAndDeductionBySalary(double salary)
     {
         return salary switch
         {
-            <= (double)TotalSalary.FirstLevel => TaxRates.FirstLevel,
-            > (double)TotalSalary.FirstLevel and <= (double)TotalSalary.SecondLevel => TaxRates.SecondLevel,
-            > (double)TotalSalary.SecondLevel and <= (double)TotalSalary.ThirdLevel => TaxRates.ThirdLevel,
-            > (double)TotalSalary.ThirdLevel and <= (double)TotalSalary.FourthLevel => TaxRates.FourthLevel,
-            > (double)TotalSalary.FourthLevel and <= (double)TotalSalary.FifthLevel => TaxRates.FifthLevel,
-            > (double)TotalSalary.FifthLevel and <= (double)TotalSalary.SixthLevel => TaxRates.SixthLevel,
-            _ => TaxRates.SeventhLevel
+            <= (double)TotalSalary.FirstLevel => new []{TaxRates.FirstLevel, (double)Deduction.FirstLevel},
+            > (double)TotalSalary.FirstLevel and <= (double)TotalSalary.SecondLevel => new []{TaxRates.SecondLevel,(double)Deduction.SecondLevel},
+            > (double)TotalSalary.SecondLevel and <= (double)TotalSalary.ThirdLevel => new []{TaxRates.ThirdLevel, (double)Deduction.ThirdLevel},
+            > (double)TotalSalary.ThirdLevel and <= (double)TotalSalary.FourthLevel => new []{TaxRates.FourthLevel, (double)Deduction.FourthLevel},
+            > (double)TotalSalary.FourthLevel and <= (double)TotalSalary.FifthLevel => new []{TaxRates.FifthLevel, (double)Deduction.FifthLevel},
+            > (double)TotalSalary.FifthLevel and <= (double)TotalSalary.SixthLevel => new []{TaxRates.SixthLevel, (double)Deduction.SixthLevel},
+            _ => new []{TaxRates.SeventhLevel, (double)Deduction.SeventhLevel}
         };
     }
 
@@ -44,5 +44,15 @@ public class TaxComputingServiceImpl : ITaxComputingService
          public const double FifthLevel = 0.3;
          public const double SixthLevel = 0.35;
          public const double SeventhLevel = 0.45;
+    }
+    private enum Deduction
+    {
+        FirstLevel = 0,
+        SecondLevel = 2520,
+        ThirdLevel = 16920,
+        FourthLevel = 31920,
+        FifthLevel = 52920,
+        SixthLevel = 85920,
+        SeventhLevel = 181920
     }
 }

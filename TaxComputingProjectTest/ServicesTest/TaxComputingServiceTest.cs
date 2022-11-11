@@ -17,17 +17,16 @@ public class TaxComputingServiceTest
     }
 
     [Theory]
-    [InlineData(36000, 0.03)]
-    [InlineData(144000, 0.1)]
-    [InlineData(300000, 0.2)]
-    [InlineData(420000, 0.25)]
-    [InlineData(660000, 0.3)]
-    [InlineData(960000, 0.35)]
-    [InlineData(1000000, 0.45)]
-    public void Should_Return_Correct_Tax_Rate_By_Total_Salary_Removed_Threshold(double salary, double taxRate)
+    [InlineData(36000, 0.03, 0)]
+    [InlineData(144000, 0.1, 2520)]
+    [InlineData(300000, 0.2, 16920)]
+    [InlineData(420000, 0.25, 31920)]
+    [InlineData(660000, 0.3, 52920)]
+    [InlineData(960000, 0.35, 85920)]
+    [InlineData(1000000, 0.45, 181920)]
+    public void Should_Return_Correct_Tax_Rate_By_Total_Salary_Removed_Threshold(double salary, double taxRate, double deduction)
     {
-        var result = _taxComputingService.MatchTaxRateByTotalSalaryRemovedSalaryThreshold(salary);
-        Assert.Equal(taxRate, result);
-        
+        var result = _taxComputingService.MatchTaxRateAndDeductionBySalary(salary);
+        Assert.Equal(new[]{taxRate, deduction}, result);
     }
 }
