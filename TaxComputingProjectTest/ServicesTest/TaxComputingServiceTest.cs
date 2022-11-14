@@ -35,4 +35,22 @@ public class TaxComputingServiceTest
         var result = _taxComputingService.MatchTaxRateAndDeductionBySalary(salary);
         Assert.Equal(new[]{taxRate, deduction}, result);
     }
+
+    [Theory]
+    [InlineData(41000, 2, 3600)]
+    [InlineData(41000, 3, 3600)]
+    [InlineData(41000, 4, 3600)]
+    [InlineData(41000, 5, 7200)]
+    [InlineData(41000, 6, 7200)]
+    [InlineData(41000, 7, 7200)]
+    [InlineData(41000, 8, 7200)]
+    [InlineData(41000, 9, 8400)]
+    [InlineData(41000, 10, 9000)]
+    [InlineData(41000, 11, 9000)]
+    [InlineData(41000, 12, 9600)]
+    public void Should_Return_Correct_Tax_With_Multiple_Month_Of_Salary(double salary, int month, double tax)
+    {
+        var result = _taxComputingService.ComputeTaxBySalaryAndMonth(salary, month);
+        Assert.Equal(tax, result);
+    }
 }
