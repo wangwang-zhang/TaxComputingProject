@@ -15,8 +15,8 @@ public class TaxComputingController : ControllerBase
         _taxComputingService = taxComputingService;
     }
 
-    [HttpPost("taxOfMonth")]
-    public IActionResult GetTaxBySalaryAndMonth([FromBody] SalaryAndMonth? salaryAndMonth)
+    [HttpGet("taxOfMonth")]
+    public IActionResult GetTaxBySalaryAndMonth([FromHeader] SalaryAndMonth? salaryAndMonth)
     {
         if (salaryAndMonth == null)
             return BadRequest();
