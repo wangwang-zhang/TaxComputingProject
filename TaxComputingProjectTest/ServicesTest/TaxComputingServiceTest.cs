@@ -33,7 +33,8 @@ public class TaxComputingServiceTest
     public void Should_Return_Correct_Tax_Rate_And_Deduction_By_Taxable_Salary(double salary, double taxRate, double deduction)
     {
         var result = _taxComputingService.MatchTaxRateAndDeductionBySalary(salary);
-        Assert.Equal(new[]{taxRate, deduction}, result);
+        Assert.Equal(taxRate, result.TaxRate);
+        Assert.Equal(deduction,result.Deduction);
     }
 
     [Theory]

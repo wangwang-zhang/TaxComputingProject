@@ -1,3 +1,5 @@
+using TaxComputingProject.Model;
+
 namespace TaxComputingProject.Services;
 
 public class TaxComputingServiceImpl : ITaxComputingService
@@ -10,8 +12,8 @@ public class TaxComputingServiceImpl : ITaxComputingService
         for (int monthForTax = 1; monthForTax <= month; monthForTax++)
         {
             double salaryForTax = salary * monthForTax - SalaryThreshold * monthForTax;
-            double[] taxRateAndDeduction = MatchTaxRateAndDeductionBySalary(salaryForTax);
-            double tax = salaryForTax * taxRateAndDeduction[0] - taxRateAndDeduction[1];
+            TaxRateAndDeduction taxRateAndDeduction = MatchTaxRateAndDeductionBySalary(salaryForTax);
+            double tax = salaryForTax * taxRateAndDeduction.TaxRate - taxRateAndDeduction.Deduction;
             for (int preMonth = 0; preMonth < monthForTax; preMonth++)
             {
                 tax -= taxOfMonth[preMonth];
@@ -21,17 +23,17 @@ public class TaxComputingServiceImpl : ITaxComputingService
         return taxOfMonth[month];
     }
 
-    public double[] MatchTaxRateAndDeductionBySalary(double salary)
+    public TaxRateAndDeduction MatchTaxRateAndDeductionBySalary(double salary)
     {
         return salary switch
         {
-            <= (double)TotalSalary.FirstLevel => new []{TaxRates.FirstLevel, (double)Deduction.FirstLevel},
-            > (double)TotalSalary.FirstLevel and <= (double)TotalSalary.SecondLevel => new []{TaxRates.SecondLevel,(double)Deduction.SecondLevel},
-            > (double)TotalSalary.SecondLevel and <= (double)TotalSalary.ThirdLevel => new []{TaxRates.ThirdLevel, (double)Deduction.ThirdLevel},
-            > (double)TotalSalary.ThirdLevel and <= (double)TotalSalary.FourthLevel => new []{TaxRates.FourthLevel, (double)Deduction.FourthLevel},
-            > (double)TotalSalary.FourthLevel and <= (double)TotalSalary.FifthLevel => new []{TaxRates.FifthLevel, (double)Deduction.FifthLevel},
-            > (double)TotalSalary.FifthLevel and <= (double)TotalSalary.SixthLevel => new []{TaxRates.SixthLevel, (double)Deduction.SixthLevel},
-            _ => new []{TaxRates.SeventhLevel, (double)Deduction.SeventhLevel}
+            <= (double)TotalSalary.FirstLevel => new TaxRateAndDeduction(TaxRates.FirstLevel,(double)Deduction.FirstLevel),
+            > (double)TotalSalary.FirstLevel and <= (double)TotalSalary.SecondLevel => new TaxRateAndDeduction(TaxRates.SecondLevel,(double)Deduction.SecondLevel),
+            > (double)TotalSalary.SecondLevel and <= (double)TotalSalary.ThirdLevel => new TaxRateAndDeduction(TaxRates.ThirdLevel,(double)Deduction.ThirdLevel),
+            > (double)TotalSalary.ThirdLevel and <= (double)TotalSalary.FourthLevel => new TaxRateAndDeduction(TaxRates.FourthLevel,(double)Deduction.FourthLevel),
+            > (double)TotalSalary.FourthLevel and <= (double)TotalSalary.FifthLevel => new TaxRateAndDeduction(TaxRates.FifthLevel,(double)Deduction.FifthLevel),
+            > (double)TotalSalary.FifthLevel and <= (double)TotalSalary.SixthLevel => new TaxRateAndDeduction(TaxRates.SixthLevel,(double)Deduction.SixthLevel),
+            _ => new TaxRateAndDeduction(TaxRates.SeventhLevel,(double)Deduction.SeventhLevel)
         };
     }
 
