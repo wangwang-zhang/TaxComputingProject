@@ -10,7 +10,13 @@ public class TaxComputingServiceTest
     [InlineData(5000, 1, 0)]
     [InlineData(36000, 1, 930)]
     [InlineData(41000, 1, 1080)]
-    public void Should_Return_Correct_Tax_With_One_Month_Of_Salary(Double salary, int month, double tax)
+    [InlineData(149000, 1, 11880)]
+    [InlineData(305000, 1, 43080)]
+    [InlineData(425000, 1, 73080)]
+    [InlineData(665000, 1, 145080)]
+    [InlineData(965000, 1, 250080)]
+    [InlineData(1000000, 1, 265830)]
+    public void Should_Return_Correct_Tax_With_One_Month_Of_Salary(double salary, int month, double tax)
     {
         var result = _taxComputingService.ComputeTaxBySalaryAndMonth(salary, month);
         Assert.Equal(tax, result);

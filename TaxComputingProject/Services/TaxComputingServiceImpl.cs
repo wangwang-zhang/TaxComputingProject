@@ -7,8 +7,9 @@ public class TaxComputingServiceImpl : ITaxComputingService
     {
         if (salary <= SalaryThreshold)
             return 0;
-        double tax = (salary * month - SalaryThreshold * month) * 0.03;
-        return tax;
+        double salaryForTax = salary * month - SalaryThreshold * month;
+        double[] taxRateAndDeduction = MatchTaxRateAndDeductionBySalary(salaryForTax);
+        return salaryForTax * taxRateAndDeduction[0] - taxRateAndDeduction[1];
     }
 
     public double[] MatchTaxRateAndDeductionBySalary(double salary)
