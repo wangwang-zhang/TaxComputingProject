@@ -7,18 +7,18 @@ public class TaxComputingServiceTest
     private readonly ITaxComputingService _taxComputingService = new TaxComputingServiceImpl();
 
     [Theory]
-    [InlineData(5000, 1, 0)]
-    [InlineData(36000, 1, 930)]
-    [InlineData(41000, 1, 1080)]
-    [InlineData(149000, 1, 11880)]
-    [InlineData(305000, 1, 43080)]
-    [InlineData(425000, 1, 73080)]
-    [InlineData(665000, 1, 145080)]
-    [InlineData(965000, 1, 250080)]
-    [InlineData(1000000, 1, 265830)]
-    public void Should_Return_Correct_Tax_With_One_Month_Of_Salary(double salary, int month, double tax)
+    [InlineData(5000, 0)]
+    [InlineData(36000,930)]
+    [InlineData(41000,1080)]
+    [InlineData(149000,11880)]
+    [InlineData(305000,43080)]
+    [InlineData(425000,73080)]
+    [InlineData(665000,145080)]
+    [InlineData(965000,250080)]
+    [InlineData(1000000,265830)]
+    public void Should_Return_Correct_Tax_With_One_Month_Of_Salary(double salary, double tax)
     {
-        var result = _taxComputingService.ComputeTaxBySalaryAndMonth(salary, month);
+        var result = _taxComputingService.ComputeTaxBySalaryAndMonth(salary, 1);
         Assert.Equal(tax, result);
     }
 
@@ -30,7 +30,7 @@ public class TaxComputingServiceTest
     [InlineData(660000, 0.3, 52920)]
     [InlineData(960000, 0.35, 85920)]
     [InlineData(1000000, 0.45, 181920)]
-    public void Should_Return_Correct_Tax_Rate_By_Total_Salary_Removed_Threshold(double salary, double taxRate, double deduction)
+    public void Should_Return_Correct_Tax_Rate_And_Deduction_By_Taxable_Salary(double salary, double taxRate, double deduction)
     {
         var result = _taxComputingService.MatchTaxRateAndDeductionBySalary(salary);
         Assert.Equal(new[]{taxRate, deduction}, result);
