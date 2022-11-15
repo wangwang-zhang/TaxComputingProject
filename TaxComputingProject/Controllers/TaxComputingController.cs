@@ -16,11 +16,11 @@ public class TaxComputingController : ControllerBase
     }
 
     [HttpGet("taxOfMonth")]
-    public IActionResult GetTaxBySalaryAndMonth([FromHeader] SalaryAndMonth? salaryAndMonth)
+    public IActionResult GetTaxByAccumulatedSalary([FromHeader] AccumulatedSalary? accumulatedSalary)
     {
-        if (salaryAndMonth == null)
+        if (accumulatedSalary == null)
             return BadRequest();
-        double tax = _taxComputingService.ComputeTaxBySalaryAndMonth(salaryAndMonth.Salary, salaryAndMonth.Month);
+        double tax = _taxComputingService.ComputeTaxBySalaryAndMonth(accumulatedSalary.Salary, accumulatedSalary.Month);
         return Ok(tax);
     }
 }
