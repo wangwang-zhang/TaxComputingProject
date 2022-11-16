@@ -86,5 +86,25 @@ public class UserServiceTest
         var result = userServiceImpl.AddVerify("testToken");
         Assert.True(result);
     }
+    [Fact]
+    public void Should_Return_False_When_Login_User_Not_Existed()
+    {
+        var mockSet = new Mock<DbSet<User>>();
+        mockSet.As<IQueryable<User>>().Setup(m => m.Provider).Returns(_users.Provider);
+        mockSet.As<IQueryable<User>>().Setup(m => m.Expression).Returns(_users.Expression);
+        mockSet.As<IQueryable<User>>().Setup(m => m.ElementType).Returns(_users.ElementType);
+        mockSet.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(() => _users.GetEnumerator());
+        var mockContext = new Mock<DataContext>();
+        mockContext.Setup(dataContext => dataContext.Users).Returns(mockSet.Object);
+        var userDaoImpl = new UserDaoImpl(mockContext.Object);
+        var userServiceImpl = new UserServiceImpl(userDaoImpl);
+        var userLoginRequest = new UserLoginRequest
+        {
+            Email = "Hello@example.email",
+            Password = "password"
+        };
+        var result = userServiceImpl.UserLogin(userLoginRequest);
+        Assert.False(result);
+    }
     
 }

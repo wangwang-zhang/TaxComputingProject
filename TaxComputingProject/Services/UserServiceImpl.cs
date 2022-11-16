@@ -41,6 +41,24 @@ public class UserServiceImpl : IUserService
         }
         return false;
     }
+
+    public bool UserLogin(UserLoginRequest request)
+    {
+        User? user = _userDao.FindUser(request.Email);
+        if(user == null)
+        {
+            return false;
+        }
+        if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
+        {
+            return false;
+        }
+        if (user.VerifiedAt == null)
+        {
+            return false;
+        }
+        return true;
+    }
     
     private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
     {
@@ -54,6 +72,15 @@ public class UserServiceImpl : IUserService
     private string CreateRandomToken()
     {
         return Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
+    }
+    private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
+    {
+        using (var hmac = new HMACSHA512(passwordSalt))
+        {
+            var computedHash = hmac
+                .ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            return computedHash.SequenceEqual(passwordHash);
+        }
     }
     
 }
