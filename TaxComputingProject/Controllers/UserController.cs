@@ -18,6 +18,8 @@ public class UserController : ControllerBase
     [HttpPost("register")]
     public IActionResult Register(UserRegisterRequest request)
     {
+        if (request.Password != request.ConfirmPassword)
+            return BadRequest("Password and ConfirmPassword do not match");
         var result = _userService.AddUser(request);
         if (!result)
         {
