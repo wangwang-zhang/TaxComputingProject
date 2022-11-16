@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace DbTest.Models
+namespace TaxComputingProject.Model
 {
     public class UserLoginRequest
     {
