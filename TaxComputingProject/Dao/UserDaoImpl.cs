@@ -31,4 +31,9 @@ public class UserDaoImpl : IUserDao
     {
         _context.SaveChanges();
     }
+
+    public User? FindUser(string email)
+    {
+        return _context.Users.FirstOrDefault(user => user.Email == email);
+    }
 }

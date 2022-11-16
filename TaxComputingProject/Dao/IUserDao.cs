@@ -8,4 +8,5 @@ public interface IUserDao
     public void AddUser(User user);
     public User? FindUserByToken(string token);
     public void SaveChanges();
+    public User? FindUser(string email);
 }
