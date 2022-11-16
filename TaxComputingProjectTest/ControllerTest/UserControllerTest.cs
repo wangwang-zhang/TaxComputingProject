@@ -15,17 +15,17 @@ public class UserControllerTest
     {
         new()
         {
-            Id = 1, Email = "Tom@email.com", PasswordHash = new byte[32], PasswordSalt = new byte[32], VerificationToken = "",
+            Id = 1, Email = "Tom@email.com", PasswordHash = new byte[32], PasswordSalt = new byte[32], VerificationToken = "testToken",
             VerifiedAt = null
         },
         new()
         {
-            Id = 2, Email = "Amy@email.com", PasswordHash = new byte[32], PasswordSalt = new byte[32], VerificationToken = "",
+            Id = 2, Email = "Amy@email.com", PasswordHash = new byte[32], PasswordSalt = new byte[32], VerificationToken = "testTokenTwo",
             VerifiedAt = null
         },
         new()
         {
-            Id = 3, Email = "Bob@email.com", PasswordHash = new byte[32], PasswordSalt = new byte[32], VerificationToken = "",
+            Id = 3, Email = "Bob@email.com", PasswordHash = new byte[32], PasswordSalt = new byte[32], VerificationToken = "testTokenThree",
             VerifiedAt = null
         },
     }.AsQueryable();
@@ -56,6 +56,14 @@ public class UserControllerTest
         };
         var controller = new UserController(userServiceImpl);
         var result = controller.Register(userRegisterRequest); 
+        Assert.IsType<OkObjectResult>(result);
+    }
+    [Fact]
+    public void Should_Return_OK_When_Token_Is_Verified()
+    {
+        var userServiceImpl = MockContext();
+        var controller = new UserController(userServiceImpl);
+        var result = controller.Verify("testToken"); 
         Assert.IsType<OkObjectResult>(result);
     }
     private UserServiceImpl MockContext()

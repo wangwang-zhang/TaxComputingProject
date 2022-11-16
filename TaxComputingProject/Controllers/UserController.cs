@@ -27,4 +27,11 @@ public class UserController : ControllerBase
         }
         return Ok("User successfully created!");
     }
+    [HttpPost("verify")]
+    public IActionResult Verify(string token)
+    {
+        _userService.AddVerify(token);
+        return Ok("User verified! :)");
+    }
+
 }
