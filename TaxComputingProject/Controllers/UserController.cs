@@ -33,5 +33,15 @@ public class UserController : ControllerBase
         _userService.AddVerify(token);
         return Ok("User verified! :)");
     }
+    [HttpPost("login")]
+    public IActionResult Login(UserLoginRequest request)
+    {
+        var result = _userService.UserLogin(request);
+        if (result == false)
+        {
+            return BadRequest("User not found or not verified");
+        }
+        return Ok($"Welcome back, {request.Email}! :)");
+    }
 
 }
