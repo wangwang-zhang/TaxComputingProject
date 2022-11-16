@@ -23,7 +23,6 @@ public class UserController : ControllerBase
         {
             return BadRequest("User already exists.");
         }
-
-        return null;
+        return Ok("User successfully created!");
     }
 }
