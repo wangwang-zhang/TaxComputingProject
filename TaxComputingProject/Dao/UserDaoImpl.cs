@@ -16,4 +16,9 @@ public class UserDaoImpl : IUserDao
     {
         return  _context.Users.Any(user => user.Email == email);
     }
+    public void AddUser(User user)
+    {
+        _context.Users.Add(user);
+        _context.SaveChanges();
+    }
 }

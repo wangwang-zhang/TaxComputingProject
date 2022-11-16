@@ -1,3 +1,4 @@
+using TaxComputingProject.Dao;
 using TaxComputingProject.DBContext;
 using TaxComputingProject.Services;
 
@@ -9,7 +10,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSingleton<ITaxComputingService, TaxComputingServiceImpl>();
+builder.Services.AddScoped<ITaxComputingService, TaxComputingServiceImpl>();
+builder.Services.AddScoped<IUserDao, UserDaoImpl>();
 builder.Services.AddDbContext<DataContext>();
 
 var app = builder.Build();

@@ -42,5 +42,22 @@ public class UserDaoTest
         Assert.True(userDao.FindUserByEmail("Tom@email.com"));
         Assert.False(userDao.FindUserByEmail("Lucas@email.com"));
     }
+    [Fact]
+    public void Should_Return_Correct_Count_When_Add_One_User()
+    {
+        DataContext dataContext = new DataContext();
+        var userDao = new UserDaoImpl(dataContext);
+        User user = new User
+        {
+            Id = 4,
+            Email = "Hello@example.com",
+            PasswordHash = new byte[32],
+            PasswordSalt = new byte[32],
+            VerificationToken = "",
+            VerifiedAt = null
+        };
+        userDao.AddUser(user);
+        Assert.Equal(2, dataContext.Users.Count());
+    }
     
 }
