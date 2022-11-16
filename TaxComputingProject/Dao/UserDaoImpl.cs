@@ -21,4 +21,9 @@ public class UserDaoImpl : IUserDao
         _context.Users.Add(user);
         _context.SaveChanges();
     }
+
+    public User FindUserByToken(string token)
+    {
+        return  _context.Users.FirstOrDefault(user => user.VerificationToken == token);
+    }
 }

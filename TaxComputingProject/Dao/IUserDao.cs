@@ -6,4 +6,5 @@ public interface IUserDao
 {
     public bool FindUserByEmail(string email);
     public void AddUser(User user);
+    public User FindUserByToken(string token);
 }
