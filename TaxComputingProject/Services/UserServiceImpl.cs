@@ -29,6 +29,19 @@ public class UserServiceImpl : IUserService
         _userDao.AddUser(user);
         return true;
     }
+
+    public bool AddVerify(string token)
+    {
+        var user = _userDao.FindUserByToken(token);
+        if (user != null)
+        {
+            user.VerifiedAt = DateTime.Now;
+            _userDao.SaveChanges();
+            return true;
+        }
+        return false;
+    }
+    
     private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
     {
         using (var hmac = new HMACSHA512())
@@ -42,4 +55,5 @@ public class UserServiceImpl : IUserService
     {
         return Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
     }
+    
 }
