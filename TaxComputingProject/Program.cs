@@ -12,6 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ITaxComputingService, TaxComputingServiceImpl>();
 builder.Services.AddScoped<IUserDao, UserDaoImpl>();
+builder.Services.AddScoped<IUserService, UserServiceImpl>();
 builder.Services.AddDbContext<DataContext>();
 
 var app = builder.Build();
