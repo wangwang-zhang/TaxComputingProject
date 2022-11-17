@@ -1,11 +1,11 @@
-using System.Security.Cryptography;
 using Microsoft.AspNetCore.Mvc;
-using TaxComputingProject.DBContext;
 using TaxComputingProject.Model;
 using TaxComputingProject.Services;
 
 namespace TaxComputingProject.Controllers;
 
+[ApiController]
+[Route("api/[controller]")]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
@@ -18,8 +18,6 @@ public class UserController : ControllerBase
     [HttpPost("register")]
     public IActionResult Register(UserRegisterRequest request)
     {
-        if (request.Password != request.ConfirmPassword)
-            return BadRequest("Password and ConfirmPassword do not match");
         var result = _userService.AddUser(request);
         if (!result)
         {
@@ -27,12 +25,14 @@ public class UserController : ControllerBase
         }
         return Ok("User successfully created!");
     }
+    
     [HttpPost("verify")]
     public IActionResult Verify(string token)
     {
         _userService.AddVerify(token);
         return Ok("User verified! :)");
     }
+    
     [HttpPost("login")]
     public IActionResult Login(UserLoginRequest request)
     {
