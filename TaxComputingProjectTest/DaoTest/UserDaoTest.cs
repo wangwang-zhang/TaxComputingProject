@@ -8,6 +8,16 @@ namespace TaxComputingProjectTest.DaoTest;
 
 public class UserDaoTest
 {
+    private readonly DataContext _context;
+    public UserDaoTest() {
+        DbContextOptionsBuilder dbOptions = new DbContextOptionsBuilder()
+            .UseInMemoryDatabase(
+                Guid.NewGuid().ToString()
+            );
+            
+        _context = new DataContext(dbOptions.Options);
+    }
+    
     private readonly IQueryable<User> _users = new List<User>
     {
         new()
@@ -39,8 +49,9 @@ public class UserDaoTest
     [Fact]
     public void Should_Return_Correct_Count_When_Add_One_User()
     {
-        DataContext dataContext = new DataContext();
-        var userDao = new UserDaoImpl(dataContext);
+        _context.AddRange(_users);
+        _context.SaveChanges();
+        var userDao = new UserDaoImpl(_context);
         User user = new User
         {
             Email = "Hello2@example.com",
@@ -49,8 +60,10 @@ public class UserDaoTest
             VerificationToken = "",
             VerifiedAt = null
         };
+        
         userDao.AddUser(user);
-        Assert.Equal(2, dataContext.Users.Count());
+        
+        Assert.Equal(4, _context.Users.Count());
     }
     
     [Fact]
