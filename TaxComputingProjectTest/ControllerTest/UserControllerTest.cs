@@ -33,7 +33,7 @@ public class UserControllerTest
     [Fact]
     public void Should_Return_BadRequest_When_User_Existed_Already()
     {
-        var userServiceImpl = MockContext();
+        var userServiceImpl = ServiceSetup();
         var userRegisterRequest = new UserRegisterRequest
         {
             Email = "Tom@email.com",
@@ -47,7 +47,7 @@ public class UserControllerTest
     [Fact]
     public void Should_Return_OK_When_User_Not_Existed()
     {
-        var userServiceImpl = MockContext();
+        var userServiceImpl = ServiceSetup();
         var userRegisterRequest = new UserRegisterRequest
         {
             Email = "Henry@email.com",
@@ -61,12 +61,21 @@ public class UserControllerTest
     [Fact]
     public void Should_Return_OK_When_Token_Is_Verified()
     {
-        var userServiceImpl = MockContext();
-        var controller = new UserController(userServiceImpl);
+        var userService = ServiceSetup();
+        var controller = new UserController(userService);
         var result = controller.Verify("testToken"); 
         Assert.IsType<OkObjectResult>(result);
     }
-    private UserServiceImpl MockContext()
+    
+    private UserServiceImpl ServiceSetup()
+    {
+        var mockContext = MockDbContext();
+        var userDao = new UserDaoImpl(mockContext.Object);
+        var userService = new UserServiceImpl(userDao);
+        return userService;
+    }
+    
+    private Mock<DataContext> MockDbContext()
     {
         var mockSet = new Mock<DbSet<User>>();
         mockSet.As<IQueryable<User>>().Setup(m => m.Provider).Returns(_users.Provider);
@@ -75,8 +84,6 @@ public class UserControllerTest
         mockSet.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(() => _users.GetEnumerator());
         var mockContext = new Mock<DataContext>();
         mockContext.Setup(dataContext => dataContext.Users).Returns(mockSet.Object);
-        var userDaoImpl = new UserDaoImpl(mockContext.Object);
-        var userServiceImpl = new UserServiceImpl(userDaoImpl);
-        return userServiceImpl;
+        return mockContext;
     }
 }
