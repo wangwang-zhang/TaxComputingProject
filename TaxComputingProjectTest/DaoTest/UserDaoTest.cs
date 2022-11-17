@@ -30,13 +30,7 @@ public class UserDaoTest
     [Fact]
     public void Should_Return_True_When_User_Exist()
     {
-        var mockSet = new Mock<DbSet<User>>();
-        mockSet.As<IQueryable<User>>().Setup(m => m.Provider).Returns(_users.Provider);
-        mockSet.As<IQueryable<User>>().Setup(m => m.Expression).Returns(_users.Expression);
-        mockSet.As<IQueryable<User>>().Setup(m => m.ElementType).Returns(_users.ElementType);
-        mockSet.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(() => _users.GetEnumerator());
-        var mockContext = new Mock<DataContext>();
-        mockContext.Setup(dataContext => dataContext.Users).Returns(mockSet.Object);
+        var mockContext = MockContext();
         var userDao = new UserDaoImpl(mockContext.Object);
         Assert.True(userDao.FindUserByEmail("Tom@email.com") != null);
         Assert.True(userDao.FindUserByEmail("Lucas@email.com") == null);
@@ -49,8 +43,7 @@ public class UserDaoTest
         var userDao = new UserDaoImpl(dataContext);
         User user = new User
         {
-            Id = 4,
-            Email = "Hello@example.com",
+            Email = "Hello2@example.com",
             PasswordHash = new byte[32],
             PasswordSalt = new byte[32],
             VerificationToken = "",
@@ -63,6 +56,14 @@ public class UserDaoTest
     [Fact]
     public void Should_Return_Correct_User_When_Find_User_By_token()
     {
+        var mockContext = MockContext();
+        var userDao = new UserDaoImpl(mockContext.Object);
+        var user = userDao.FindUserByToken("testToken");
+        Assert.Equal("Tom@email.com", user.Email);
+    }
+
+    private Mock<DataContext> MockContext()
+    {
         var mockSet = new Mock<DbSet<User>>();
         mockSet.As<IQueryable<User>>().Setup(m => m.Provider).Returns(_users.Provider);
         mockSet.As<IQueryable<User>>().Setup(m => m.Expression).Returns(_users.Expression);
@@ -70,8 +71,6 @@ public class UserDaoTest
         mockSet.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(() => _users.GetEnumerator());
         var mockContext = new Mock<DataContext>();
         mockContext.Setup(dataContext => dataContext.Users).Returns(mockSet.Object);
-        var userDao = new UserDaoImpl(mockContext.Object);
-        var user = userDao.FindUserByToken("testToken");
-        Assert.Equal("Tom@email.com", user.Email);
+        return mockContext;
     }
 }
