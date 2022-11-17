@@ -12,9 +12,10 @@ public class UserServiceImpl : IUserService
     {
         _userDao = userDao;
     }
+    
     public bool AddUser(UserRegisterRequest request)
     {
-        if (_userDao.FindUserByEmail(request.Email))
+        if (_userDao.FindUserByEmail(request.Email) != null)
         {
             return false;
         }
@@ -44,7 +45,7 @@ public class UserServiceImpl : IUserService
 
     public bool UserLogin(UserLoginRequest request)
     {
-        User? user = _userDao.FindUser(request.Email);
+        User? user = _userDao.FindUserByEmail(request.Email);
         if(user == null)
         {
             return false;
@@ -69,10 +70,12 @@ public class UserServiceImpl : IUserService
                 .ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
         }
     }
+    
     private string CreateRandomToken()
     {
         return Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
     }
+    
     private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
     {
         using (var hmac = new HMACSHA512(passwordSalt))

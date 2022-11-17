@@ -28,6 +28,7 @@ public class UserServiceTest
             VerifiedAt = null
         },
     }.AsQueryable();
+    
     [Fact]
     public void Should_Return_False_When_User_Existed_Already()
     {
@@ -49,6 +50,7 @@ public class UserServiceTest
         var result = userServiceImpl.AddUser(userRegisterRequest);
         Assert.False(result);
     }
+    
     [Fact]
     public void Should_Return_True_When_User_Not_Existed()
     {
@@ -86,6 +88,7 @@ public class UserServiceTest
         var result = userServiceImpl.AddVerify("testToken");
         Assert.True(result);
     }
+    
     [Fact]
     public void Should_Return_False_When_Login_User_Not_Existed()
     {

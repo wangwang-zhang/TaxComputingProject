@@ -3,7 +3,6 @@ using Moq;
 using TaxComputingProject.Dao;
 using TaxComputingProject.DBContext;
 using TaxComputingProject.Model;
-using TaxComputingProject.Services;
 
 namespace TaxComputingProjectTest.DaoTest;
 
@@ -39,9 +38,10 @@ public class UserDaoTest
         var mockContext = new Mock<DataContext>();
         mockContext.Setup(dataContext => dataContext.Users).Returns(mockSet.Object);
         var userDao = new UserDaoImpl(mockContext.Object);
-        Assert.True(userDao.FindUserByEmail("Tom@email.com"));
-        Assert.False(userDao.FindUserByEmail("Lucas@email.com"));
+        Assert.True(userDao.FindUserByEmail("Tom@email.com") != null);
+        Assert.True(userDao.FindUserByEmail("Lucas@email.com") == null);
     }
+    
     [Fact]
     public void Should_Return_Correct_Count_When_Add_One_User()
     {
@@ -59,6 +59,7 @@ public class UserDaoTest
         userDao.AddUser(user);
         Assert.Equal(2, dataContext.Users.Count());
     }
+    
     [Fact]
     public void Should_Return_Correct_User_When_Find_User_By_token()
     {

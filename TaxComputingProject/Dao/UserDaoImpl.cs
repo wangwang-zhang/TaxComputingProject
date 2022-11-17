@@ -12,9 +12,9 @@ public class UserDaoImpl : IUserDao
         _context = context;
     }
 
-    public bool FindUserByEmail(string email)
+    public User? FindUserByEmail(string email)
     {
-        return  _context.Users.Any(user => user.Email == email);
+        return  _context.Users.FirstOrDefault(user => user.Email == email);
     }
     public void AddUser(User user)
     {
@@ -30,10 +30,5 @@ public class UserDaoImpl : IUserDao
     public void SaveChanges()
     {
         _context.SaveChanges();
-    }
-
-    public User? FindUser(string email)
-    {
-        return _context.Users.FirstOrDefault(user => user.Email == email);
     }
 }
