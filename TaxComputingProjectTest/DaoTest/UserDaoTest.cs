@@ -9,7 +9,8 @@ namespace TaxComputingProjectTest.DaoTest;
 public class UserDaoTest
 {
     private readonly DataContext _context;
-    public UserDaoTest() {
+    public UserDaoTest() 
+    {
         DbContextOptionsBuilder dbOptions = new DbContextOptionsBuilder()
             .UseInMemoryDatabase(
                 Guid.NewGuid().ToString()
@@ -49,8 +50,6 @@ public class UserDaoTest
     [Fact]
     public void Should_Return_Correct_Count_When_Add_One_User()
     {
-        _context.AddRange(_users);
-        _context.SaveChanges();
         var userDao = new UserDaoImpl(_context);
         User user = new User
         {
@@ -63,7 +62,7 @@ public class UserDaoTest
         
         userDao.AddUser(user);
         
-        Assert.Equal(4, _context.Users.Count());
+        Assert.Equal(1, _context.Users.Count());
     }
     
     [Fact]
