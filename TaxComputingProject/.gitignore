@@ -1,0 +1,6 @@
+bin/
+obj/
+/packages/
+riderModule.iml
+/_ReSharper.Caches/
+../TaxComputingProject.sln.DotSettings.user
