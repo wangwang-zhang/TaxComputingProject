@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Xunit;
 using Moq;
 using TaxComputingProject.Dao;
@@ -107,7 +108,7 @@ public class UserServiceTest
             Password = "password"
         };
         var result = userServiceImpl.UserLogin(userLoginRequest);
-        Assert.False(result);
+        Assert.Equal(0, result.Length);
     }
     
 }

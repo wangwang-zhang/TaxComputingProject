@@ -1,4 +1,7 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography;
+using Microsoft.IdentityModel.Tokens;
 using TaxComputingProject.Dao;
 using TaxComputingProject.Model;
 
@@ -7,6 +10,7 @@ namespace TaxComputingProject.Services;
 public class UserServiceImpl : IUserService
 {
     private readonly IUserDao _userDao;
+    private readonly string _tokenKey = "My token key";
 
     public UserServiceImpl(IUserDao userDao)
     {
@@ -43,22 +47,22 @@ public class UserServiceImpl : IUserService
         return false;
     }
 
-    public bool UserLogin(UserLoginRequest request)
+    public string UserLogin(UserLoginRequest request)
     {
         User? user = _userDao.FindUserByEmail(request.Email);
         if(user == null)
         {
-            return false;
+            throw new Exception("The user is not existed!");
         }
         if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
         {
-            return false;
+            throw new Exception("The password is not correct!");
         }
         if (user.VerifiedAt == null)
         {
-            return false;
+            throw new Exception("The user is not activated");;
         }
-        return true;
+        return CreateToken(user);
     }
     
     private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
@@ -84,6 +88,21 @@ public class UserServiceImpl : IUserService
                 .ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
             return computedHash.SequenceEqual(passwordHash);
         }
+    }
+    private string CreateToken(User user)
+    {
+        List<Claim> claims = new List<Claim>
+        {
+            new(ClaimTypes.Email, user.Email),
+        };
+        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_tokenKey));
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+        var token = new JwtSecurityToken(
+            claims: claims,
+            expires: DateTime.Now.AddDays(50),
+            signingCredentials: credentials);
+        var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+        return jwt;
     }
     
 }

@@ -37,7 +37,7 @@ public class UserController : ControllerBase
     public IActionResult Login(UserLoginRequest request)
     {
         var result = _userService.UserLogin(request);
-        if (result == false)
+        if (result.Length == 0)
         {
             return BadRequest("User not found or not verified");
         }

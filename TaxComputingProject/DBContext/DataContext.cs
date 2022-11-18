@@ -9,15 +9,15 @@ public class DataContext : DbContext
     {
     }
     public DataContext(){}
-    // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    // {
-    //     base.OnConfiguring(optionsBuilder);
-    //     optionsBuilder.UseMySql("Server=Localhost;Database=TaxDB;user=root;pwd=123456789",
-    //         new MySqlServerVersion("8.0.29"));
-    // }
-    public virtual DbSet<User> Users => Set<User>();
-    protected override void OnModelCreating(ModelBuilder modelBuilder) {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(DataContext).Assembly);
-        modelBuilder.HasDefaultSchema("App");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+        optionsBuilder.UseMySql("Server=Localhost;Database=TaxDB;user=root;pwd=123456789",
+            new MySqlServerVersion("8.0.29"));
     }
+    public virtual DbSet<User> Users => Set<User>();
+    // protected override void OnModelCreating(ModelBuilder modelBuilder) {
+    //     modelBuilder.ApplyConfigurationsFromAssembly(typeof(DataContext).Assembly);
+    //     modelBuilder.HasDefaultSchema("App");
+    // }
 }
