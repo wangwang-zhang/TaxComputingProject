@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaxComputingProject.Model;
 using TaxComputingProject.Services;
@@ -15,7 +16,7 @@ public class TaxComputingController : ControllerBase
         _taxComputingService = taxComputingService;
     }
 
-    [HttpGet("taxOfMonth")]
+    [HttpGet("taxOfMonth"), Authorize]
     public IActionResult GetTaxByAccumulatedSalary([FromHeader] AccumulatedSalary? accumulatedSalary)
     {
         if (accumulatedSalary == null)
