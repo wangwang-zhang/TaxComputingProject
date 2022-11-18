@@ -41,7 +41,7 @@ public class UserController : ControllerBase
         {
             return BadRequest("User not found or not verified");
         }
-        return Ok($"Welcome back, {request.Email}! :)");
+        return Ok($"Welcome back, {request.Email}! :), Your Token is\n {result}");
     }
 
 }

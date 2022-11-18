@@ -10,7 +10,7 @@ namespace TaxComputingProject.Services;
 public class UserServiceImpl : IUserService
 {
     private readonly IUserDao _userDao;
-    private readonly string _tokenKey = "My token key";
+    private readonly string _tokenKey = "My Json Web Token Key";
 
     public UserServiceImpl(IUserDao userDao)
     {
