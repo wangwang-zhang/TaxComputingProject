@@ -4,6 +4,6 @@ namespace TaxComputingProject.Services;
 
 public interface ITaxComputingService
 {
-    public double ComputeTaxBySalaryAndMonth(double salary, int month);
+    public double ComputeTaxBySalaryAndMonth(double[] salaries, int month);
     public TaxLevel MatchTaxRateAndDeductionBySalary(double salary);
 }

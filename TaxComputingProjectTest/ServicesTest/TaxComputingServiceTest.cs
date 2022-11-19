@@ -7,16 +7,16 @@ public class TaxComputingServiceTest
     private readonly ITaxComputingService _taxComputingService = new TaxComputingServiceImpl();
 
     [Theory]
-    [InlineData(5000, 0)]
-    [InlineData(36000,930)]
-    [InlineData(41000,1080)]
-    [InlineData(149000,11880)]
-    [InlineData(305000,43080)]
-    [InlineData(425000,73080)]
-    [InlineData(665000,145080)]
-    [InlineData(965000,250080)]
-    [InlineData(1000000,265830)]
-    public void Should_Return_Correct_Tax_With_One_Month_Of_Salary(double salary, double tax)
+    [InlineData(new double[]{5000}, 0)]
+    [InlineData(new double[]{36000},930)]
+    [InlineData(new double[]{41000},1080)]
+    [InlineData(new double[]{149000},11880)]
+    [InlineData(new double[]{305000},43080)]
+    [InlineData(new double[]{425000},73080)]
+    [InlineData(new double[]{665000},145080)]
+    [InlineData(new double[]{965000},250080)]
+    [InlineData(new double[]{1000000},265830)]
+    public void Should_Return_Correct_Tax_With_One_Month_Of_Salary(double[] salary, double tax)
     {
         var result = _taxComputingService.ComputeTaxBySalaryAndMonth(salary, 1);
         Assert.Equal(tax, result);
@@ -38,18 +38,11 @@ public class TaxComputingServiceTest
     }
 
     [Theory]
-    [InlineData(41000, 2, 3600)]
-    [InlineData(41000, 3, 3600)]
-    [InlineData(41000, 4, 3600)]
-    [InlineData(41000, 5, 7200)]
-    [InlineData(41000, 6, 7200)]
-    [InlineData(41000, 7, 7200)]
-    [InlineData(41000, 8, 7200)]
-    [InlineData(41000, 9, 8400)]
-    [InlineData(41000, 10, 9000)]
-    [InlineData(41000, 11, 9000)]
-    [InlineData(41000, 12, 9600)]
-    public void Should_Return_Correct_Tax_With_Multiple_Month_Of_Salary(double salary, int month, double tax)
+    [InlineData(new double[]{41000}, 1, 1080)]
+    [InlineData(new double[]{41000, 113000}, 2, 10800)]
+    [InlineData(new double[]{41000, 113000, 161000}, 3, 31200)]
+    [InlineData(new double[]{41000, 113000, 161000, 125000}, 4, 30000)]
+    public void Should_Return_Correct_Tax_With_Multiple_Month_Of_Salary(double[] salary, int month, double tax)
     {
         var result = _taxComputingService.ComputeTaxBySalaryAndMonth(salary, month);
         Assert.Equal(tax, result);
