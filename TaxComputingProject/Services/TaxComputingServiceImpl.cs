@@ -7,25 +7,25 @@ public class TaxComputingServiceImpl : ITaxComputingService
     const int SalaryThreshold = 5000;
     public double ComputeTaxBySalaryAndMonth(double[] salaries, int month)
     {
-        double[] taxOfMonth = new double[salaries.Length + 1];
-        taxOfMonth[0] = 0;
+        double[] taxPerMonth = new double[salaries.Length + 1];
+        taxPerMonth[0] = 0;
         for (int monthForTax = 1; monthForTax <= salaries.Length; monthForTax++)
         {
             double salaryForTax = 0;
-            for (int i = 1; i <= monthForTax; i++)
+            for (int preMonth = 1; preMonth <= monthForTax; preMonth++)
             {
-                salaryForTax += salaries[i - 1];
+                salaryForTax += salaries[preMonth - 1];
             }
             salaryForTax -= SalaryThreshold * monthForTax;
             TaxLevel taxLevel = MatchTaxRateAndDeductionBySalary(salaryForTax);
             double tax = salaryForTax * taxLevel.TaxRate - taxLevel.Deduction;
             for (int preMonth = 0; preMonth < monthForTax; preMonth++)
             {
-                tax -= taxOfMonth[preMonth];
+                tax -= taxPerMonth[preMonth];
             }
-            taxOfMonth[monthForTax] = tax;
+            taxPerMonth[monthForTax] = tax;
         }
-        return taxOfMonth[month];
+        return taxPerMonth[month];
     }
 
     public TaxLevel MatchTaxRateAndDeductionBySalary(double salary)
