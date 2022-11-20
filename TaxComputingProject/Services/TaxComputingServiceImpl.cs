@@ -1,10 +1,18 @@
+using System.Security.Claims;
 using TaxComputingProject.Model;
 
 namespace TaxComputingProject.Services;
 
 public class TaxComputingServiceImpl : ITaxComputingService
 {
+    private readonly IHttpContextAccessor _httpContextAccessor;
     const int SalaryThreshold = 5000;
+
+    public TaxComputingServiceImpl(IHttpContextAccessor httpContextAccessor)
+    {
+        _httpContextAccessor = httpContextAccessor;
+    }
+
     public double ComputeTaxBySalaryAndMonth(double[] salaries, int month)
     {
         double[] taxPerMonth = new double[salaries.Length + 1];
@@ -40,6 +48,15 @@ public class TaxComputingServiceImpl : ITaxComputingService
             > (double)TotalSalary.FifthLevel and <= (double)TotalSalary.SixthLevel => new TaxLevel(TaxRates.SixthLevel,(double)Deduction.SixthLevel),
             _ => new TaxLevel(TaxRates.SeventhLevel,(double)Deduction.SeventhLevel)
         };
+    }
+    public string GetEmail()
+    {
+        var result = string.Empty;
+        if (_httpContextAccessor.HttpContext != null)
+        {
+            result = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Email);
+        }
+        return result;
     }
 
     private enum TotalSalary
