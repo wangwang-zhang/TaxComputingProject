@@ -16,8 +16,6 @@ public class DataContext : DbContext
             new MySqlServerVersion("8.0.29"));
     }
     public virtual DbSet<User> Users => Set<User>();
-    // protected override void OnModelCreating(ModelBuilder modelBuilder) {
-    //     modelBuilder.ApplyConfigurationsFromAssembly(typeof(DataContext).Assembly);
-    //     modelBuilder.HasDefaultSchema("App");
-    // }
+    public virtual DbSet<UserTax> UserTaxes => Set<UserTax>();
+    public virtual DbSet<TaxOfMonth> Taxes => Set<TaxOfMonth>();
 }
