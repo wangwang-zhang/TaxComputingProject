@@ -34,54 +34,63 @@ public class UserControllerTest
     [Fact]
     public void Should_Return_BadRequest_When_User_Existed_Already()
     {
-        var userServiceImpl = ServiceSetup();
+        var userService = SetupService();
         var userRegisterRequest = new UserRegisterRequest
         {
             Email = "Tom@email.com",
             Password = "password",
             ConfirmPassword = "password"
         };
-        var controller = new UserController(userServiceImpl);
+        var controller = new UserController(userService);
         var result = controller.Register(userRegisterRequest); 
         Assert.IsType<BadRequestObjectResult>(result);
     }
+    
     [Fact]
     public void Should_Return_OK_When_User_Not_Existed()
     {
-        var userServiceImpl = ServiceSetup();
+        var userService = SetupService();
         var userRegisterRequest = new UserRegisterRequest
         {
             Email = "Henry@email.com",
             Password = "password",
             ConfirmPassword = "password"
         };
-        var controller = new UserController(userServiceImpl);
+        var controller = new UserController(userService);
         var result = controller.Register(userRegisterRequest); 
         Assert.IsType<OkObjectResult>(result);
     }
+    
     [Fact]
     public void Should_Return_OK_When_Token_Is_Verified()
     {
-        var userService = ServiceSetup();
+        var userService = SetupService();
         var controller = new UserController(userService);
         var result = controller.Verify("testToken"); 
         Assert.IsType<OkObjectResult>(result);
     }
     
-    private UserServiceImpl ServiceSetup()
+    private UserServiceImpl SetupService()
     {
         var mockContext = MockDbContext();
         var userDao = new UserDaoImpl(mockContext.Object);
-        var inMemorySettings = new Dictionary<string, string> {
-            {"AppSettings:Token", "My Json Web Token Key"},
+        var configuration = MockConfiguration();
+        var userService = new UserServiceImpl(userDao,configuration);
+        return userService;
+    }
+
+    private static IConfiguration MockConfiguration()
+    {
+        var inMemorySettings = new Dictionary<string, string>
+        {
+            { "AppSettings:Token", "My Json Web Token Key" },
         };
         IConfiguration configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(inMemorySettings)
             .Build();
-        var userService = new UserServiceImpl(userDao,configuration);
-        return userService;
+        return configuration;
     }
-    
+
     private Mock<DataContext> MockDbContext()
     {
         var mockSet = new Mock<DbSet<User>>();
