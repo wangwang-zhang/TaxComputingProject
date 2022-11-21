@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using TaxComputingProject.Controllers;
 using TaxComputingProject.Dao;
@@ -71,7 +72,13 @@ public class UserControllerTest
     {
         var mockContext = MockDbContext();
         var userDao = new UserDaoImpl(mockContext.Object);
-        var userService = new UserServiceImpl(userDao);
+        var inMemorySettings = new Dictionary<string, string> {
+            {"AppSettings:Token", "My Json Web Token Key"},
+        };
+        IConfiguration configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(inMemorySettings)
+            .Build();
+        var userService = new UserServiceImpl(userDao,configuration);
         return userService;
     }
     

@@ -40,8 +40,14 @@ public class UserServiceTest
         mockSet.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(() => _users.GetEnumerator());
         var mockContext = new Mock<DataContext>();
         mockContext.Setup(dataContext => dataContext.Users).Returns(mockSet.Object);
+        var inMemorySettings = new Dictionary<string, string> {
+            {"AppSettings:Token", "My Json Web Token Key"},
+        };
+        IConfiguration configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(inMemorySettings)
+            .Build();
         var userDaoImpl = new UserDaoImpl(mockContext.Object);
-        var userServiceImpl = new UserServiceImpl(userDaoImpl);
+        var userServiceImpl = new UserServiceImpl(userDaoImpl,configuration);
         var userRegisterRequest = new UserRegisterRequest
         {
             Email = "Tom@email.com",
@@ -63,7 +69,13 @@ public class UserServiceTest
         var mockContext = new Mock<DataContext>();
         mockContext.Setup(dataContext => dataContext.Users).Returns(mockSet.Object);
         var userDaoImpl = new UserDaoImpl(mockContext.Object);
-        var userServiceImpl = new UserServiceImpl(userDaoImpl);
+        var inMemorySettings = new Dictionary<string, string> {
+            {"AppSettings:Token", "My Json Web Token Key"},
+        };
+        IConfiguration configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(inMemorySettings)
+            .Build();
+        var userServiceImpl = new UserServiceImpl(userDaoImpl,configuration);
         var userRegisterRequest = new UserRegisterRequest
         {
             Email = "Henry@email.com",
@@ -85,7 +97,13 @@ public class UserServiceTest
         var mockContext = new Mock<DataContext>();
         mockContext.Setup(dataContext => dataContext.Users).Returns(mockSet.Object);
         var userDaoImpl = new UserDaoImpl(mockContext.Object);
-        var userServiceImpl = new UserServiceImpl(userDaoImpl);
+        var inMemorySettings = new Dictionary<string, string> {
+            {"AppSettings:Token", "My Json Web Token Key"},
+        };
+        IConfiguration configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(inMemorySettings)
+            .Build();
+        var userServiceImpl = new UserServiceImpl(userDaoImpl,configuration);
         var result = userServiceImpl.AddVerify("testToken");
         Assert.True(result);
     }
@@ -101,14 +119,19 @@ public class UserServiceTest
         var mockContext = new Mock<DataContext>();
         mockContext.Setup(dataContext => dataContext.Users).Returns(mockSet.Object);
         var userDaoImpl = new UserDaoImpl(mockContext.Object);
-        var userServiceImpl = new UserServiceImpl(userDaoImpl);
+        var inMemorySettings = new Dictionary<string, string> {
+            {"AppSettings:Token", "My Json Web Token Key"},
+        };
+        IConfiguration configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(inMemorySettings)
+            .Build();
+        var userServiceImpl = new UserServiceImpl(userDaoImpl, configuration);
         var userLoginRequest = new UserLoginRequest
         {
             Email = "Hello@example.email",
             Password = "password"
         };
-        var result = userServiceImpl.UserLogin(userLoginRequest);
-        Assert.Equal(0, result.Length);
+        Assert.Throws<Exception>(() => userServiceImpl.UserLogin(userLoginRequest));
     }
     
 }

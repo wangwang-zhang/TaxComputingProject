@@ -10,11 +10,12 @@ namespace TaxComputingProject.Services;
 public class UserServiceImpl : IUserService
 {
     private readonly IUserDao _userDao;
-    private readonly string _tokenKey = "My Json Web Token Key";
+    private readonly IConfiguration _configuration;
 
-    public UserServiceImpl(IUserDao userDao)
+    public UserServiceImpl(IUserDao userDao, IConfiguration configuration)
     {
         _userDao = userDao;
+        _configuration = configuration;
     }
     
     public bool AddUser(UserRegisterRequest request)
@@ -95,7 +96,7 @@ public class UserServiceImpl : IUserService
         {
             new(ClaimTypes.Email, user.Email),
         };
-        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_tokenKey));
+        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
         var token = new JwtSecurityToken(
             claims: claims,
