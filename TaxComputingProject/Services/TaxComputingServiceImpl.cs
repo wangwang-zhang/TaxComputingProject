@@ -1,16 +1,19 @@
 using System.Security.Claims;
+using TaxComputingProject.Dao;
 using TaxComputingProject.Model;
 
 namespace TaxComputingProject.Services;
 
 public class TaxComputingServiceImpl : ITaxComputingService
 {
+    private readonly IUserDao _userDao;
     private readonly IHttpContextAccessor _httpContextAccessor;
     const int SalaryThreshold = 5000;
 
-    public TaxComputingServiceImpl(IHttpContextAccessor httpContextAccessor)
+    public TaxComputingServiceImpl(IHttpContextAccessor httpContextAccessor, IUserDao userDao)
     {
         _httpContextAccessor = httpContextAccessor;
+        _userDao = userDao;
     }
 
     public double ComputeTaxBySalaryAndMonth(double[] salaries, int month)
@@ -33,9 +36,46 @@ public class TaxComputingServiceImpl : ITaxComputingService
             }
             taxPerMonth[monthForTax] = tax;
         }
+        SaveRecord(salaries,taxPerMonth);
         return taxPerMonth[month];
     }
 
+    private bool SaveRecord(double[] salaries, double[] taxPerMonth)
+    {
+        string email = GetEmail();
+        UserTax? userTax = _userDao.GetUserTax(email);
+        if (userTax == null)
+        {
+            userTax = new UserTax();
+            userTax.Email = email;
+            List<TaxOfMonth> taxes = new List<TaxOfMonth>();
+            for (int month = 1; month <= salaries.Length; month++)
+            {
+               taxes.Add(new TaxOfMonth
+               {
+                   Month = month,
+                   Salary = salaries[month - 1],
+                   Tax = taxPerMonth[month]
+               }); 
+            }
+            userTax.Taxes = taxes;
+            _userDao.AddUserTax(userTax);
+            _userDao.SaveChanges();
+        }
+        return true;
+    }
+    public double GetTaxOfMonth(int month)
+    {
+        string email = GetEmail();
+        UserTax? userTax = _userDao.GetUserTax(email);
+        TaxOfMonth? taxOfMonth = userTax?.Taxes.FirstOrDefault(tax => tax.Month == month);
+        if (taxOfMonth != null)
+        {
+            var tax = taxOfMonth.Tax;
+            return tax;
+        }
+        return -1;
+    } 
     public TaxLevel MatchTaxRateAndDeductionBySalary(double salary)
     {
         return salary switch
