@@ -38,4 +38,11 @@ public class UserDaoImpl : IUserDao
         _context.SaveChanges();
         return true;
     }
+    
+    public UserTax? GetUserTax(string email)
+    {
+        return _context.UserTaxes.Where(user => user.Email == email)
+            .Include(userTax => userTax.Taxes)
+            .FirstOrDefault();
+    }
 }
