@@ -7,6 +7,10 @@ public class AccumulatedSalary
         Salary = salary;
         Month = month;
     }
-    public double[] Salary { get; set; }
-    public int Month { get; set; }
+    public AccumulatedSalary()
+    {
+        
+    }
+    public double[] Salary { get; set; } = { 0 };
+    public int Month { get; set; } = 0;
 }

@@ -30,4 +30,11 @@ public class TaxComputingController : ControllerBase
         var userEmail = _taxComputingService.GetEmail();
         return Ok(userEmail);
     }
+
+    [HttpGet("taxByMonth"), Authorize]
+    public ActionResult GetMonthOfTax(int month)
+    {
+        var taxOfMonth = _taxComputingService.GetTaxOfMonth(month);
+        return Ok(taxOfMonth);
+    }
 }
