@@ -31,4 +31,11 @@ public class UserDaoImpl : IUserDao
     {
         _context.SaveChanges();
     }
+
+    public bool AddUserTax(UserTax userTax)
+    {
+        _context.UserTaxes.Add(userTax);
+        _context.SaveChanges();
+        return true;
+    }
 }

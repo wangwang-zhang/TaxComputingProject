@@ -53,6 +53,26 @@ public class UserDaoTest
         Assert.Equal("Tom@email.com", user?.Email);
     }
 
+    [Fact]
+    public void Should_Return_Correct_Count_When_Add_One_UserTax()
+    {
+        UserTax userTax = new()
+        {
+            Email = "Tom@email.com",
+            Taxes = new List<TaxOfMonth>()
+            {
+                new() { Id = 1, Month = 1, Salary = 41000, Tax = 1080 },
+                new() { Id = 2, Month = 2, Salary = 41000, Tax = 3600 },
+                new() { Id = 3, Month = 3, Salary = 41000, Tax = 3600 },
+                new() { Id = 4, Month = 4, Salary = 41000, Tax = 3600 },
+                new() { Id = 5, Month = 5, Salary = 41000, Tax = 7200 },
+            }
+        };
+        var userDao = new UserDaoImpl(_context);
+        userDao.AddUserTax(userTax);
+        Assert.Equal(1, _context.UserTaxes.Count());
+    }
+
     private Mock<DataContext> MockContext()
     {
         var mockSet = new Mock<DbSet<User>>();
