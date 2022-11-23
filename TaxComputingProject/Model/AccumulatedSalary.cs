@@ -7,10 +7,11 @@ public class AccumulatedSalary
         Salary = salary;
         Month = month;
     }
+
     public AccumulatedSalary()
     {
-        
     }
+
     public List<MonthSalary> Salary { get; set; }
     public int Month { get; set; } = 0;
 }

@@ -24,7 +24,7 @@ public class UserServiceTest
         var result = userService.AddUser(userRegisterRequest);
         Assert.False(result);
     }
-    
+
     [Fact]
     public void Should_Return_True_When_User_Not_Existed()
     {
@@ -46,7 +46,7 @@ public class UserServiceTest
         var result = userService.AddVerify("testToken");
         Assert.True(result);
     }
-    
+
     [Fact]
     public void Should_Return_False_When_Login_User_Not_Existed()
     {

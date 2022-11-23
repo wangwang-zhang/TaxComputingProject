@@ -24,6 +24,7 @@ public class TaxComputingController : ControllerBase
         double tax = _taxComputingService.ComputeTaxBySalaryAndMonth(accumulatedSalary.Salary, accumulatedSalary.Month);
         return Ok(tax);
     }
+    
     [HttpGet("UserEmail"), Authorize]
     public ActionResult<string> GetUserEmail()
     {

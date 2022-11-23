@@ -43,5 +43,4 @@ public class UserController : ControllerBase
         }
         return Ok($"Welcome back, {request.Email}! :), Your Token is\n {result}");
     }
-
 }

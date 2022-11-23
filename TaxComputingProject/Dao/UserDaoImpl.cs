@@ -15,10 +15,12 @@ public class UserDaoImpl : IUserDao
     public UserDaoImpl()
     {
     }
+    
     public User? FindUserByEmail(string email)
     {
         return  _context.Users.FirstOrDefault(user => user.Email == email);
     }
+    
     public void AddUser(User user)
     {
         _context.Users.Add(user);

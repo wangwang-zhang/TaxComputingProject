@@ -10,7 +10,8 @@ namespace TaxComputingProjectTest.DaoTest;
 public class UserDaoTest
 {
     private readonly DataContext _context;
-    public UserDaoTest() 
+
+    public UserDaoTest()
     {
         DbContextOptionsBuilder dbOptions = new DbContextOptionsBuilder()
             .UseInMemoryDatabase(
@@ -27,7 +28,7 @@ public class UserDaoTest
         Assert.True(userDao.FindUserByEmail("Tom@email.com") != null);
         Assert.True(userDao.FindUserByEmail("Lucas@email.com") == null);
     }
-    
+
     [Fact]
     public void Should_Return_Correct_Count_When_Add_One_User()
     {
@@ -43,7 +44,7 @@ public class UserDaoTest
         userDao.AddUser(user);
         Assert.Equal(1, _context.Users.Count());
     }
-    
+
     [Fact]
     public void Should_Return_Correct_User_When_Find_User_By_token()
     {
@@ -72,7 +73,7 @@ public class UserDaoTest
         userDao.AddUserTax(userTax);
         Assert.Equal(1, _context.UserTaxes.Count());
     }
-    
+
     [Fact]
     public void Should_Return_Correct_UserTax_By_Email()
     {

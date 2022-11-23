@@ -1,4 +1,5 @@
 namespace TaxComputingProject.Model;
+
 public class UserTax
 {
     public int Id { get; set; }
