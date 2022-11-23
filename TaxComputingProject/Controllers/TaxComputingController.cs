@@ -16,8 +16,8 @@ public class TaxComputingController : ControllerBase
         _taxComputingService = taxComputingService;
     }
 
-    [HttpGet("taxOfMonth"), Authorize]
-    public IActionResult GetTaxByAccumulatedSalary([FromHeader] AccumulatedSalary? accumulatedSalary)
+    [HttpPost("taxOfMonth"), Authorize]
+    public IActionResult SaveTaxByAccumulatedSalary([FromBody] AccumulatedSalary? accumulatedSalary)
     {
         if (accumulatedSalary == null)
             return BadRequest();

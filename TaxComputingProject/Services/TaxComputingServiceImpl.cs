@@ -16,31 +16,28 @@ public class TaxComputingServiceImpl : ITaxComputingService
         _userDao = userDao;
     }
 
-    public double ComputeTaxBySalaryAndMonth(double[] salaries, int month)
+    public double ComputeTaxBySalaryAndMonth(List<MonthSalary> salaries, int month)
     {
-        double[] taxPerMonth = new double[salaries.Length + 1];
-        taxPerMonth[0] = 0;
-        for (int monthForTax = 1; monthForTax <= salaries.Length; monthForTax++)
+        var salariesOrdered = salaries.OrderBy(s => s.Month).ToList();
+        for (int count = 0; count < salariesOrdered.Count; count++)
         {
-            double salaryForTax = 0;
-            for (int preMonth = 1; preMonth <= monthForTax; preMonth++)
+            double taxableSalary = 0;
+            for (int pre = 0; pre <= count; pre++)
             {
-                salaryForTax += salaries[preMonth - 1];
+                taxableSalary += salariesOrdered[pre].Salary;
+                taxableSalary -= SalaryThreshold;
             }
-            salaryForTax -= SalaryThreshold * monthForTax;
-            TaxLevel taxLevel = MatchTaxRateAndDeductionBySalary(salaryForTax);
-            double tax = salaryForTax * taxLevel.TaxRate - taxLevel.Deduction;
-            for (int preMonth = 0; preMonth < monthForTax; preMonth++)
-            {
-                tax -= taxPerMonth[preMonth];
-            }
-            taxPerMonth[monthForTax] = tax;
+            TaxLevel taxLevel = MatchTaxRateAndDeductionBySalary(taxableSalary);
+            double tax = taxableSalary * taxLevel.TaxRate - taxLevel.Deduction;
+            double preTaxes = salariesOrdered.Take(count).Select(monthSalary => monthSalary.Tax).Sum();
+            tax -= preTaxes;
+            salariesOrdered[count].Tax =  tax;
         }
-        SaveRecord(salaries,taxPerMonth);
-        return taxPerMonth[month];
+        SaveRecord(salariesOrdered);
+        return salariesOrdered.Where(s => s.Month == month).Select(s => s.Tax).FirstOrDefault();
     }
 
-    private bool SaveRecord(double[] salaries, double[] taxPerMonth)
+    private bool SaveRecord(List<MonthSalary> salaries)
     {
         string email = GetEmail();
         UserTax? userTax = _userDao.GetUserTax(email);
@@ -49,14 +46,14 @@ public class TaxComputingServiceImpl : ITaxComputingService
             userTax = new UserTax();
             userTax.Email = email;
             List<TaxOfMonth> taxes = new List<TaxOfMonth>();
-            for (int month = 1; month <= salaries.Length; month++)
+            foreach (var monthSalary in salaries)
             {
-               taxes.Add(new TaxOfMonth
-               {
-                   Month = month,
-                   Salary = salaries[month - 1],
-                   Tax = taxPerMonth[month]
-               }); 
+                taxes.Add(new TaxOfMonth
+                {
+                    Month = monthSalary.Month,
+                    Salary = monthSalary.Salary,
+                    Tax = monthSalary.Tax
+                });
             }
             userTax.Taxes = taxes;
             _userDao.AddUserTax(userTax);
