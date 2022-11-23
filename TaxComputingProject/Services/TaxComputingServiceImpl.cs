@@ -19,6 +19,7 @@ public class TaxComputingServiceImpl : ITaxComputingService
     public double ComputeTaxBySalaryAndMonth(List<MonthSalary> salaries, int month)
     {
         var salariesOrdered = salaries.OrderBy(s => s.Month).ToList();
+        salariesOrdered.DistinctBy(s => s.Month);
         for (int count = 0; count < salariesOrdered.Count; count++)
         {
             double taxableSalary = 0;
