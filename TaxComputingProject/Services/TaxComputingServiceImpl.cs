@@ -21,7 +21,7 @@ public class TaxComputingServiceImpl : ITaxComputingService
         string currentUserEmail = GetEmail();
         UserTax? userTax = _userDao.GetUserTax(currentUserEmail);
         var salariesOrderedByMonth = salaries.OrderBy(monthSalary => monthSalary.Month).ToList();
-        salariesOrderedByMonth.DistinctBy(monthSalary => monthSalary.Month);
+        salariesOrderedByMonth = salariesOrderedByMonth.DistinctBy(monthSalary => monthSalary.Month).ToList();
         if (userTax == null)
         {
             FirstComputeTaxOfMonth(salariesOrderedByMonth);
