@@ -18,24 +18,25 @@ public class TaxComputingServiceImpl : ITaxComputingService
 
     public double ComputeTaxBySalaryAndMonth(List<MonthSalary> salaries, int month)
     {
-        string email = GetEmail();
-        UserTax? userTax = _userDao.GetUserTax(email);
-        var salariesOrdered = salaries.OrderBy(s => s.Month).ToList();
-        salariesOrdered.DistinctBy(s => s.Month);
+        string currentUserEmail = GetEmail();
+        UserTax? userTax = _userDao.GetUserTax(currentUserEmail);
+        var salariesOrderedByMonth = salaries.OrderBy(monthSalary => monthSalary.Month).ToList();
+        salariesOrderedByMonth.DistinctBy(monthSalary => monthSalary.Month);
         if (userTax == null)
         {
-            FirstComputeTaxOfMonth(salariesOrdered);
-            SaveRecord(salariesOrdered);
-            return salariesOrdered.Where(s => s.Month == month).Select(s => s.Tax).FirstOrDefault();
+            FirstComputeTaxOfMonth(salariesOrderedByMonth);
+            SaveRecord(salariesOrderedByMonth);
+            return salariesOrderedByMonth.Where(monthSalary => monthSalary.Month == month)
+                .Select(monthSalary => monthSalary.Tax).FirstOrDefault();
         }
 
         List<TaxOfMonth> existedTaxOfMonths = userTax.Taxes.ToList();
         int existedCount = userTax.Taxes.ToList().Count();
-        double existedTaxableSalary = existedTaxOfMonths.Select(s => s.Salary).Sum() - existedCount * SalaryThreshold;
-        double existedTax = existedTaxOfMonths.Select(s => s.Tax).Sum();
+        double existedTaxableSalary = existedTaxOfMonths.Select(taxOfMonth => taxOfMonth.Salary).Sum() - existedCount * SalaryThreshold;
+        double existedTax = existedTaxOfMonths.Select(taxOfMonth => taxOfMonth.Tax).Sum();
 
-        int existedMaxMonth = existedTaxOfMonths.Select(s => s.Month).Max();
-        List<MonthSalary> filteredSalaries = salariesOrdered.Where(s => s.Month > existedMaxMonth).ToList();
+        int existedMaxMonth = existedTaxOfMonths.Select(taxOfMonth => taxOfMonth.Month).Max();
+        List<MonthSalary> filteredSalaries = salariesOrderedByMonth.Where(monthSalary => monthSalary.Month > existedMaxMonth).ToList();
 
         LaterComputeTaxOfMonth(filteredSalaries, existedTaxableSalary, existedTax);
         SaveRecord(filteredSalaries);
