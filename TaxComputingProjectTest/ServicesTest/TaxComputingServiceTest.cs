@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using TaxComputingProject.Dao;
+using TaxComputingProject.DBContext;
 using TaxComputingProject.Model;
 using TaxComputingProject.Services;
+using TaxComputingProjectTest.MockData;
 
 namespace TaxComputingProjectTest.ServicesTest;
 
@@ -81,7 +84,7 @@ public class TaxComputingServiceTest
     [InlineData(5, 7200)]
     public void Should_Return_Correct_TaxOfMonth_By_Month(int month, double tax)
     {
-        ITaxComputingService taxComputingService = MockService();
+        ITaxComputingService taxComputingService = MockUserTax();
         double taxOfMonth = taxComputingService.GetTaxOfMonth(month);
         Assert.Equal(tax, taxOfMonth);
     }
@@ -91,12 +94,32 @@ public class TaxComputingServiceTest
         var accessorMock = new Mock<IHttpContextAccessor>();
         var context = new DefaultHttpContext();
         accessorMock.Setup(a => a.HttpContext).Returns(context);
+        Mock<DataContext> mockDbContext = MockDbContext();
+        var mockUserDao = new UserDaoImpl(mockDbContext.Object);
+        ITaxComputingService taxComputingService = new TaxComputingServiceImpl(accessorMock.Object, mockUserDao);
+        return taxComputingService;
+    }
+    private static ITaxComputingService MockUserTax()
+    {
+        var accessorMock = new Mock<IHttpContextAccessor>();
+        var context = new DefaultHttpContext();
+        accessorMock.Setup(a => a.HttpContext).Returns(context);
         Mock<UserDaoImpl> mockUserDao = new Mock<UserDaoImpl>();
         mockUserDao.Setup(user => user.GetUserTax(It.IsAny<string>())).Returns(UserTax);
         ITaxComputingService taxComputingService = new TaxComputingServiceImpl(accessorMock.Object, mockUserDao.Object);
         return taxComputingService;
     }
-
+    private static Mock<DataContext> MockDbContext()
+    {
+        var mockSet = new Mock<DbSet<UserTax>>();
+        mockSet.As<IQueryable<UserTax>>().Setup(m => m.Provider).Returns(TestMockData.UserTaxes.Provider);
+        mockSet.As<IQueryable<UserTax>>().Setup(m => m.Expression).Returns(TestMockData.UserTaxes.Expression);
+        mockSet.As<IQueryable<UserTax>>().Setup(m => m.ElementType).Returns(TestMockData.UserTaxes.ElementType);
+        mockSet.As<IQueryable<UserTax>>().Setup(m => m.GetEnumerator()).Returns(() => TestMockData.UserTaxes.GetEnumerator());
+        var mockContext = new Mock<DataContext>();
+        mockContext.Setup(dataContext => dataContext.UserTaxes).Returns(mockSet.Object);
+        return mockContext;
+    }
     private static readonly UserTax UserTax = new UserTax
     {
         Id = 1,
