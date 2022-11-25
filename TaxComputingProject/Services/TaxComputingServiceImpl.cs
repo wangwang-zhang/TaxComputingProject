@@ -24,7 +24,7 @@ public class TaxComputingServiceImpl : ITaxComputingService
         salariesOrderedByMonth = salariesOrderedByMonth.DistinctBy(monthSalary => monthSalary.Month).ToList();
         if (userTax == null)
         {
-            FirstComputeTaxOfMonth(salariesOrderedByMonth);
+            ComputeTaxOfMonth(salariesOrderedByMonth, 0, 0);
             SaveRecord(salariesOrderedByMonth);
             return salariesOrderedByMonth.Where(monthSalary => monthSalary.Month == month)
                 .Select(monthSalary => monthSalary.Tax).FirstOrDefault();
@@ -38,12 +38,12 @@ public class TaxComputingServiceImpl : ITaxComputingService
         int existedMaxMonth = existedTaxOfMonths.Select(taxOfMonth => taxOfMonth.Month).Max();
         List<MonthSalary> filteredSalaries = salariesOrderedByMonth.Where(monthSalary => monthSalary.Month > existedMaxMonth).ToList();
 
-        LaterComputeTaxOfMonth(filteredSalaries, existedTaxableSalary, existedTax);
+        ComputeTaxOfMonth(filteredSalaries, existedTaxableSalary, existedTax);
         SaveRecord(filteredSalaries);
         return GetTaxOfMonth(month);
     }
 
-    private void LaterComputeTaxOfMonth(List<MonthSalary> monthSalariesFiltered, double existedTaxableSalary, double existedTax)
+    private void ComputeTaxOfMonth(List<MonthSalary> monthSalariesFiltered, double existedTaxableSalary, double existedTax)
     {
         for (int count = 0; count < monthSalariesFiltered.Count; count++)
         {
@@ -63,25 +63,7 @@ public class TaxComputingServiceImpl : ITaxComputingService
             monthSalariesFiltered[count].Tax = tax;
         }
     }
-
-    private void FirstComputeTaxOfMonth(List<MonthSalary> salariesOrdered)
-    {
-        for (int count = 0; count < salariesOrdered.Count; count++)
-        {
-            double taxableSalary = 0;
-            for (int pre = 0; pre <= count; pre++)
-            {
-                taxableSalary += salariesOrdered[pre].Salary;
-                taxableSalary -= SalaryThreshold;
-            }
-
-            TaxLevel taxLevel = MatchTaxRateAndDeductionBySalary(taxableSalary);
-            double tax = taxableSalary * taxLevel.TaxRate - taxLevel.Deduction;
-            double preTaxes = salariesOrdered.Take(count).Select(monthSalary => monthSalary.Tax).Sum();
-            tax -= preTaxes;
-            salariesOrdered[count].Tax = tax;
-        }
-    }
+    
 
     private void SaveRecord(List<MonthSalary> salaries)
     {
