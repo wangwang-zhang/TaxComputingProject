@@ -99,6 +99,7 @@ public class TaxComputingServiceTest
         ITaxComputingService taxComputingService = new TaxComputingServiceImpl(accessorMock.Object, mockUserDao);
         return taxComputingService;
     }
+    
     private static ITaxComputingService MockUserTax()
     {
         var accessorMock = new Mock<IHttpContextAccessor>();
@@ -109,6 +110,7 @@ public class TaxComputingServiceTest
         ITaxComputingService taxComputingService = new TaxComputingServiceImpl(accessorMock.Object, mockUserDao.Object);
         return taxComputingService;
     }
+    
     private static Mock<DataContext> MockDbContext()
     {
         var mockSet = new Mock<DbSet<UserTax>>();
@@ -120,6 +122,7 @@ public class TaxComputingServiceTest
         mockContext.Setup(dataContext => dataContext.UserTaxes).Returns(mockSet.Object);
         return mockContext;
     }
+    
     private static readonly UserTax UserTax = new UserTax
     {
         Id = 1,

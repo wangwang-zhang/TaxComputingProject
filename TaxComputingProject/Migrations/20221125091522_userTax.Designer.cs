@@ -11,7 +11,7 @@ using TaxComputingProject.DBContext;
 namespace TaxComputingProject.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20221121075027_userTax")]
+    [Migration("20221125091522_userTax")]
     partial class userTax
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
