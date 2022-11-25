@@ -19,11 +19,11 @@ public class UserController : ControllerBase
     public IActionResult Register(UserRegisterRequest request)
     {
         var result = _userService.AddUser(request);
-        if (!result)
+        if (result.Length == 0)
         {
             return BadRequest("User already exists.");
         }
-        return Ok("User successfully created!");
+        return Ok($"User successfully created! Your activation code is\n {result}");
     }
     
     [HttpPost("verify")]

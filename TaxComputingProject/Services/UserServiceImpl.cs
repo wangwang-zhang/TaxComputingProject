@@ -18,11 +18,11 @@ public class UserServiceImpl : IUserService
         _configuration = configuration;
     }
 
-    public bool AddUser(UserRegisterRequest request)
+    public string AddUser(UserRegisterRequest request)
     {
         if (_userDao.FindUserByEmail(request.Email) != null)
         {
-            return false;
+            return "";
         }
 
         CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
@@ -31,10 +31,10 @@ public class UserServiceImpl : IUserService
             Email = request.Email,
             PasswordHash = passwordHash,
             PasswordSalt = passwordSalt,
-            VerificationToken = CreateRandomToken()
+            VerificationToken = CreateActivationCode()
         };
         _userDao.AddUser(user);
-        return true;
+        return user.VerificationToken;
     }
 
     public bool AddVerify(string token)
@@ -81,7 +81,7 @@ public class UserServiceImpl : IUserService
         }
     }
 
-    private string CreateRandomToken()
+    private string CreateActivationCode()
     {
         return Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
     }

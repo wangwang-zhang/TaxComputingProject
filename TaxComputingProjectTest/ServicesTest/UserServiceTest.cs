@@ -12,7 +12,7 @@ namespace TaxComputingProjectTest.ServicesTest;
 public class UserServiceTest
 {
     [Fact]
-    public void Should_Return_False_When_User_Existed_Already()
+    public void Should_Return_Empty_String_When_User_Existed_Already()
     {
         var userService = SetupService();
         var userRegisterRequest = new UserRegisterRequest
@@ -22,11 +22,11 @@ public class UserServiceTest
             ConfirmPassword = "password"
         };
         var result = userService.AddUser(userRegisterRequest);
-        Assert.False(result);
+        Assert.Equal(0, result.Length);
     }
 
     [Fact]
-    public void Should_Return_True_When_User_Not_Existed()
+    public void Should_Return_String_NotEmpty_When_User_Not_Existed()
     {
         var userService = SetupService();
         var userRegisterRequest = new UserRegisterRequest
@@ -36,7 +36,7 @@ public class UserServiceTest
             ConfirmPassword = "password"
         };
         var result = userService.AddUser(userRegisterRequest);
-        Assert.True(result);
+        Assert.True(result.Length != 0);
     }
 
     [Fact]
