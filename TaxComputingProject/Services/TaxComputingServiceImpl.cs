@@ -43,28 +43,27 @@ public class TaxComputingServiceImpl : ITaxComputingService
         return GetTaxOfMonth(month);
     }
 
-    private void ComputeTaxOfMonth(List<MonthSalary> monthSalariesFiltered, double existedTaxableSalary, double existedTax)
+    private void ComputeTaxOfMonth(List<MonthSalary> monthSalaries, double existedTaxableSalary, double existedTax)
     {
-        for (int count = 0; count < monthSalariesFiltered.Count; count++)
+        for (int count = 0; count < monthSalaries.Count; count++)
         {
             double taxableSalary = 0;
             taxableSalary += existedTaxableSalary;
             for (int pre = 0; pre <= count; pre++)
             {
-                taxableSalary += monthSalariesFiltered[pre].Salary;
+                taxableSalary += monthSalaries[pre].Salary;
                 taxableSalary -= SalaryThreshold;
             }
 
             TaxLevel taxLevel = MatchTaxRateAndDeductionBySalary(taxableSalary);
             double tax = taxableSalary * taxLevel.TaxRate - taxLevel.Deduction;
-            double preTaxes = monthSalariesFiltered.Take(count).Select(monthSalary => monthSalary.Tax).Sum();
+            double preTaxes = monthSalaries.Take(count).Select(monthSalary => monthSalary.Tax).Sum();
             tax -= preTaxes;
             tax -= existedTax;
-            monthSalariesFiltered[count].Tax = tax;
+            monthSalaries[count].Tax = tax;
         }
     }
     
-
     private void SaveRecord(List<MonthSalary> salaries)
     {
         string email = GetEmail();
@@ -93,6 +92,7 @@ public class TaxComputingServiceImpl : ITaxComputingService
             Tax = monthSalary.Tax
         });
     }
+    
     private static UserTax CreateUserTax(List<MonthSalary> salaries, string email)
     {
         var userTax = new UserTax
