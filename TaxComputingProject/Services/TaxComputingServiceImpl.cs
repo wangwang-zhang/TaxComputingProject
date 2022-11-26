@@ -20,27 +20,41 @@ public class TaxComputingServiceImpl : ITaxComputingService
     {
         string currentUserEmail = GetEmail();
         UserTax? userTax = _userDao.GetUserTax(currentUserEmail);
+
         var salariesOrderedByMonth = salaries.OrderBy(monthSalary => monthSalary.Month).ToList();
         salariesOrderedByMonth = salariesOrderedByMonth.DistinctBy(monthSalary => monthSalary.Month).ToList();
+
         if (userTax == null)
         {
-            ComputeTaxOfMonth(salariesOrderedByMonth, 0, 0);
-            SaveRecord(salariesOrderedByMonth);
-            return salariesOrderedByMonth.Where(monthSalary => monthSalary.Month == month)
-                .Select(monthSalary => monthSalary.Tax).FirstOrDefault();
+            return FirstSaveSalary(month, salariesOrderedByMonth);
         }
 
+        return LaterSaveSalary(month, userTax, salariesOrderedByMonth);
+    }
+
+    private double LaterSaveSalary(int month, UserTax userTax, List<MonthSalary> salariesOrderedByMonth)
+    {
         List<TaxOfMonth> existedTaxOfMonths = userTax.Taxes.ToList();
         int existedCount = userTax.Taxes.ToList().Count();
-        double existedTaxableSalary = existedTaxOfMonths.Select(taxOfMonth => taxOfMonth.Salary).Sum() - existedCount * SalaryThreshold;
+        double existedTaxableSalary = existedTaxOfMonths.Select(taxOfMonth => taxOfMonth.Salary).Sum() -
+                                      existedCount * SalaryThreshold;
         double existedTax = existedTaxOfMonths.Select(taxOfMonth => taxOfMonth.Tax).Sum();
 
         int existedMaxMonth = existedTaxOfMonths.Select(taxOfMonth => taxOfMonth.Month).Max();
-        List<MonthSalary> filteredSalaries = salariesOrderedByMonth.Where(monthSalary => monthSalary.Month > existedMaxMonth).ToList();
+        List<MonthSalary> filteredSalaries =
+            salariesOrderedByMonth.Where(monthSalary => monthSalary.Month > existedMaxMonth).ToList();
 
         ComputeTaxOfMonth(filteredSalaries, existedTaxableSalary, existedTax);
         SaveRecord(filteredSalaries);
         return GetTaxOfMonth(month);
+    }
+
+    private double FirstSaveSalary(int month, List<MonthSalary> salariesOrderedByMonth)
+    {
+        ComputeTaxOfMonth(salariesOrderedByMonth, 0, 0);
+        SaveRecord(salariesOrderedByMonth);
+        return salariesOrderedByMonth.Where(monthSalary => monthSalary.Month == month)
+            .Select(monthSalary => monthSalary.Tax).FirstOrDefault();
     }
 
     private void ComputeTaxOfMonth(List<MonthSalary> monthSalaries, double existedTaxableSalary, double existedTax)
@@ -63,7 +77,7 @@ public class TaxComputingServiceImpl : ITaxComputingService
             monthSalaries[count].Tax = tax;
         }
     }
-    
+
     private void SaveRecord(List<MonthSalary> salaries)
     {
         string email = GetEmail();
@@ -80,6 +94,7 @@ public class TaxComputingServiceImpl : ITaxComputingService
                 AddTaxItems(userTax.Taxes, monthSalary);
             }
         }
+
         _userDao.SaveChanges();
     }
 
@@ -92,7 +107,7 @@ public class TaxComputingServiceImpl : ITaxComputingService
             Tax = monthSalary.Tax
         });
     }
-    
+
     private static UserTax CreateUserTax(List<MonthSalary> salaries, string email)
     {
         var userTax = new UserTax
