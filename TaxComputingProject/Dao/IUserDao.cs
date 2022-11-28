@@ -9,5 +9,5 @@ public interface IUserDao
     public User? FindUserByToken(string token);
     public void SaveChanges();
     public bool AddUserTax(UserTax userTax);
-    public UserTax? GetUserTax(string email);
+    public UserTax? GetUserTaxById(int id);
 }

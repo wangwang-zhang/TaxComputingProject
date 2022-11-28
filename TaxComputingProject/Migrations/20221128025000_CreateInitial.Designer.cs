@@ -11,8 +11,8 @@ using TaxComputingProject.DBContext;
 namespace TaxComputingProject.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20221125091522_userTax")]
-    partial class userTax
+    [Migration("20221128025000_CreateInitial")]
+    partial class CreateInitial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -81,9 +81,8 @@ namespace TaxComputingProject.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

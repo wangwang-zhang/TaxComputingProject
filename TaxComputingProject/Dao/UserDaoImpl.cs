@@ -43,10 +43,10 @@ public class UserDaoImpl : IUserDao
         _context.SaveChanges();
         return true;
     }
-    
-    public virtual UserTax? GetUserTax(string email)
+
+    public virtual UserTax? GetUserTaxById(int id)
     {
-        return _context.UserTaxes.Where(user => user.Email == email)
+        return _context.UserTaxes.Where(user => user.UserId == id)
             .Include(userTax => userTax.Taxes)
             .FirstOrDefault();
     }

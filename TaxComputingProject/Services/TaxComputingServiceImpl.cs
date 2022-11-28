@@ -18,8 +18,8 @@ public class TaxComputingServiceImpl : ITaxComputingService
 
     public double ComputeTaxBySalaryAndMonth(List<MonthSalary> salaries, int month)
     {
-        string currentUserEmail = GetEmail();
-        UserTax? userTax = _userDao.GetUserTax(currentUserEmail);
+        int id = GetId();
+        UserTax? userTax = _userDao.GetUserTaxById(id);
 
         var salariesOrderedByMonth = salaries.OrderBy(monthSalary => monthSalary.Month).ToList();
         salariesOrderedByMonth = salariesOrderedByMonth.DistinctBy(monthSalary => monthSalary.Month).ToList();
@@ -80,11 +80,11 @@ public class TaxComputingServiceImpl : ITaxComputingService
 
     private void SaveRecord(List<MonthSalary> salaries)
     {
-        string email = GetEmail();
-        UserTax? userTax = _userDao.GetUserTax(email);
+        int userid = GetId();
+        UserTax? userTax = _userDao.GetUserTaxById(userid);
         if (userTax == null)
         {
-            userTax = CreateUserTax(salaries, email);
+            userTax = CreateUserTax(salaries, userid);
             _userDao.AddUserTax(userTax);
         }
         else
@@ -108,11 +108,11 @@ public class TaxComputingServiceImpl : ITaxComputingService
         });
     }
 
-    private static UserTax CreateUserTax(List<MonthSalary> salaries, string email)
+    private static UserTax CreateUserTax(List<MonthSalary> salaries, int userId)
     {
         var userTax = new UserTax
         {
-            Email = email
+            UserId = userId
         };
         List<TaxOfMonth> taxes = new List<TaxOfMonth>();
         foreach (var monthSalary in salaries)
@@ -126,8 +126,8 @@ public class TaxComputingServiceImpl : ITaxComputingService
 
     public double GetTaxOfMonth(int month)
     {
-        string email = GetEmail();
-        UserTax? userTax = _userDao.GetUserTax(email);
+        int userid = GetId();
+        UserTax? userTax = _userDao.GetUserTaxById(userid);
         TaxOfMonth? taxOfMonth = userTax?.Taxes.FirstOrDefault(tax => tax.Month == month);
         if (taxOfMonth != null)
         {
@@ -157,17 +157,16 @@ public class TaxComputingServiceImpl : ITaxComputingService
         };
     }
 
-    public string GetEmail()
+    public int GetId()
     {
-        var result = string.Empty;
+        string result = string.Empty;
         if (_httpContextAccessor.HttpContext != null)
         {
-            result = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Email);
+            result = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Sid);
         }
-
-        return result;
+        int.TryParse(result, out var userId);
+        return userId;
     }
-
     private enum TotalSalary
     {
         FirstLevel = 36000,

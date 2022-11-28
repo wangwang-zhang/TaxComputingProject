@@ -25,11 +25,11 @@ public class TaxComputingController : ControllerBase
         return Ok(tax);
     }
     
-    [HttpGet("UserEmail"), Authorize]
-    public ActionResult<string> GetUserEmail()
+    [HttpGet("UserId"), Authorize]
+    public ActionResult<string> GetUserId()
     {
-        var userEmail = _taxComputingService.GetEmail();
-        return Ok(userEmail);
+        var userId = _taxComputingService.GetId();
+        return Ok(userId);
     }
 
     [HttpGet("taxByMonth"), Authorize]

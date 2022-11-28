@@ -25,8 +25,8 @@ public class UserDaoTest
     {
         var mockContext = MockContext();
         var userDao = new UserDaoImpl(mockContext.Object);
-        Assert.True(userDao.FindUserByEmail("Tom@email.com") != null);
-        Assert.True(userDao.FindUserByEmail("Lucas@email.com") == null);
+        Assert.NotNull(userDao.FindUserByEmail("Tom@email.com"));
+        Assert.Null(userDao.FindUserByEmail("Lucas@email.com"));
     }
 
     [Fact]
@@ -59,7 +59,7 @@ public class UserDaoTest
     {
         UserTax userTax = new()
         {
-            Email = "Tom@email.com",
+            UserId = 1,
             Taxes = new List<TaxOfMonth>()
             {
                 new() { Id = 1, Month = 1, Salary = 41000, Tax = 1080 },
@@ -75,11 +75,11 @@ public class UserDaoTest
     }
 
     [Fact]
-    public void Should_Return_Correct_UserTax_By_Email()
+    public void Should_Return_Correct_UserTax_By_Id()
     {
         UserTax testUserTax = new()
         {
-            Email = "Tom@email.com",
+            UserId = 1,
             Taxes = new List<TaxOfMonth>()
             {
                 new() { Id = 1, Month = 1, Salary = 41000, Tax = 1080 },
@@ -91,7 +91,7 @@ public class UserDaoTest
         };
         var userDao = new UserDaoImpl(_context);
         userDao.AddUserTax(testUserTax);
-        UserTax? userTax = userDao.GetUserTax("Tom@email.com");
+        UserTax? userTax = userDao.GetUserTaxById(1);
         Assert.Equal(5, userTax?.Taxes.Count);
     }
 

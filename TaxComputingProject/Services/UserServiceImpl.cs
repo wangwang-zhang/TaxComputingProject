@@ -100,7 +100,7 @@ public class UserServiceImpl : IUserService
     {
         List<Claim> claims = new List<Claim>
         {
-            new(ClaimTypes.Email, user.Email),
+            new(ClaimTypes.Sid, user.Id.ToString()),
         };
         var key = new SymmetricSecurityKey(
             System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));

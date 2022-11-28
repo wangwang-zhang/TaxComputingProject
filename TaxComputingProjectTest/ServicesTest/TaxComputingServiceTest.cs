@@ -106,7 +106,7 @@ public class TaxComputingServiceTest
         var context = new DefaultHttpContext();
         accessorMock.Setup(a => a.HttpContext).Returns(context);
         Mock<UserDaoImpl> mockUserDao = new Mock<UserDaoImpl>();
-        mockUserDao.Setup(user => user.GetUserTax(It.IsAny<string>())).Returns(UserTax);
+        mockUserDao.Setup(user => user.GetUserTaxById(It.IsAny<int>())).Returns(UserTax);
         ITaxComputingService taxComputingService = new TaxComputingServiceImpl(accessorMock.Object, mockUserDao.Object);
         return taxComputingService;
     }
@@ -126,7 +126,7 @@ public class TaxComputingServiceTest
     private static readonly UserTax UserTax = new UserTax
     {
         Id = 1,
-        Email = "Tom@email.com",
+        UserId = 1,
         Taxes = new List<TaxOfMonth>()
         {
             new TaxOfMonth() { Id = 1, Month = 1, Salary = 41000, Tax = 1080 },

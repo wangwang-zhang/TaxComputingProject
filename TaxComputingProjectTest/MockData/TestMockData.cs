@@ -31,7 +31,7 @@ public static class TestMockData
         new UserTax()
         {
             Id = 1,
-            Email = "Tom@email.com",
+            UserId = 1,
             Taxes = new List<TaxOfMonth>()
             {
                 new TaxOfMonth() { Id = 1, Month = 1, Salary = 41000, Tax = 1080 },

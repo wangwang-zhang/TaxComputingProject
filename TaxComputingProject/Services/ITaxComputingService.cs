@@ -6,6 +6,6 @@ public interface ITaxComputingService
 {
     public double ComputeTaxBySalaryAndMonth(List<MonthSalary> salaries, int month);
     public TaxLevel MatchTaxRateAndDeductionBySalary(double salary);
-    public string GetEmail();
+    public int GetId();
     public double GetTaxOfMonth(int month);
 }
