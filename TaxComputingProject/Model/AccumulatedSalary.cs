@@ -1,13 +1,10 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace TaxComputingProject.Model;
 
 public class AccumulatedSalary
 {
-    public AccumulatedSalary(List<MonthSalary> salary, int month)
+    public AccumulatedSalary(List<MonthSalary> salary)
     {
         Salary = salary;
-        Month = month;
     }
 
     public AccumulatedSalary()
@@ -15,7 +12,4 @@ public class AccumulatedSalary
     }
 
     public List<MonthSalary> Salary { get; set; }
-
-    [Range(1, 12)] 
-    public int Month { get; set; } = 0;
 }

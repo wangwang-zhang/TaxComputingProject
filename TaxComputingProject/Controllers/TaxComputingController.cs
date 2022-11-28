@@ -21,8 +21,8 @@ public class TaxComputingController : ControllerBase
     {
         if (accumulatedSalary == null)
             return BadRequest();
-        double tax = _taxComputingService.ComputeTaxBySalaryAndMonth(accumulatedSalary.Salary, accumulatedSalary.Month);
-        return Ok(tax);
+        _taxComputingService.ComputeTaxBySalaryAndMonth(accumulatedSalary.Salary);
+        return Ok("Saved taxes successfully!");
     }
     
     [HttpGet("UserId"), Authorize]

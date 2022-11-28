@@ -11,6 +11,17 @@ namespace TaxComputingProjectTest.ServicesTest;
 
 public class TaxComputingServiceTest
 {
+    private readonly DataContext _context;
+
+    public TaxComputingServiceTest()
+    {
+        DbContextOptionsBuilder dbOptions = new DbContextOptionsBuilder()
+            .UseInMemoryDatabase(
+                Guid.NewGuid().ToString()
+            );
+        _context = new DataContext(dbOptions.Options);
+    }
+
     [Theory]
     [InlineData(5000, 0)]
     [InlineData(36000, 930)]
@@ -31,9 +42,13 @@ public class TaxComputingServiceTest
                 Salary = salary
             }
         };
-        var taxComputingService = MockService();
-        var result = taxComputingService.ComputeTaxBySalaryAndMonth(testSalaries, 1);
-        Assert.Equal(tax, result);
+        var userDao = new UserDaoImpl(_context);
+        var accessorMock = new Mock<IHttpContextAccessor>();
+        var context = new DefaultHttpContext();
+        accessorMock.Setup(a => a.HttpContext).Returns(context);
+        var taxComputingService = new TaxComputingServiceImpl(accessorMock.Object, userDao);
+        taxComputingService.ComputeTaxBySalaryAndMonth(testSalaries);
+        Assert.Equal(tax, taxComputingService.GetTaxOfMonth(1));
     }
 
     [Theory]
@@ -73,9 +88,13 @@ public class TaxComputingServiceTest
             });
         }
 
-        var taxComputingService = MockService();
-        var result = taxComputingService.ComputeTaxBySalaryAndMonth(testSalaries, month);
-        Assert.Equal(tax, result);
+        var userDao = new UserDaoImpl(_context);
+        var accessorMock = new Mock<IHttpContextAccessor>();
+        var context = new DefaultHttpContext();
+        accessorMock.Setup(a => a.HttpContext).Returns(context);
+        var taxComputingService = new TaxComputingServiceImpl(accessorMock.Object, userDao);
+        taxComputingService.ComputeTaxBySalaryAndMonth(testSalaries);
+        Assert.Equal(tax, taxComputingService.GetTaxOfMonth(month));
     }
 
     [Theory]

@@ -16,7 +16,7 @@ public class TaxComputingServiceImpl : ITaxComputingService
         _userDao = userDao;
     }
 
-    public double ComputeTaxBySalaryAndMonth(List<MonthSalary> salaries, int month)
+    public void ComputeTaxBySalaryAndMonth(List<MonthSalary> salaries)
     {
         int id = GetId();
         UserTax? userTax = _userDao.GetUserTaxById(id);
@@ -26,13 +26,15 @@ public class TaxComputingServiceImpl : ITaxComputingService
 
         if (userTax == null)
         {
-            return FirstSaveSalary(month, salariesOrderedByMonth);
+            FirstSaveSalary(salariesOrderedByMonth);
         }
-
-        return LaterSaveSalary(month, userTax, salariesOrderedByMonth);
+        else
+        {
+            LaterSaveSalary(userTax, salariesOrderedByMonth);
+        }
     }
 
-    private double LaterSaveSalary(int month, UserTax userTax, List<MonthSalary> salariesOrderedByMonth)
+    private void LaterSaveSalary(UserTax userTax, List<MonthSalary> salariesOrderedByMonth)
     {
         List<TaxOfMonth> existedTaxOfMonths = userTax.Taxes.ToList();
         int existedCount = userTax.Taxes.ToList().Count();
@@ -46,15 +48,12 @@ public class TaxComputingServiceImpl : ITaxComputingService
 
         ComputeTaxOfMonth(filteredSalaries, existedTaxableSalary, existedTax);
         SaveRecord(filteredSalaries);
-        return GetTaxOfMonth(month);
     }
 
-    private double FirstSaveSalary(int month, List<MonthSalary> salariesOrderedByMonth)
+    private void FirstSaveSalary(List<MonthSalary> salariesOrderedByMonth)
     {
         ComputeTaxOfMonth(salariesOrderedByMonth, 0, 0);
         SaveRecord(salariesOrderedByMonth);
-        return salariesOrderedByMonth.Where(monthSalary => monthSalary.Month == month)
-            .Select(monthSalary => monthSalary.Tax).FirstOrDefault();
     }
 
     private void ComputeTaxOfMonth(List<MonthSalary> monthSalaries, double existedTaxableSalary, double existedTax)
