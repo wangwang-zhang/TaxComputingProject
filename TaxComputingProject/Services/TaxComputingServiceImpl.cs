@@ -135,7 +135,7 @@ public class TaxComputingServiceImpl : ITaxComputingService
             return tax;
         }
 
-        return -1;
+        throw new BadHttpRequestException("The month of tax is not existed!");
     }
 
     public TaxLevel MatchTaxRateAndDeductionBySalary(double salary)
