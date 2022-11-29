@@ -42,18 +42,20 @@ public class TaxComputingServiceImpl : ITaxComputingService
     private void LaterSaveSalary(UserTax userTax, List<MonthSalary> salariesOrderedByMonth)
     {
         List<TaxOfMonth> existedTaxOfMonths = userTax.Taxes.ToList();
-        int existedCount = userTax.Taxes.ToList().Count();
-        
-        double existedTaxableSalary = existedTaxOfMonths.Select(taxOfMonth => taxOfMonth.Salary).Sum() -
-                                      existedCount * SalaryThreshold;
-        double existedTax = existedTaxOfMonths.Select(taxOfMonth => taxOfMonth.Tax).Sum();
-
-        int existedMaxMonth = existedTaxOfMonths.Select(taxOfMonth => taxOfMonth.Month).Max();
-        List<MonthSalary> filteredSalaries =
-            salariesOrderedByMonth.Where(monthSalary => monthSalary.Month > existedMaxMonth).ToList();
-
-        ComputeTaxOfMonth(filteredSalaries, existedTaxableSalary, existedTax);
-        SaveRecord(filteredSalaries);
+        _userDao.RemoveTaxItem(userTax.Id);
+        foreach (var existedItem in existedTaxOfMonths)
+        {
+            var monthSalary = new MonthSalary
+            {
+                Month = existedItem.Month,
+                Salary = existedItem.Salary,
+                Tax = 0
+            };
+            salariesOrderedByMonth.Add(monthSalary);
+        }
+        salariesOrderedByMonth = salariesOrderedByMonth.OrderBy(monthSalary => monthSalary.Month).ToList();
+        ComputeTaxOfMonth(salariesOrderedByMonth, 0, 0);
+        SaveRecord(salariesOrderedByMonth);
     }
 
     private void FirstSaveSalary(List<MonthSalary> salariesOrderedByMonth)
