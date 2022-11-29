@@ -50,4 +50,13 @@ public class UserDaoImpl : IUserDao
             .Include(userTax => userTax.Taxes)
             .FirstOrDefault();
     }
+
+    public void RemoveTaxItem(int id)
+    {
+        UserTax? userTax = _context.UserTaxes.Where(user => user.Id == id)
+            .Include(userTax => userTax.Taxes)
+            .FirstOrDefault();
+        if (userTax != null) _context.Taxes.RemoveRange(userTax.Taxes);
+        _context.SaveChanges();
+    }
 }

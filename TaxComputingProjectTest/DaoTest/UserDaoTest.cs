@@ -95,6 +95,25 @@ public class UserDaoTest
         Assert.Equal(5, userTax?.Taxes.Count);
     }
 
+    [Fact]
+    public void Should_Return_Zero_When_Remove_Tax_Items_By_Id()
+    {
+        UserTax testUserTax = new()
+        {
+            UserId = 1,
+            Taxes = new List<TaxOfMonth>()
+            {
+                new() { Id = 1, Month = 1, Salary = 41000, Tax = 1080 },
+                new() { Id = 2, Month = 2, Salary = 41000, Tax = 3600 },
+            }
+        };
+        var userDao = new UserDaoImpl(_context);
+        userDao.AddUserTax(testUserTax);
+        userDao.RemoveTaxItem(1);
+        UserTax? userTax = userDao.GetUserTaxById(1);
+        if (userTax != null) Assert.Empty(userTax.Taxes);
+    }
+
     private Mock<DataContext> MockContext()
     {
         var mockSet = new Mock<DbSet<User>>();
