@@ -108,6 +108,28 @@ public class TaxComputingServiceTest
         Assert.Equal(tax, taxOfMonth);
     }
 
+    [Fact]
+    public void Should_Return_Exception_When_There_Are_Duplicate_Months()
+    {
+        var monthSalaries = new List<MonthSalary>
+        {
+            new()
+            {
+                Month = 1,
+                Salary = 41000,
+                Tax = 1080
+            },
+            new()
+            {
+                Month = 1,
+                Salary = 41000,
+                Tax = 1080
+            }
+        };
+        var taxComputingService = MockService();
+        Assert.Throws<ArgumentException>(() => taxComputingService.ComputeTaxBySalaryAndMonth(monthSalaries));
+    }
+
     private static ITaxComputingService MockService()
     {
         var accessorMock = new Mock<IHttpContextAccessor>();
@@ -155,4 +177,6 @@ public class TaxComputingServiceTest
             new TaxOfMonth() { Id = 5, Month = 5, Salary = 41000, Tax = 7200 },
         }
     };
+    
+    
 }
