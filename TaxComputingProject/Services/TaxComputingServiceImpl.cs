@@ -47,6 +47,11 @@ public class TaxComputingServiceImpl : ITaxComputingService
     private void LaterSaveSalary(UserTax userTax, List<MonthSalary> salariesOrderedByMonth)
     {
         List<TaxOfMonth> existedTaxOfMonths = userTax.Taxes.ToList();
+        var months = salariesOrderedByMonth.Select(monthSalary => monthSalary.Month).ToList();
+        foreach (var month in months)
+        {
+            existedTaxOfMonths = existedTaxOfMonths.Where(monthSalary => monthSalary.Month != month).ToList();
+        }
         _userDao.RemoveTaxItem(userTax.Id);
         foreach (var existedItem in existedTaxOfMonths)
         {
