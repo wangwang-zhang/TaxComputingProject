@@ -18,14 +18,7 @@ public class TaxComputingServiceImpl : ITaxComputingService
 
     public void ComputeTaxBySalaryAndMonth(List<MonthSalary> salaries)
     {
-        var groupWithRepeatingMonth = salaries.GroupBy(monthSalary => monthSalary.Month)
-            .Where(group => group.Count() > 1)
-            .Select(group => group.Key)
-            .ToList();
-        if (groupWithRepeatingMonth.Count > 0)
-        {
-            throw new ArgumentException("There are duplicate months");
-        }
+        JudgeRepetitionMonth(salaries);
         int id = GetId();
         UserTax? userTax = _userDao.GetUserTaxById(id);
         var salariesOrderedByMonth = salaries.OrderBy(monthSalary => monthSalary.Month).ToList();
@@ -36,6 +29,18 @@ public class TaxComputingServiceImpl : ITaxComputingService
         else
         {
             LaterSaveSalary(userTax, salariesOrderedByMonth);
+        }
+    }
+
+    private static void JudgeRepetitionMonth(List<MonthSalary> salaries)
+    {
+        var groupWithRepeatingMonth = salaries.GroupBy(monthSalary => monthSalary.Month)
+            .Where(group => group.Count() > 1)
+            .Select(group => group.Key)
+            .ToList();
+        if (groupWithRepeatingMonth.Count > 0)
+        {
+            throw new ArgumentException("There are duplicate months");
         }
     }
 
