@@ -14,8 +14,11 @@ public class DataContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
-        optionsBuilder.UseMySql("Server=Localhost;Database=TaxDB;user=root;pwd=123456789",
-            new MySqlServerVersion("8.0.29"));
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseMySql("Server=Localhost;Database=TaxDB;user=root;pwd=123456789",
+                new MySqlServerVersion("8.0.29"));
+        }
     }
     
     public virtual DbSet<User> Users => Set<User>();
