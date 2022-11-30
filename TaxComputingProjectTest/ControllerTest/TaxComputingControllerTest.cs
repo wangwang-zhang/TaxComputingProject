@@ -54,4 +54,16 @@ public class TaxComputingControllerTest
         var result = taxComputingController.SaveTaxByAccumulatedSalary(monthSalaries);
         Assert.IsType<OkObjectResult>(result);
     }
+
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(0)]
+    [InlineData(13)]
+    public void Should_Return_BadRequest_When_Request_Month_Not_Valid(int month)
+    {
+        var mockService = new Mock<ITaxComputingService>();
+        var taxComputingController = new TaxComputingController(mockService.Object);
+        var result = taxComputingController.GetMonthOfTax(month);
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
 }
