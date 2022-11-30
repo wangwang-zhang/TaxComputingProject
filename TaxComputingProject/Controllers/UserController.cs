@@ -14,16 +14,19 @@ public class UserController : ControllerBase
     {
         _userService = userService;
     }
-    
+
     [HttpPost("register")]
     public IActionResult Register(UserRegisterRequest request)
     {
-        var result = _userService.AddUser(request);
-        if (result.Length == 0)
+        try
         {
-            return BadRequest("User already exists.");
+            var result = _userService.AddUser(request);
+            return Ok($"User successfully created! Your activation code is\n {result}");
         }
-        return Ok($"User successfully created! Your activation code is\n {result}");
+        catch (Exception e)
+        {
+            return BadRequest(new { errorMessage = e.Message });
+        }
     }
     
     [HttpPost("verify")]

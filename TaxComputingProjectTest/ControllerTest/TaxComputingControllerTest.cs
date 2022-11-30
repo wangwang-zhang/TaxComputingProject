@@ -18,13 +18,16 @@ public class TaxComputingControllerTest
         Assert.IsType<OkObjectResult>(result.Result);
     }
 
-    [Fact]
-    public void Should_Return_Ok_When_Get_MonthOfTax_Correctly()
+    [Theory]
+    [InlineData(1)]
+    [InlineData(6)]
+    [InlineData(12)]
+    public void Should_Return_Ok_When_Get_MonthOfTax_Correctly(int month)
     {
         var mockService = new Mock<ITaxComputingService>();
-        mockService.Setup(user => user.GetTaxOfMonth(It.IsIn(1,12))).Returns(It.IsAny<double>());
+        mockService.Setup(user => user.GetTaxOfMonth(It.IsIn(1,6,12))).Returns(It.IsAny<double>());
         var taxComputingController = new TaxComputingController(mockService.Object);
-        var result = taxComputingController.GetMonthOfTax(It.IsIn(1,12));
+        var result = taxComputingController.GetMonthOfTax(month);
         Assert.IsType<OkObjectResult>(result);
     }
     

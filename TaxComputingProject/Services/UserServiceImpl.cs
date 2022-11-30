@@ -22,7 +22,7 @@ public class UserServiceImpl : IUserService
     {
         if (_userDao.FindUserByEmail(request.Email) != null)
         {
-            return "";
+            throw new Exception("User already exists.");
         }
 
         CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
