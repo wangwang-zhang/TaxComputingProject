@@ -64,22 +64,21 @@ public class TaxComputingServiceImpl : ITaxComputingService
             salariesOrderedByMonth.Add(monthSalary);
         }
         salariesOrderedByMonth = salariesOrderedByMonth.OrderBy(monthSalary => monthSalary.Month).ToList();
-        ComputeTaxOfMonth(salariesOrderedByMonth, 0, 0);
+        ComputeTaxOfMonth(salariesOrderedByMonth);
         SaveRecord(salariesOrderedByMonth);
     }
 
     private void FirstSaveSalary(List<MonthSalary> salariesOrderedByMonth)
     {
-        ComputeTaxOfMonth(salariesOrderedByMonth, 0, 0);
+        ComputeTaxOfMonth(salariesOrderedByMonth);
         SaveRecord(salariesOrderedByMonth);
     }
 
-    private void ComputeTaxOfMonth(List<MonthSalary> monthSalaries, double existedTaxableSalary, double existedTax)
+    private void ComputeTaxOfMonth(List<MonthSalary> monthSalaries)
     {
         for (int count = 0; count < monthSalaries.Count; count++)
         {
             double taxableSalary = 0;
-            taxableSalary += existedTaxableSalary;
             for (int pre = 0; pre <= count; pre++)
             {
                 double salary = monthSalaries[pre].Salary;
@@ -90,7 +89,6 @@ public class TaxComputingServiceImpl : ITaxComputingService
             double tax = taxableSalary * taxLevel.TaxRate - taxLevel.Deduction;
             double preTaxes = monthSalaries.Take(count).Select(monthSalary => monthSalary.Tax).Sum();
             tax -= preTaxes;
-            tax -= existedTax;
             monthSalaries[count].Tax = tax;
         }
     }
