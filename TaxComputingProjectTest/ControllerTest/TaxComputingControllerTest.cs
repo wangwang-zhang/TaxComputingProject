@@ -38,4 +38,22 @@ public class TaxComputingControllerTest
         var result = taxComputingController.SaveTaxByAccumulatedSalary(monthSalaries);
         Assert.IsType<BadRequestResult>(result);
     }
+    
+    [Fact]
+    public void Should_Return_Ok_When_Request_SaveTaxByAccumulatedSalary_Successfully()
+    {
+        var mockService = new Mock<ITaxComputingService>();
+        mockService.Setup(user => user.ComputeTaxBySalaryAndMonth(It.IsAny<List<MonthSalary>>())).Returns(true);
+        var taxComputingController = new TaxComputingController(mockService.Object);
+        List<MonthSalary> monthSalaries = new List<MonthSalary>
+        {
+            new()
+            {
+                Month = 1,
+                Salary = 41000
+            }
+        };
+        var result = taxComputingController.SaveTaxByAccumulatedSalary(monthSalaries);
+        Assert.IsType<OkObjectResult>(result);
+    }
 }
