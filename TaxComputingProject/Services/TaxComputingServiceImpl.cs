@@ -82,10 +82,10 @@ public class TaxComputingServiceImpl : ITaxComputingService
             taxableSalary += existedTaxableSalary;
             for (int pre = 0; pre <= count; pre++)
             {
-                taxableSalary += monthSalaries[pre].Salary;
-                taxableSalary -= SalaryThreshold;
+                double salary = monthSalaries[pre].Salary;
+                taxableSalary += salary;
+                taxableSalary -= salary < SalaryThreshold ? salary : SalaryThreshold;
             }
-
             TaxLevel taxLevel = MatchTaxRateAndDeductionBySalary(taxableSalary);
             double tax = taxableSalary * taxLevel.TaxRate - taxLevel.Deduction;
             double preTaxes = monthSalaries.Take(count).Select(monthSalary => monthSalary.Tax).Sum();
