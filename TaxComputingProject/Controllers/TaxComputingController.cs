@@ -20,7 +20,7 @@ public class TaxComputingController : ControllerBase
     public IActionResult SaveTaxByAccumulatedSalary([FromBody] List<MonthSalary> monthSalaries)
     {
         if (monthSalaries.Count == 0)
-            return BadRequest();
+            return BadRequest(new { errorMessage = "The input is empty!" });
         try
         {
             _taxComputingService.ComputeTaxBySalaryAndMonth(monthSalaries);

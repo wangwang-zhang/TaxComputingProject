@@ -35,7 +35,7 @@ public class TaxComputingControllerTest
         var taxComputingController = new TaxComputingController(mockService.Object);
         List<MonthSalary> monthSalaries = new List<MonthSalary>();
         var result = taxComputingController.SaveTaxByAccumulatedSalary(monthSalaries);
-        Assert.IsType<BadRequestResult>(result);
+        Assert.IsType<BadRequestObjectResult>(result);
     }
     
     [Fact]
