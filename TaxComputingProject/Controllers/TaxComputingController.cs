@@ -17,12 +17,17 @@ public class TaxComputingController : ControllerBase
     }
 
     [HttpPost("taxOfMonth"), Authorize]
-    public IActionResult SaveTaxByAccumulatedSalary([FromBody] AccumulatedSalary? accumulatedSalary)
+    public IActionResult SaveTaxByAccumulatedSalary([FromBody] List<MonthSalary> monthSalaries)
     {
-        if (accumulatedSalary == null)
+        if (monthSalaries.Count == 0)
             return BadRequest();
-        _taxComputingService.ComputeTaxBySalaryAndMonth(accumulatedSalary.Salary);
-        return Ok("Saved taxes successfully!");
+        var success = _taxComputingService.ComputeTaxBySalaryAndMonth(monthSalaries);
+        if (success)
+        {
+            return Ok("Saved taxes successfully!");
+        }
+
+        return BadRequest(new { errorMessage = "There are duplicate months!" });
     }
     
     [HttpGet("UserId"), Authorize]
