@@ -21,13 +21,15 @@ public class TaxComputingController : ControllerBase
     {
         if (monthSalaries.Count == 0)
             return BadRequest();
-        var success = _taxComputingService.ComputeTaxBySalaryAndMonth(monthSalaries);
-        if (success)
+        try
         {
+            _taxComputingService.ComputeTaxBySalaryAndMonth(monthSalaries);
             return Ok("Saved taxes successfully!");
         }
-
-        return BadRequest(new { errorMessage = "There are duplicate months!" });
+        catch (ArgumentException e)
+        {
+            return BadRequest(new { errorMessage = e.Message });
+        }
     }
     
     [HttpGet("UserId"), Authorize]
@@ -40,7 +42,14 @@ public class TaxComputingController : ControllerBase
     [HttpGet("taxByMonth"), Authorize]
     public ActionResult GetMonthOfTax(int month)
     {
-        var taxOfMonth = _taxComputingService.GetTaxOfMonth(month);
-        return Ok(taxOfMonth);
+        try
+        {
+            var taxOfMonth = _taxComputingService.GetTaxOfMonth(month);
+            return Ok(taxOfMonth);
+        }
+        catch (BadHttpRequestException e)
+        {
+            return BadRequest(new { errorMessage = e.Message });
+        }
     }
 }
