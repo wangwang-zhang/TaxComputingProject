@@ -50,7 +50,15 @@ namespace TaxComputingProject.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Job")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -61,6 +69,10 @@ namespace TaxComputingProject.Migrations
                     b.Property<byte[]>("PasswordSalt")
                         .IsRequired()
                         .HasColumnType("longblob");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<string>("VerificationToken")
                         .HasColumnType("longtext");

@@ -36,6 +36,9 @@ public class UserDaoTest
         User user = new User
         {
             Email = "Hello2@example.com",
+            Phone = "13812344321",
+            Job = "teacher",
+            Address = "Xi'an",
             PasswordHash = new byte[32],
             PasswordSalt = new byte[32],
             VerificationToken = "",

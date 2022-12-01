@@ -11,7 +11,7 @@ using TaxComputingProject.DBContext;
 namespace TaxComputingProject.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20221128025000_CreateInitial")]
+    [Migration("20221201032856_CreateInitial")]
     partial class CreateInitial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -52,7 +52,15 @@ namespace TaxComputingProject.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Job")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -63,6 +71,10 @@ namespace TaxComputingProject.Migrations
                     b.Property<byte[]>("PasswordSalt")
                         .IsRequired()
                         .HasColumnType("longblob");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<string>("VerificationToken")
                         .HasColumnType("longtext");

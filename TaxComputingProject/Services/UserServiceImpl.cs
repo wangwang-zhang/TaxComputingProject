@@ -29,6 +29,9 @@ public class UserServiceImpl : IUserService
         var user = new User
         {
             Email = request.Email,
+            Phone = request.Phone,
+            Address = request.Address,
+            Job = request.Job,
             PasswordHash = passwordHash,
             PasswordSalt = passwordSalt,
             VerificationToken = CreateActivationCode()

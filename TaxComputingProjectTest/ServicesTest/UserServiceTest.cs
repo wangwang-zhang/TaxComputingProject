@@ -21,8 +21,7 @@ public class UserServiceTest
             Password = "password",
             ConfirmPassword = "password"
         };
-        var result = userService.AddUser(userRegisterRequest);
-        Assert.Equal(0, result.Length);
+        Assert.Throws<Exception>(() => userService.AddUser(userRegisterRequest));
     }
 
     [Fact]
