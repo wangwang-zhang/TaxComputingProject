@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -74,13 +73,7 @@ public class UserServiceTest
     public void Should_Return_NotNull_When_Find_User_By_Updated_Email()
     {
         var userDao = new UserDaoImpl(_context);
-        var accessorMock = new Mock<IHttpContextAccessor>();
-        var userClaimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new[]
-        {
-            new Claim(ClaimTypes.Sid, "1"),
-        }, "mock"));
-        HttpContext httpContext = new DefaultHttpContext { User = userClaimsPrincipal };
-        accessorMock.Setup(accessor => accessor.HttpContext).Returns(httpContext);
+        var accessorMock = MockHttpContextAccessor();
         var userService = new UserServiceImpl(userDao,MockConfiguration(), accessorMock.Object);
         UserRegisterRequest user = new UserRegisterRequest
         {
@@ -102,6 +95,18 @@ public class UserServiceTest
         userService.UserUpdate(userInfo);
         User? result = userDao.FindUserByEmail(userInfo.Email);
         Assert.NotNull(result);
+    }
+
+    private static Mock<IHttpContextAccessor> MockHttpContextAccessor()
+    {
+        var accessorMock = new Mock<IHttpContextAccessor>();
+        var userClaimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new[]
+        {
+            new Claim(ClaimTypes.Sid, "1"),
+        }, "mock"));
+        HttpContext httpContext = new DefaultHttpContext { User = userClaimsPrincipal };
+        accessorMock.Setup(accessor => accessor.HttpContext).Returns(httpContext);
+        return accessorMock;
     }
 
     private UserServiceImpl SetupService()
