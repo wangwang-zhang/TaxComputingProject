@@ -11,11 +11,13 @@ public class UserServiceImpl : IUserService
 {
     private readonly IUserDao _userDao;
     private readonly IConfiguration _configuration;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public UserServiceImpl(IUserDao userDao, IConfiguration configuration)
+    public UserServiceImpl(IUserDao userDao, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
     {
         _userDao = userDao;
         _configuration = configuration;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public string AddUser(UserRegisterRequest request)
@@ -74,6 +76,23 @@ public class UserServiceImpl : IUserService
         return CreateToken(user);
     }
 
+    public void UserUpdate(UserInfo userInfo)
+    {
+        int id = GetId();
+        _userDao.UpdateUserInfo(id, userInfo);
+    }
+
+    private int GetId()
+    {
+        string result = string.Empty;
+        if (_httpContextAccessor.HttpContext != null)
+        {
+            result = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Sid);
+        }
+        int.TryParse(result, out var userId);
+        return userId;
+    }
+    
     private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
     {
         using (var hmac = new HMACSHA512())

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -57,7 +58,10 @@ public class UserControllerTest
         var mockContext = MockDbContext();
         var userDao = new UserDaoImpl(mockContext.Object);
         var configuration = MockConfiguration();
-        var userService = new UserServiceImpl(userDao, configuration);
+        var accessorMock = new Mock<IHttpContextAccessor>();
+        var context = new DefaultHttpContext();
+        accessorMock.Setup(a => a.HttpContext).Returns(context);
+        var userService = new UserServiceImpl(userDao, configuration, accessorMock.Object);
         return userService;
     }
 

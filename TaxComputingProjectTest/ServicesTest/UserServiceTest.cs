@@ -1,3 +1,6 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Components.Web.Virtualization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Moq;
@@ -11,6 +14,15 @@ namespace TaxComputingProjectTest.ServicesTest;
 
 public class UserServiceTest
 {
+    private readonly DataContext _context;
+    public UserServiceTest()
+    {
+        DbContextOptionsBuilder dbOptions = new DbContextOptionsBuilder()
+            .UseInMemoryDatabase(
+                Guid.NewGuid().ToString()
+            );
+        _context = new DataContext(dbOptions.Options);
+    }
     [Fact]
     public void Should_Return_Empty_String_When_User_Existed_Already()
     {
@@ -58,12 +70,49 @@ public class UserServiceTest
         Assert.Throws<Exception>(() => userService.UserLogin(userLoginRequest));
     }
 
+    [Fact]
+    public void Should_Return_NotNull_When_Find_User_By_Updated_Email()
+    {
+        var userDao = new UserDaoImpl(_context);
+        var accessorMock = new Mock<IHttpContextAccessor>();
+        var userClaimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new[]
+        {
+            new Claim(ClaimTypes.Sid, "1"),
+        }, "mock"));
+        HttpContext httpContext = new DefaultHttpContext { User = userClaimsPrincipal };
+        accessorMock.Setup(accessor => accessor.HttpContext).Returns(httpContext);
+        var userService = new UserServiceImpl(userDao,MockConfiguration(), accessorMock.Object);
+        UserRegisterRequest user = new UserRegisterRequest
+        {
+            Email = "initial@example.com",
+            Phone = "13812344321",
+            Job = "teacher",
+            Address = "Xi'an",
+            Password = "123456789",
+            ConfirmPassword = "123456789"
+        };
+        userService.AddUser(user);
+        UserInfo userInfo = new UserInfo()
+        {
+            Email = "Updated@example.com",
+            Address = "New York",
+            Job = "doctor",
+            Phone = "15524367856"
+        };
+        userService.UserUpdate(userInfo);
+        User? result = userDao.FindUserByEmail(userInfo.Email);
+        Assert.NotNull(result);
+    }
+
     private UserServiceImpl SetupService()
     {
         var mockContext = MockDbContext();
         var userDaoImpl = new UserDaoImpl(mockContext.Object);
         var configuration = MockConfiguration();
-        var userServiceImpl = new UserServiceImpl(userDaoImpl, configuration);
+        var accessorMock = new Mock<IHttpContextAccessor>();
+        var context = new DefaultHttpContext();
+        accessorMock.Setup(a => a.HttpContext).Returns(context);
+        var userServiceImpl = new UserServiceImpl(userDaoImpl, configuration,accessorMock.Object);
         return userServiceImpl;
     }
 
