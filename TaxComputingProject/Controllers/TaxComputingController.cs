@@ -16,7 +16,7 @@ public class TaxComputingController : ControllerBase
         _taxComputingService = taxComputingService;
     }
 
-    [HttpPost("taxOfMonth"), Authorize]
+    [HttpPost("recordTax"), Authorize]
     public IActionResult SaveTaxByAccumulatedSalary([FromBody] List<MonthSalary> monthSalaries)
     {
         if (monthSalaries.Count == 0)
@@ -32,7 +32,7 @@ public class TaxComputingController : ControllerBase
         }
     }
     
-    [HttpGet("UserId"), Authorize]
+    [HttpGet("userId"), Authorize]
     public ActionResult<string> GetUserId()
     {
         var userId = _taxComputingService.GetId();
