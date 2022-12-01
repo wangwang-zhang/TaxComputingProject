@@ -11,4 +11,5 @@ public interface IUserDao
     public bool AddUserTax(UserTax userTax);
     public UserTax? GetUserTaxById(int id);
     public void RemoveTaxItem(int id);
+    public void UpdateUserInfo(int id, UserInfo userInfo);
 }

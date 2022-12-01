@@ -59,4 +59,18 @@ public class UserDaoImpl : IUserDao
         if (userTax != null) _context.Taxes.RemoveRange(userTax.Taxes);
         _context.SaveChanges();
     }
+
+    public void UpdateUserInfo(int id, UserInfo userInfo)
+    {
+        var user = _context.Users.FirstOrDefault(user => user.Id == id);
+        if (user != null)
+        {
+            user.Email = userInfo.Email;
+            user.Address = userInfo.Address;
+            user.Job = userInfo.Job;
+            user.Phone = userInfo.Phone;
+        }
+
+        _context.SaveChanges();
+    }
 }
