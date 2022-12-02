@@ -148,6 +148,37 @@ public class UserDaoTest
             .FirstOrDefault(user => user.Phone == userInfo.Phone);
         Assert.NotNull(result);
     }
+    
+    [Fact]
+    public void Should_Still_Return_Non_Empty_User_When_Find_User_By_Previous_Email()
+    {
+        UserDaoImpl userDao = new UserDaoImpl(_context);
+        User testUser = new User
+        {
+            Email = "Hello@example.com",
+            Phone = "13812344321",
+            Job = "teacher",
+            Address = "Xi'an",
+            PasswordHash = new byte[32],
+            PasswordSalt = new byte[32],
+            VerificationToken = "",
+            VerifiedAt = null
+        };
+        userDao.AddUser(testUser);
+        UserInfo userInfo = new UserInfo()
+        {
+            Address = "New York",
+            Job = "doctor",
+            Phone = "15524367856"
+        };
+        userDao.UpdateUserInfo(1, userInfo);
+        var result = _context.Users
+            .Where(user => user.Email == testUser.Email)
+            .Where(user => user.Address == userInfo.Address)
+            .Where(user => user.Job == userInfo.Job)
+            .FirstOrDefault(user => user.Phone == userInfo.Phone);
+        Assert.NotNull(result);
+    }
 
     private Mock<DataContext> MockContext()
     {
