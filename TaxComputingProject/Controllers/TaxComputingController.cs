@@ -56,4 +56,11 @@ public class TaxComputingController : ControllerBase
             return BadRequest(new { errorMessage = e.Message });
         }
     }
+    
+    [HttpGet("AnnualTaxRecords"), Authorize]
+    public ActionResult GetAnnualTaxRecords()
+    {
+        var taxRecords = _taxComputingService.GetAnnualTaxRecords();
+        return Ok(taxRecords);
+    }
 }

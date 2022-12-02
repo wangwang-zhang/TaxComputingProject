@@ -69,4 +69,15 @@ public class TaxComputingControllerTest
         var result = taxComputingController.GetMonthOfTax(month);
         Assert.IsType<BadRequestObjectResult>(result);
     }
+    
+    [Fact]
+    public void Should_Return_OK_When_Get_AnnualTaxRecords_Successfully()
+    {
+        var mockService = new Mock<ITaxComputingService>();
+        AnnualTaxRecords annualTaxRecords = new AnnualTaxRecords();
+        mockService.Setup(tax => tax.GetAnnualTaxRecords()).Returns(annualTaxRecords);
+        var taxComputingController = new TaxComputingController(mockService.Object);
+        var result = taxComputingController.GetAnnualTaxRecords();
+        Assert.IsType<OkObjectResult>(result);
+    }
 }
