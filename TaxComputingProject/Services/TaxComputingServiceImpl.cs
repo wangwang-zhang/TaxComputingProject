@@ -153,6 +153,40 @@ public class TaxComputingServiceImpl : ITaxComputingService
         throw new BadHttpRequestException("The month of tax is not existed!");
     }
 
+    public AnnualTaxRecords GetAnnualTaxRecords()
+    {
+        int id = GetId();
+        var user = _userDao.GetUserById(id);
+        UserTax? userTax = _userDao.GetUserTaxById(id);
+        if (userTax != null)
+        {
+            double totalSalary = userTax.Taxes.Select(tax => tax.Salary).Sum();
+            double totalTax = userTax.Taxes.Select(tax => tax.Tax).Sum();
+            List<MonthTax> monthTaxes = new List<MonthTax>();
+            foreach (var taxOfMonth in userTax.Taxes)
+            {
+                monthTaxes.Add(new MonthTax()
+                {
+                    Month = taxOfMonth.Month,
+                    Tax = taxOfMonth.Tax
+                });
+            }
+
+            if (user?.Email != null)
+            {
+                var records = new AnnualTaxRecords
+                {
+                    Email = user.Email,
+                    TotalSalary = totalSalary,
+                    TotalTax = totalTax,
+                    MonthTaxes = monthTaxes
+                };
+                return records;
+            }
+        }
+        return null;
+    }
+
     public TaxLevel MatchTaxRateAndDeductionBySalary(double salary)
     {
         return salary switch

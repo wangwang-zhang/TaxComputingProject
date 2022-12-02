@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -6,6 +7,7 @@ using TaxComputingProject.DBContext;
 using TaxComputingProject.Model;
 using TaxComputingProject.Services;
 using TaxComputingProjectTest.MockData;
+using Microsoft.Extensions.Configuration;
 
 namespace TaxComputingProjectTest.ServicesTest;
 
@@ -130,6 +132,59 @@ public class TaxComputingServiceTest
         Assert.Throws<ArgumentException>(() => taxComputingService.ComputeTaxBySalaryAndMonth(monthSalaries));
     }
 
+    [Fact]
+    public void Should_Return_NotNull_Object_When_Get_AnnualTaxRecords_Successfully()
+    {
+        var userDao = new UserDaoImpl(_context);
+        var accessorMock = MockHttpContextAccessor();
+        var userService = new UserServiceImpl(userDao,MockConfiguration(), accessorMock.Object);
+        var taxComputingService = new TaxComputingServiceImpl(accessorMock.Object, userDao);
+        var user = new UserRegisterRequest
+        {
+            Email = "initial@example.com",
+            Phone = "13812344321",
+            Job = "teacher",
+            Address = "Xi'an",
+            Password = "123456789",
+            ConfirmPassword = "123456789"
+        };
+        userService.AddUser(user);
+        List<MonthSalary> monthSalaries = new List<MonthSalary>
+        {
+            new(){Month = 1, Salary = 41000, Tax = 1080},
+            new(){Month = 2, Salary = 41000, Tax = 3600}
+        };
+        taxComputingService.ComputeTaxBySalaryAndMonth(monthSalaries);
+        var records = taxComputingService.GetAnnualTaxRecords();
+        Assert.NotNull(records);
+        Assert.Equal(82000, records.TotalSalary);
+        Assert.Equal(4680, records.TotalTax);
+    }
+    
+    private static Mock<IHttpContextAccessor> MockHttpContextAccessor()
+    {
+        var accessorMock = new Mock<IHttpContextAccessor>();
+        var userClaimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new[]
+        {
+            new Claim(ClaimTypes.Sid, "1"),
+        }, "mock"));
+        HttpContext httpContext = new DefaultHttpContext { User = userClaimsPrincipal };
+        accessorMock.Setup(accessor => accessor.HttpContext).Returns(httpContext);
+        return accessorMock;
+    }
+    
+    private static IConfiguration MockConfiguration()
+    {
+        var inMemorySettings = new Dictionary<string, string>
+        {
+            { "AppSettings:Token", "My Json Web Token Key" },
+        };
+        IConfiguration configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(inMemorySettings)
+            .Build();
+        return configuration;
+    }
+    
     private static ITaxComputingService MockService()
     {
         var accessorMock = new Mock<IHttpContextAccessor>();
