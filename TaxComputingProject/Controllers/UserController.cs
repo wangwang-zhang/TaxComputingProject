@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaxComputingProject.Model;
 using TaxComputingProject.Services;
@@ -45,5 +46,12 @@ public class UserController : ControllerBase
             return BadRequest("User not found or not verified");
         }
         return Ok($"Welcome back, {request.Email}! :), Your Token is\n {result}");
+    }
+    
+    [HttpPut("userInfoUpdate"), Authorize]
+    public IActionResult Update(UserInfo userInfo)
+    {
+        _userService.UserUpdate(userInfo);
+        return Ok("User information updated successfully!");
     }
 }

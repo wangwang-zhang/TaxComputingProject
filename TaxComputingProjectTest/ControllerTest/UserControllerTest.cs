@@ -53,6 +53,22 @@ public class UserControllerTest
         Assert.IsType<OkObjectResult>(result);
     }
 
+    [Fact]
+    public void Should_Return_OK_When_Update_Successfully()
+    {
+        var userService = SetupService();
+        var controller = new UserController(userService);
+        UserInfo userInfo = new UserInfo
+        {
+            Email = "update@email.com",
+            Address = "Xi'an",
+            Job = "doctor",
+            Phone = "13526758976"
+        };
+        var result = controller.Update(userInfo);
+        Assert.IsType<OkObjectResult>(result);
+    }
+    
     private UserServiceImpl SetupService()
     {
         var mockContext = MockDbContext();
