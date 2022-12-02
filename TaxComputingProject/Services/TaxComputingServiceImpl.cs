@@ -153,7 +153,7 @@ public class TaxComputingServiceImpl : ITaxComputingService
         throw new BadHttpRequestException("The month of tax is not existed!");
     }
 
-    public AnnualTaxRecords GetAnnualTaxRecords()
+    public AnnualTaxRecords? GetAnnualTaxRecords()
     {
         int id = GetId();
         var user = _userDao.GetUserById(id);

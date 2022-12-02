@@ -8,5 +8,5 @@ public interface ITaxComputingService
     public TaxLevel MatchTaxRateAndDeductionBySalary(double salary);
     public int GetId();
     public double GetTaxOfMonth(int month);
-    public AnnualTaxRecords GetAnnualTaxRecords();
+    public AnnualTaxRecords? GetAnnualTaxRecords();
 }

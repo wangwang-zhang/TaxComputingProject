@@ -157,8 +157,8 @@ public class TaxComputingServiceTest
         taxComputingService.ComputeTaxBySalaryAndMonth(monthSalaries);
         var records = taxComputingService.GetAnnualTaxRecords();
         Assert.NotNull(records);
-        Assert.Equal(82000, records.TotalSalary);
-        Assert.Equal(4680, records.TotalTax);
+        Assert.Equal(82000, records?.TotalSalary);
+        Assert.Equal(4680, records?.TotalTax);
     }
     
     private static Mock<IHttpContextAccessor> MockHttpContextAccessor()
