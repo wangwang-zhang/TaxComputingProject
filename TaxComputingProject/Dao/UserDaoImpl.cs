@@ -85,4 +85,9 @@ public class UserDaoImpl : IUserDao
         }
         _context.SaveChanges();
     }
+
+    public User? GetUserById(int id)
+    {
+        return _context.Users.FirstOrDefault(user => user.Id == id);
+    }
 }

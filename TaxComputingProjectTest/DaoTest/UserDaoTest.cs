@@ -180,6 +180,26 @@ public class UserDaoTest
         Assert.NotNull(result);
     }
 
+    [Fact]
+    public void Should_Return_User_When_Find_User_By_Id_Successfully()
+    {
+        UserDaoImpl userDao = new UserDaoImpl(_context);
+        User testUser = new User
+        {
+            Email = "Hello@example.com",
+            Phone = "13812344321",
+            Job = "teacher",
+            Address = "Xi'an",
+            PasswordHash = new byte[32],
+            PasswordSalt = new byte[32],
+            VerificationToken = "",
+            VerifiedAt = null
+        };
+        userDao.AddUser(testUser);
+        User? user = userDao.GetUserById(1);
+        Assert.NotNull(user);
+    }
+    
     private Mock<DataContext> MockContext()
     {
         var mockSet = new Mock<DbSet<User>>();
