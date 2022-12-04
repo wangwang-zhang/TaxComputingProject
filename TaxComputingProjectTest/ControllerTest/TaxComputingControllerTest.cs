@@ -25,12 +25,12 @@ public class TaxComputingControllerTest
     public void Should_Return_Ok_When_Get_MonthOfTax_Correctly(int month)
     {
         var mockService = new Mock<ITaxComputingService>();
-        mockService.Setup(user => user.GetTaxOfMonth(It.IsIn(1,6,12))).Returns(It.IsAny<double>());
+        mockService.Setup(user => user.GetTaxOfMonth(It.IsIn(1, 6, 12))).Returns(It.IsAny<double>());
         var taxComputingController = new TaxComputingController(mockService.Object);
         var result = taxComputingController.GetMonthOfTax(month);
         Assert.IsType<OkObjectResult>(result);
     }
-    
+
     [Fact]
     public void Should_Return_BadRequest_When_Request_Failed()
     {
@@ -40,7 +40,7 @@ public class TaxComputingControllerTest
         var result = taxComputingController.SaveTaxByAccumulatedSalary(monthSalaries);
         Assert.IsType<BadRequestObjectResult>(result);
     }
-    
+
     [Fact]
     public void Should_Return_Ok_When_Request_SaveTaxByAccumulatedSalary_Successfully()
     {
@@ -69,7 +69,7 @@ public class TaxComputingControllerTest
         var result = taxComputingController.GetMonthOfTax(month);
         Assert.IsType<BadRequestObjectResult>(result);
     }
-    
+
     [Fact]
     public void Should_Return_OK_When_Get_AnnualTaxRecords_Successfully()
     {

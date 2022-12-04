@@ -52,6 +52,7 @@ public class TaxComputingServiceImpl : ITaxComputingService
         {
             existedTaxOfMonths = existedTaxOfMonths.Where(monthSalary => monthSalary.Month != month).ToList();
         }
+
         _userDao.RemoveTaxItem(userTax.Id);
         foreach (var existedItem in existedTaxOfMonths)
         {
@@ -63,6 +64,7 @@ public class TaxComputingServiceImpl : ITaxComputingService
             };
             salariesOrderedByMonth.Add(monthSalary);
         }
+
         salariesOrderedByMonth = salariesOrderedByMonth.OrderBy(monthSalary => monthSalary.Month).ToList();
         ComputeTaxOfMonth(salariesOrderedByMonth);
         SaveRecord(salariesOrderedByMonth);
@@ -85,6 +87,7 @@ public class TaxComputingServiceImpl : ITaxComputingService
                 taxableSalary += salary;
                 taxableSalary -= salary < SalaryThreshold ? salary : SalaryThreshold;
             }
+
             TaxLevel taxLevel = MatchTaxRateAndDeductionBySalary(taxableSalary);
             double tax = taxableSalary * taxLevel.TaxRate - taxLevel.Deduction;
             double preTaxes = monthSalaries.Take(count).Select(monthSalary => monthSalary.Tax).Sum();
@@ -184,6 +187,7 @@ public class TaxComputingServiceImpl : ITaxComputingService
                 return records;
             }
         }
+
         return null;
     }
 
@@ -213,9 +217,11 @@ public class TaxComputingServiceImpl : ITaxComputingService
         {
             result = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Sid);
         }
+
         int.TryParse(result, out var userId);
         return userId;
     }
+
     private enum TotalSalary
     {
         FirstLevel = 36000,

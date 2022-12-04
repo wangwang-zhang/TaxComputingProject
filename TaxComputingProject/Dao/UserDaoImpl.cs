@@ -7,6 +7,7 @@ namespace TaxComputingProject.Dao;
 public class UserDaoImpl : IUserDao
 {
     private readonly DataContext _context;
+
     public UserDaoImpl(DataContext context)
     {
         _context = context;
@@ -15,12 +16,12 @@ public class UserDaoImpl : IUserDao
     public UserDaoImpl()
     {
     }
-    
+
     public User? FindUserByEmail(string email)
     {
-        return  _context.Users.FirstOrDefault(user => user.Email == email);
+        return _context.Users.FirstOrDefault(user => user.Email == email);
     }
-    
+
     public void AddUser(User user)
     {
         _context.Users.Add(user);
@@ -29,7 +30,7 @@ public class UserDaoImpl : IUserDao
 
     public User? FindUserByToken(string token)
     {
-        return  _context.Users.FirstOrDefault(user => user.VerificationToken == token);
+        return _context.Users.FirstOrDefault(user => user.VerificationToken == token);
     }
 
     public void SaveChanges()
@@ -37,11 +38,10 @@ public class UserDaoImpl : IUserDao
         _context.SaveChanges();
     }
 
-    public bool AddUserTax(UserTax userTax)
+    public void AddUserTax(UserTax userTax)
     {
         _context.UserTaxes.Add(userTax);
         _context.SaveChanges();
-        return true;
     }
 
     public virtual UserTax? GetUserTaxById(int id)
@@ -83,6 +83,7 @@ public class UserDaoImpl : IUserDao
                 user.Phone = userInfo.Phone;
             }
         }
+
         _context.SaveChanges();
     }
 

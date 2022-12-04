@@ -11,7 +11,7 @@ public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
 
-    public UserController( IUserService userService )
+    public UserController(IUserService userService)
     {
         _userService = userService;
     }
@@ -29,14 +29,14 @@ public class UserController : ControllerBase
             return BadRequest(new { errorMessage = e.Message });
         }
     }
-    
+
     [HttpPost("verify")]
     public IActionResult Verify(string token)
     {
         _userService.AddVerify(token);
         return Ok("User verified! :)");
     }
-    
+
     [HttpPost("login")]
     public IActionResult Login(UserLoginRequest request)
     {
@@ -45,9 +45,10 @@ public class UserController : ControllerBase
         {
             return BadRequest("User not found or not verified");
         }
+
         return Ok($"Welcome back, {request.Email}! :), Your Token is\n {result}");
     }
-    
+
     [HttpPut("userInfoUpdate"), Authorize]
     public IActionResult Update(UserInfo userInfo)
     {

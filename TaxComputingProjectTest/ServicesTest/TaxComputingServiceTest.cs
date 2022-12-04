@@ -137,7 +137,7 @@ public class TaxComputingServiceTest
     {
         var userDao = new UserDaoImpl(_context);
         var accessorMock = MockHttpContextAccessor();
-        var userService = new UserServiceImpl(userDao,MockConfiguration(), accessorMock.Object);
+        var userService = new UserServiceImpl(userDao, MockConfiguration(), accessorMock.Object);
         var taxComputingService = new TaxComputingServiceImpl(accessorMock.Object, userDao);
         var user = new UserRegisterRequest
         {
@@ -151,8 +151,8 @@ public class TaxComputingServiceTest
         userService.AddUser(user);
         List<MonthSalary> monthSalaries = new List<MonthSalary>
         {
-            new(){Month = 1, Salary = 41000, Tax = 1080},
-            new(){Month = 2, Salary = 41000, Tax = 3600}
+            new() { Month = 1, Salary = 41000, Tax = 1080 },
+            new() { Month = 2, Salary = 41000, Tax = 3600 }
         };
         taxComputingService.ComputeTaxBySalaryAndMonth(monthSalaries);
         var records = taxComputingService.GetAnnualTaxRecords();
@@ -160,7 +160,7 @@ public class TaxComputingServiceTest
         Assert.Equal(82000, records?.TotalSalary);
         Assert.Equal(4680, records?.TotalTax);
     }
-    
+
     private static Mock<IHttpContextAccessor> MockHttpContextAccessor()
     {
         var accessorMock = new Mock<IHttpContextAccessor>();
@@ -172,7 +172,7 @@ public class TaxComputingServiceTest
         accessorMock.Setup(accessor => accessor.HttpContext).Returns(httpContext);
         return accessorMock;
     }
-    
+
     private static IConfiguration MockConfiguration()
     {
         var inMemorySettings = new Dictionary<string, string>
@@ -184,7 +184,7 @@ public class TaxComputingServiceTest
             .Build();
         return configuration;
     }
-    
+
     private static ITaxComputingService MockService()
     {
         var accessorMock = new Mock<IHttpContextAccessor>();
@@ -195,7 +195,7 @@ public class TaxComputingServiceTest
         ITaxComputingService taxComputingService = new TaxComputingServiceImpl(accessorMock.Object, mockUserDao);
         return taxComputingService;
     }
-    
+
     private static ITaxComputingService MockUserTax()
     {
         var accessorMock = new Mock<IHttpContextAccessor>();
@@ -206,32 +206,31 @@ public class TaxComputingServiceTest
         ITaxComputingService taxComputingService = new TaxComputingServiceImpl(accessorMock.Object, mockUserDao.Object);
         return taxComputingService;
     }
-    
+
     private static Mock<DataContext> MockDbContext()
     {
         var mockSet = new Mock<DbSet<UserTax>>();
         mockSet.As<IQueryable<UserTax>>().Setup(m => m.Provider).Returns(TestMockData.UserTaxes.Provider);
         mockSet.As<IQueryable<UserTax>>().Setup(m => m.Expression).Returns(TestMockData.UserTaxes.Expression);
         mockSet.As<IQueryable<UserTax>>().Setup(m => m.ElementType).Returns(TestMockData.UserTaxes.ElementType);
-        mockSet.As<IQueryable<UserTax>>().Setup(m => m.GetEnumerator()).Returns(() => TestMockData.UserTaxes.GetEnumerator());
+        mockSet.As<IQueryable<UserTax>>().Setup(m => m.GetEnumerator())
+            .Returns(() => TestMockData.UserTaxes.GetEnumerator());
         var mockContext = new Mock<DataContext>();
         mockContext.Setup(dataContext => dataContext.UserTaxes).Returns(mockSet.Object);
         return mockContext;
     }
-    
-    private static readonly UserTax UserTax = new UserTax
+
+    private static readonly UserTax UserTax = new()
     {
         Id = 1,
         UserId = 1,
-        Taxes = new List<TaxOfMonth>()
+        Taxes = new List<TaxOfMonth>
         {
-            new TaxOfMonth() { Id = 1, Month = 1, Salary = 41000, Tax = 1080 },
-            new TaxOfMonth() { Id = 2, Month = 2, Salary = 41000, Tax = 3600 },
-            new TaxOfMonth() { Id = 3, Month = 3, Salary = 41000, Tax = 3600 },
-            new TaxOfMonth() { Id = 4, Month = 4, Salary = 41000, Tax = 3600 },
-            new TaxOfMonth() { Id = 5, Month = 5, Salary = 41000, Tax = 7200 },
+            new() { Id = 1, Month = 1, Salary = 41000, Tax = 1080 },
+            new() { Id = 2, Month = 2, Salary = 41000, Tax = 3600 },
+            new() { Id = 3, Month = 3, Salary = 41000, Tax = 3600 },
+            new() { Id = 4, Month = 4, Salary = 41000, Tax = 3600 },
+            new() { Id = 5, Month = 5, Salary = 41000, Tax = 7200 },
         }
     };
-    
-    
 }

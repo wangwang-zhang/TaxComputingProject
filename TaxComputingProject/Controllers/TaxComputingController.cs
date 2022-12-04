@@ -31,7 +31,7 @@ public class TaxComputingController : ControllerBase
             return BadRequest(new { errorMessage = e.Message });
         }
     }
-    
+
     [HttpGet("userId"), Authorize]
     public ActionResult<string> GetUserId()
     {
@@ -46,6 +46,7 @@ public class TaxComputingController : ControllerBase
         {
             return BadRequest(new { errorMessage = "Month is not valid!" });
         }
+
         try
         {
             var taxOfMonth = _taxComputingService.GetTaxOfMonth(month);
@@ -56,7 +57,7 @@ public class TaxComputingController : ControllerBase
             return BadRequest(new { errorMessage = e.Message });
         }
     }
-    
+
     [HttpGet("AnnualTaxRecords"), Authorize]
     public ActionResult GetAnnualTaxRecords()
     {

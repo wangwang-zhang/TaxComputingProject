@@ -14,6 +14,7 @@ namespace TaxComputingProjectTest.ServicesTest;
 public class UserServiceTest
 {
     private readonly DataContext _context;
+
     public UserServiceTest()
     {
         DbContextOptionsBuilder dbOptions = new DbContextOptionsBuilder()
@@ -22,6 +23,7 @@ public class UserServiceTest
             );
         _context = new DataContext(dbOptions.Options);
     }
+
     [Fact]
     public void Should_Return_Empty_String_When_User_Existed_Already()
     {
@@ -74,7 +76,7 @@ public class UserServiceTest
     {
         var userDao = new UserDaoImpl(_context);
         var accessorMock = MockHttpContextAccessor();
-        var userService = new UserServiceImpl(userDao,MockConfiguration(), accessorMock.Object);
+        var userService = new UserServiceImpl(userDao, MockConfiguration(), accessorMock.Object);
         UserRegisterRequest user = new UserRegisterRequest
         {
             Email = "initial@example.com",
@@ -117,7 +119,7 @@ public class UserServiceTest
         var accessorMock = new Mock<IHttpContextAccessor>();
         var context = new DefaultHttpContext();
         accessorMock.Setup(a => a.HttpContext).Returns(context);
-        var userServiceImpl = new UserServiceImpl(userDaoImpl, configuration,accessorMock.Object);
+        var userServiceImpl = new UserServiceImpl(userDaoImpl, configuration, accessorMock.Object);
         return userServiceImpl;
     }
 

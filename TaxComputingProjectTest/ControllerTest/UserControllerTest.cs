@@ -68,7 +68,7 @@ public class UserControllerTest
         var result = controller.Update(userInfo);
         Assert.IsType<OkObjectResult>(result);
     }
-    
+
     private UserServiceImpl SetupService()
     {
         var mockContext = MockDbContext();

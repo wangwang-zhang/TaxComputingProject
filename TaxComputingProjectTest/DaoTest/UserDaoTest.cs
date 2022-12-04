@@ -148,7 +148,7 @@ public class UserDaoTest
             .FirstOrDefault(user => user.Phone == userInfo.Phone);
         Assert.NotNull(result);
     }
-    
+
     [Fact]
     public void Should_Still_Return_Non_Empty_User_When_Find_User_By_Previous_Email()
     {
@@ -199,7 +199,7 @@ public class UserDaoTest
         User? user = userDao.GetUserById(1);
         Assert.NotNull(user);
     }
-    
+
     private Mock<DataContext> MockContext()
     {
         var mockSet = new Mock<DbSet<User>>();

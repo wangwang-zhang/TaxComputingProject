@@ -89,10 +89,11 @@ public class UserServiceImpl : IUserService
         {
             result = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Sid);
         }
+
         int.TryParse(result, out var userId);
         return userId;
     }
-    
+
     private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
     {
         using (var hmac = new HMACSHA512())
