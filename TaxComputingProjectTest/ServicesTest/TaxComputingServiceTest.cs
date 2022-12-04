@@ -110,6 +110,16 @@ public class TaxComputingServiceTest
         Assert.Equal(tax, taxOfMonth);
     }
 
+    [Theory]
+    [InlineData(6)]
+    [InlineData(8)]
+    [InlineData(10)]
+    public void Should_Throw_Exception_When_Month_Tax_Not_Exist(int month)
+    {
+        ITaxComputingService taxComputingService = MockUserTax();
+        Assert.Throws<BadHttpRequestException>(() => taxComputingService.GetTaxOfMonth(month));
+    }
+
     [Fact]
     public void Should_Return_Exception_When_There_Are_Duplicate_Months()
     {
