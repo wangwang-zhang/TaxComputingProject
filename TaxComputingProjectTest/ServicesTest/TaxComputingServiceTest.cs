@@ -161,6 +161,16 @@ public class TaxComputingServiceTest
         Assert.Equal(4680, records?.TotalTax);
     }
 
+    [Fact]
+    public void Should_Return_Null_If_User_Not_Existed_When_Get_AnnualTaxRecords()
+    {
+        var userDao = new UserDaoImpl(_context);
+        var accessorMock = MockHttpContextAccessor();
+        var taxComputingService = new TaxComputingServiceImpl(accessorMock.Object, userDao);
+        var records = taxComputingService.GetAnnualTaxRecords();
+        Assert.Null(records);
+    }
+    
     private static Mock<IHttpContextAccessor> MockHttpContextAccessor()
     {
         var accessorMock = new Mock<IHttpContextAccessor>();
