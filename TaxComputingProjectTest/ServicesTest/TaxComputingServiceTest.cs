@@ -45,9 +45,7 @@ public class TaxComputingServiceTest
             }
         };
         var userDao = new UserDaoImpl(_context);
-        var accessorMock = new Mock<IHttpContextAccessor>();
-        var context = new DefaultHttpContext();
-        accessorMock.Setup(a => a.HttpContext).Returns(context);
+        var accessorMock = MockHttpContextAccessor();
         var taxComputingService = new TaxComputingServiceImpl(accessorMock.Object, userDao);
         taxComputingService.ComputeTaxBySalaryAndMonth(testSalaries);
         Assert.Equal(tax, taxComputingService.GetTaxOfMonth(1));
@@ -92,9 +90,7 @@ public class TaxComputingServiceTest
         }
 
         var userDao = new UserDaoImpl(_context);
-        var accessorMock = new Mock<IHttpContextAccessor>();
-        var context = new DefaultHttpContext();
-        accessorMock.Setup(a => a.HttpContext).Returns(context);
+        var accessorMock = MockHttpContextAccessor();
         var taxComputingService = new TaxComputingServiceImpl(accessorMock.Object, userDao);
         taxComputingService.ComputeTaxBySalaryAndMonth(testSalaries);
         Assert.Equal(tax, taxComputingService.GetTaxOfMonth(month));
@@ -268,9 +264,7 @@ public class TaxComputingServiceTest
 
     private static ITaxComputingService MockService()
     {
-        var accessorMock = new Mock<IHttpContextAccessor>();
-        var context = new DefaultHttpContext();
-        accessorMock.Setup(a => a.HttpContext).Returns(context);
+        var accessorMock = MockHttpContextAccessor();
         Mock<DataContext> mockDbContext = MockDbContext();
         var mockUserDao = new UserDaoImpl(mockDbContext.Object);
         ITaxComputingService taxComputingService = new TaxComputingServiceImpl(accessorMock.Object, mockUserDao);
@@ -279,10 +273,8 @@ public class TaxComputingServiceTest
 
     private static ITaxComputingService MockUserTax()
     {
-        var accessorMock = new Mock<IHttpContextAccessor>();
-        var context = new DefaultHttpContext();
-        accessorMock.Setup(a => a.HttpContext).Returns(context);
-        Mock<UserDaoImpl> mockUserDao = new Mock<UserDaoImpl>();
+        var accessorMock = MockHttpContextAccessor();
+        Mock<IUserDao> mockUserDao = new Mock<IUserDao>();
         mockUserDao.Setup(user => user.GetUserTaxById(It.IsAny<int>())).Returns(UserTax);
         ITaxComputingService taxComputingService = new TaxComputingServiceImpl(accessorMock.Object, mockUserDao.Object);
         return taxComputingService;
