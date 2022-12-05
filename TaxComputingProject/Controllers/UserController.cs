@@ -52,7 +52,14 @@ public class UserController : ControllerBase
     [HttpPut("userInfoUpdate"), Authorize]
     public IActionResult Update(UserInfo userInfo)
     {
-        _userService.UserUpdate(userInfo);
+        try
+        {
+            _userService.UserUpdate(userInfo);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(new { errorMessage = e.Message });
+        }
         return Ok("User information updated successfully!");
     }
 }
