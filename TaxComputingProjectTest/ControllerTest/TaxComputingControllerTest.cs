@@ -8,16 +8,7 @@ namespace TaxComputingProjectTest.ControllerTest;
 
 public class TaxComputingControllerTest
 {
-    [Fact]
-    public void Should_Return_Ok_When_Get_UserId_Correctly()
-    {
-        var mockService = new Mock<ITaxComputingService>();
-        mockService.Setup(user => user.GetId()).Returns(It.IsAny<int>());
-        var taxComputingController = new TaxComputingController(mockService.Object);
-        var result = taxComputingController.GetUserId();
-        Assert.IsType<OkObjectResult>(result.Result);
-    }
-
+    
     [Theory]
     [InlineData(1)]
     [InlineData(6)]

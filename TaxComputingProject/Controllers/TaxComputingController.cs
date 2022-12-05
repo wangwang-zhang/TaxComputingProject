@@ -32,13 +32,6 @@ public class TaxComputingController : ControllerBase
         }
     }
 
-    [HttpGet("userId"), Authorize]
-    public ActionResult<string> GetUserId()
-    {
-        var userId = _taxComputingService.GetId();
-        return Ok(userId);
-    }
-
     [HttpGet("taxByMonth"), Authorize]
     public ActionResult GetMonthOfTax(int month)
     {

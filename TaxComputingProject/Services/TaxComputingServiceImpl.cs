@@ -196,7 +196,7 @@ public class TaxComputingServiceImpl : ITaxComputingService
         };
     }
 
-    public int GetId()
+    private int GetId()
     {
         string result = string.Empty;
         if (_httpContextAccessor.HttpContext != null)
