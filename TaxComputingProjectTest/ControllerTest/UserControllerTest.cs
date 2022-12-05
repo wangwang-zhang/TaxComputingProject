@@ -8,6 +8,7 @@ using TaxComputingProject.Dao;
 using TaxComputingProject.DBContext;
 using TaxComputingProject.Model;
 using TaxComputingProject.Services;
+using TaxComputingProject.Utils;
 using TaxComputingProjectTest.MockData;
 
 namespace TaxComputingProjectTest.ControllerTest;
@@ -77,7 +78,8 @@ public class UserControllerTest
         var accessorMock = new Mock<IHttpContextAccessor>();
         var context = new DefaultHttpContext();
         accessorMock.Setup(a => a.HttpContext).Returns(context);
-        var userService = new UserServiceImpl(userDao, configuration, accessorMock.Object);
+        var httpContextAccessor = new HttpContextAccessorUtil(accessorMock.Object);
+        var userService = new UserServiceImpl(userDao, configuration, httpContextAccessor);
         return userService;
     }
 

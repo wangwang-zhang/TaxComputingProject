@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using TaxComputingProject.Dao;
 using TaxComputingProject.DBContext;
 using TaxComputingProject.Services;
+using TaxComputingProject.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ITaxComputingService, TaxComputingServiceImpl>();
 builder.Services.AddScoped<IUserDao, UserDaoImpl>();
 builder.Services.AddScoped<IUserService, UserServiceImpl>();
+builder.Services.AddScoped<HttpContextAccessorUtil>();
 builder.Services.AddDbContext<DataContext>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

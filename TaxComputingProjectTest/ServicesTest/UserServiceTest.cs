@@ -7,6 +7,7 @@ using TaxComputingProject.Dao;
 using TaxComputingProject.DBContext;
 using TaxComputingProject.Model;
 using TaxComputingProject.Services;
+using TaxComputingProject.Utils;
 using TaxComputingProjectTest.MockData;
 
 namespace TaxComputingProjectTest.ServicesTest;
@@ -76,7 +77,8 @@ public class UserServiceTest
     {
         var userDao = new UserDaoImpl(_context);
         var accessorMock = MockHttpContextAccessor();
-        var userService = new UserServiceImpl(userDao, MockConfiguration(), accessorMock.Object);
+        var httpContextAccessor = new HttpContextAccessorUtil(accessorMock.Object);
+        var userService = new UserServiceImpl(userDao, MockConfiguration(), httpContextAccessor);
         UserRegisterRequest user = new UserRegisterRequest
         {
             Email = "initial@example.com",
@@ -119,7 +121,8 @@ public class UserServiceTest
         var accessorMock = new Mock<IHttpContextAccessor>();
         var context = new DefaultHttpContext();
         accessorMock.Setup(a => a.HttpContext).Returns(context);
-        var userServiceImpl = new UserServiceImpl(userDaoImpl, configuration, accessorMock.Object);
+        var httpContextAccessor = new HttpContextAccessorUtil(accessorMock.Object);
+        var userServiceImpl = new UserServiceImpl(userDaoImpl, configuration, httpContextAccessor);
         return userServiceImpl;
     }
 

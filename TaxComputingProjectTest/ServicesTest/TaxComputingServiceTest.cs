@@ -8,6 +8,7 @@ using TaxComputingProject.Model;
 using TaxComputingProject.Services;
 using TaxComputingProjectTest.MockData;
 using Microsoft.Extensions.Configuration;
+using TaxComputingProject.Utils;
 
 namespace TaxComputingProjectTest.ServicesTest;
 
@@ -46,7 +47,8 @@ public class TaxComputingServiceTest
         };
         var userDao = new UserDaoImpl(_context);
         var accessorMock = MockHttpContextAccessor();
-        var taxComputingService = new TaxComputingServiceImpl(accessorMock.Object, userDao);
+        var httpContextAccessor = new HttpContextAccessorUtil(accessorMock.Object);
+        var taxComputingService = new TaxComputingServiceImpl(userDao, httpContextAccessor);
         taxComputingService.ComputeTaxBySalaryAndMonth(testSalaries);
         Assert.Equal(tax, taxComputingService.GetTaxOfMonth(1));
     }
@@ -91,7 +93,8 @@ public class TaxComputingServiceTest
 
         var userDao = new UserDaoImpl(_context);
         var accessorMock = MockHttpContextAccessor();
-        var taxComputingService = new TaxComputingServiceImpl(accessorMock.Object, userDao);
+        var httpContextAccessor = new HttpContextAccessorUtil(accessorMock.Object);
+        var taxComputingService = new TaxComputingServiceImpl(userDao, httpContextAccessor);
         taxComputingService.ComputeTaxBySalaryAndMonth(testSalaries);
         Assert.Equal(tax, taxComputingService.GetTaxOfMonth(month));
     }
@@ -144,8 +147,9 @@ public class TaxComputingServiceTest
     {
         var userDao = new UserDaoImpl(_context);
         var accessorMock = MockHttpContextAccessor();
-        var userService = new UserServiceImpl(userDao, MockConfiguration(), accessorMock.Object);
-        var taxComputingService = new TaxComputingServiceImpl(accessorMock.Object, userDao);
+        var httpContextAccessor = new HttpContextAccessorUtil(accessorMock.Object);
+        var userService = new UserServiceImpl(userDao, MockConfiguration(), httpContextAccessor);
+        var taxComputingService = new TaxComputingServiceImpl(userDao, httpContextAccessor);
         var user = new UserRegisterRequest
         {
             Email = "initial@example.com",
@@ -179,7 +183,8 @@ public class TaxComputingServiceTest
     {
         var userDao = new UserDaoImpl(_context);
         var accessorMock = MockHttpContextAccessor();
-        var taxComputingService = new TaxComputingServiceImpl(accessorMock.Object, userDao);
+        var httpContextAccessor = new HttpContextAccessorUtil(accessorMock.Object);
+        var taxComputingService = new TaxComputingServiceImpl(userDao, httpContextAccessor);
         var records = taxComputingService.GetAnnualTaxRecords();
         Assert.Null(records);
     }
@@ -189,8 +194,9 @@ public class TaxComputingServiceTest
     {
         var userDao = new UserDaoImpl(_context);
         var accessorMock = MockHttpContextAccessor();
-        var userService = new UserServiceImpl(userDao, MockConfiguration(), accessorMock.Object);
-        var taxComputingService = new TaxComputingServiceImpl(accessorMock.Object, userDao);
+        var httpContextAccessor = new HttpContextAccessorUtil(accessorMock.Object);
+        var userService = new UserServiceImpl(userDao, MockConfiguration(), httpContextAccessor);
+        var taxComputingService = new TaxComputingServiceImpl(userDao, httpContextAccessor);
         var user = new UserRegisterRequest
         {
             Email = "initial@example.com",
@@ -209,9 +215,10 @@ public class TaxComputingServiceTest
     public void Should_Return_Correct_Tax_When_Salary_Updated()
     {
         var userDao = new UserDaoImpl(_context);
-        var contextAccessor = MockHttpContextAccessor();
-        var userService = new UserServiceImpl(userDao, MockConfiguration(), contextAccessor.Object);
-        var taxComputingService = new TaxComputingServiceImpl(contextAccessor.Object, userDao);
+        var accessorMock = MockHttpContextAccessor();
+        var httpContextAccessor = new HttpContextAccessorUtil(accessorMock.Object);
+        var userService = new UserServiceImpl(userDao, MockConfiguration(), httpContextAccessor);
+        var taxComputingService = new TaxComputingServiceImpl(userDao, httpContextAccessor);
         var user = new UserRegisterRequest
         {
             Email = "initial@example.com",
@@ -267,16 +274,18 @@ public class TaxComputingServiceTest
         var accessorMock = MockHttpContextAccessor();
         Mock<DataContext> mockDbContext = MockDbContext();
         var mockUserDao = new UserDaoImpl(mockDbContext.Object);
-        ITaxComputingService taxComputingService = new TaxComputingServiceImpl(accessorMock.Object, mockUserDao);
+        var httpContextAccessor = new HttpContextAccessorUtil(accessorMock.Object);
+        ITaxComputingService taxComputingService = new TaxComputingServiceImpl(mockUserDao, httpContextAccessor);
         return taxComputingService;
     }
 
     private static ITaxComputingService MockUserTax()
     {
         var accessorMock = MockHttpContextAccessor();
+        var httpContextAccessor = new HttpContextAccessorUtil(accessorMock.Object);
         Mock<IUserDao> mockUserDao = new Mock<IUserDao>();
         mockUserDao.Setup(user => user.GetUserTaxById(It.IsAny<int>())).Returns(UserTax);
-        ITaxComputingService taxComputingService = new TaxComputingServiceImpl(accessorMock.Object, mockUserDao.Object);
+        ITaxComputingService taxComputingService = new TaxComputingServiceImpl(mockUserDao.Object, httpContextAccessor);
         return taxComputingService;
     }
 

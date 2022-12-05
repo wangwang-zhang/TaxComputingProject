@@ -1,25 +1,27 @@
 using System.Security.Claims;
 using TaxComputingProject.Dao;
 using TaxComputingProject.Model;
+using TaxComputingProject.Utils;
 
 namespace TaxComputingProject.Services;
 
 public class TaxComputingServiceImpl : ITaxComputingService
 {
     private readonly IUserDao _userDao;
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private HttpContextAccessorUtil _httpContextAccessorUtil;
+    
     const int SalaryThreshold = 5000;
 
-    public TaxComputingServiceImpl(IHttpContextAccessor httpContextAccessor, IUserDao userDao)
+    public TaxComputingServiceImpl( IUserDao userDao, HttpContextAccessorUtil httpContextAccessorUtil)
     {
-        _httpContextAccessor = httpContextAccessor;
         _userDao = userDao;
+        _httpContextAccessorUtil = httpContextAccessorUtil;
     }
 
     public void ComputeTaxBySalaryAndMonth(List<MonthSalary> salaries)
     {
         JudgeRepetitionMonth(salaries);
-        int id = GetId();
+        int id = _httpContextAccessorUtil.GetId();
         UserTax? userTax = _userDao.GetUserTaxById(id);
         var salariesOrderedByMonth = salaries.OrderBy(monthSalary => monthSalary.Month).ToList();
         if (userTax == null)
@@ -98,7 +100,7 @@ public class TaxComputingServiceImpl : ITaxComputingService
 
     private void SaveRecord(List<MonthSalary> salaries)
     {
-        int userid = GetId();
+        int userid = _httpContextAccessorUtil.GetId();
         UserTax? userTax = _userDao.GetUserTaxById(userid);
         if (userTax == null)
         {
@@ -144,7 +146,7 @@ public class TaxComputingServiceImpl : ITaxComputingService
 
     public double GetTaxOfMonth(int month)
     {
-        int userid = GetId();
+        int userid = _httpContextAccessorUtil.GetId();
         UserTax? userTax = _userDao.GetUserTaxById(userid);
         TaxOfMonth? taxOfMonth = userTax?.Taxes.FirstOrDefault(tax => tax.Month == month);
         if (taxOfMonth != null)
@@ -158,7 +160,7 @@ public class TaxComputingServiceImpl : ITaxComputingService
 
     public AnnualTaxRecords? GetAnnualTaxRecords()
     {
-        var id = GetId();
+        var id = _httpContextAccessorUtil.GetId();
         var user = _userDao.GetUserById(id);
         if (user == null) return null;
         var userTax = _userDao.GetUserTaxById(id);
@@ -194,18 +196,6 @@ public class TaxComputingServiceImpl : ITaxComputingService
                 (double)Deduction.SixthLevel),
             _ => new TaxLevel(TaxRates.SeventhLevel, (double)Deduction.SeventhLevel)
         };
-    }
-
-    private int GetId()
-    {
-        string result = string.Empty;
-        if (_httpContextAccessor.HttpContext != null)
-        {
-            result = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Sid);
-        }
-
-        int.TryParse(result, out var userId);
-        return userId;
     }
 
     private enum TotalSalary

@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
 using TaxComputingProject.Dao;
 using TaxComputingProject.Model;
+using TaxComputingProject.Utils;
 
 namespace TaxComputingProject.Services;
 
@@ -11,13 +12,13 @@ public class UserServiceImpl : IUserService
 {
     private readonly IUserDao _userDao;
     private readonly IConfiguration _configuration;
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly HttpContextAccessorUtil _httpContextAccessorUtil;
 
-    public UserServiceImpl(IUserDao userDao, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+    public UserServiceImpl(IUserDao userDao, IConfiguration configuration, HttpContextAccessorUtil httpContextAccessorUtil)
     {
         _userDao = userDao;
         _configuration = configuration;
-        _httpContextAccessor = httpContextAccessor;
+        _httpContextAccessorUtil = httpContextAccessorUtil;
     }
 
     public string AddUser(UserRegisterRequest request)
@@ -78,20 +79,8 @@ public class UserServiceImpl : IUserService
 
     public void UserUpdate(UserInfo userInfo)
     {
-        int id = GetId();
+        int id = _httpContextAccessorUtil.GetId();
         _userDao.UpdateUserInfo(id, userInfo);
-    }
-
-    private int GetId()
-    {
-        string result = string.Empty;
-        if (_httpContextAccessor.HttpContext != null)
-        {
-            result = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Sid);
-        }
-
-        int.TryParse(result, out var userId);
-        return userId;
     }
 
     private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
