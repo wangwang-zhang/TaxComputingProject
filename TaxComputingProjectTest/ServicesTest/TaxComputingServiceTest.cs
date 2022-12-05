@@ -78,6 +78,7 @@ public class TaxComputingServiceTest
     [InlineData(new double[] { 41000, 113000, 161000, 125000, 245000 }, 5, 72000)]
     [InlineData(new double[] { 41000, 113000, 161000, 125000, 245000, 305000 }, 6, 105000)]
     [InlineData(new double[] { 41000, 113000, 161000, 125000, 245000, 305000, 45000 }, 7, 18000)]
+    [InlineData(new[] { 39003.7, 41200.8, 50987.7 }, 3, 4598.77)]
     public void Should_Return_Correct_Tax_With_Multiple_Month_Of_Salary(double[] salaries, int month, double tax)
     {
         List<MonthSalary> testSalaries = new List<MonthSalary>();

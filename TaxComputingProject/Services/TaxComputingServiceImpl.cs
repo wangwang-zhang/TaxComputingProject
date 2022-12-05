@@ -92,7 +92,7 @@ public class TaxComputingServiceImpl : ITaxComputingService
             double tax = taxableSalary * taxLevel.TaxRate - taxLevel.Deduction;
             double preTaxes = monthSalaries.Take(count).Select(monthSalary => monthSalary.Tax).Sum();
             tax -= preTaxes;
-            monthSalaries[count].Tax = tax;
+            monthSalaries[count].Tax = Math.Round(tax,2);
         }
     }
 
@@ -171,7 +171,7 @@ public class TaxComputingServiceImpl : ITaxComputingService
         {
             Email = user.Email,
             TotalSalary = totalSalary,
-            TotalTax = totalTax,
+            TotalTax = Math.Round(totalTax, 2),
             MonthTaxes = monthTaxes
         };
         return records;
