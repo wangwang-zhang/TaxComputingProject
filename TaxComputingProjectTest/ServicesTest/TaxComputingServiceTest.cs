@@ -201,7 +201,40 @@ public class TaxComputingServiceTest
         var records = taxComputingService.GetAnnualTaxRecords();
         Assert.Null(records);
     }
-    
+
+    [Fact]
+    public void Should_Return_Correct_Tax_When_Salary_Updated()
+    {
+        var userDao = new UserDaoImpl(_context);
+        var contextAccessor = MockHttpContextAccessor();
+        var userService = new UserServiceImpl(userDao, MockConfiguration(), contextAccessor.Object);
+        var taxComputingService = new TaxComputingServiceImpl(contextAccessor.Object, userDao);
+        var user = new UserRegisterRequest
+        {
+            Email = "initial@example.com",
+            Phone = "13812344321",
+            Job = "teacher",
+            Address = "Xi'an",
+            Password = "123456789",
+            ConfirmPassword = "123456789"
+        };
+        userService.AddUser(user);
+        var monthSalaries = new List<MonthSalary>
+        {
+            new(){Month = 1, Salary = 41000},
+            new(){Month = 2, Salary = 41000},
+            new(){Month = 5, Salary = 41000}
+        };
+        taxComputingService.ComputeTaxBySalaryAndMonth(monthSalaries);
+        var monthSalariesLater = new List<MonthSalary>
+        {
+            new(){Month = 3, Salary = 41000},
+            new(){Month = 4, Salary = 41000},
+        };
+        taxComputingService.ComputeTaxBySalaryAndMonth(monthSalariesLater);
+        Assert.Equal(7200, taxComputingService.GetTaxOfMonth(5));
+    }
+
     private static Mock<IHttpContextAccessor> MockHttpContextAccessor()
     {
         var accessorMock = new Mock<IHttpContextAccessor>();
