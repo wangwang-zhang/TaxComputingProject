@@ -74,7 +74,7 @@ public class UserControllerTest
     [Fact]
     public void Should_Return_BadRequest_When_Updated_Email_Already_Existed()
     {
-        var userService = SetupServiceByMockHttpContextAccessor();
+        var userService = SetupService();
         var controller = new UserController(userService);
         UserInfo userInfo = new UserInfo
         {
@@ -87,7 +87,7 @@ public class UserControllerTest
         Assert.IsType<BadRequestObjectResult>(result);
     }
     
-    private UserServiceImpl SetupServiceByMockHttpContextAccessor()
+    private UserServiceImpl SetupService()
     {
         var mockContext = MockDbContext();
         var userDao = new UserDaoImpl(mockContext.Object);
@@ -108,19 +108,6 @@ public class UserControllerTest
         HttpContext httpContext = new DefaultHttpContext { User = userClaimsPrincipal };
         accessorMock.Setup(accessor => accessor.HttpContext).Returns(httpContext);
         return accessorMock;
-    }
-
-    private UserServiceImpl SetupService()
-    {
-        var mockContext = MockDbContext();
-        var userDao = new UserDaoImpl(mockContext.Object);
-        var configuration = MockConfiguration();
-        var accessorMock = new Mock<IHttpContextAccessor>();
-        var context = new DefaultHttpContext();
-        accessorMock.Setup(a => a.HttpContext).Returns(context);
-        var httpContextAccessor = new HttpContextAccessorUtil(accessorMock.Object);
-        var userService = new UserServiceImpl(userDao, configuration, httpContextAccessor);
-        return userService;
     }
 
     private static IConfiguration MockConfiguration()

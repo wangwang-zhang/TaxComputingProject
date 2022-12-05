@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using TaxComputingProject.Dao;
 using TaxComputingProject.Model;
 using TaxComputingProject.Utils;
@@ -8,7 +7,7 @@ namespace TaxComputingProject.Services;
 public class TaxComputingServiceImpl : ITaxComputingService
 {
     private readonly IUserDao _userDao;
-    private HttpContextAccessorUtil _httpContextAccessorUtil;
+    private readonly HttpContextAccessorUtil _httpContextAccessorUtil;
     
     const int SalaryThreshold = 5000;
 

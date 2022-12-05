@@ -155,9 +155,7 @@ public class UserServiceTest
         var mockContext = MockDbContext();
         var userDaoImpl = new UserDaoImpl(mockContext.Object);
         var configuration = MockConfiguration();
-        var accessorMock = new Mock<IHttpContextAccessor>();
-        var context = new DefaultHttpContext();
-        accessorMock.Setup(a => a.HttpContext).Returns(context);
+        var accessorMock = MockHttpContextAccessor();
         var httpContextAccessor = new HttpContextAccessorUtil(accessorMock.Object);
         var userServiceImpl = new UserServiceImpl(userDaoImpl, configuration, httpContextAccessor);
         return userServiceImpl;
