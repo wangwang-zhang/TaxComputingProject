@@ -80,6 +80,12 @@ public class UserServiceImpl : IUserService
     public void UserUpdate(UserInfo userInfo)
     {
         int id = _httpContextAccessorUtil.GetId();
+        User? user1 = _userDao.GetUserById(id);
+        User? user2 = _userDao.FindUserByEmail(userInfo.Email);
+        if (userInfo.Email != user1?.Email && user2 != null)
+        {
+            throw new Exception("This user email have already existed!");
+        } 
         _userDao.UpdateUserInfo(id, userInfo);
     }
 

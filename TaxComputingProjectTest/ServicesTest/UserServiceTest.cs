@@ -100,6 +100,43 @@ public class UserServiceTest
         User? result = userDao.FindUserByEmail(userInfo.Email);
         Assert.NotNull(result);
     }
+    
+    [Fact]
+    public void Should_Throw_Exception_When_Updated_Email_Have_Already_Existed()
+    {
+        var userDao = new UserDaoImpl(_context);
+        var accessorMock = MockHttpContextAccessor();
+        var httpContextAccessor = new HttpContextAccessorUtil(accessorMock.Object);
+        var userService = new UserServiceImpl(userDao, MockConfiguration(), httpContextAccessor);
+        var firstUser = new UserRegisterRequest
+        {
+            Email = "initial@example.com",
+            Phone = "13812344321",
+            Job = "teacher",
+            Address = "Xi'an",
+            Password = "123456789",
+            ConfirmPassword = "123456789"
+        };
+        var secondUser = new UserRegisterRequest
+        {
+            Email = "same@example.com",
+            Phone = "13812344321",
+            Job = "teacher",
+            Address = "Xi'an",
+            Password = "123456789",
+            ConfirmPassword = "123456789"
+        };
+        userService.AddUser(firstUser);
+        userService.AddUser(secondUser);
+        var userInfo = new UserInfo
+        {
+            Email = "same@example.com",
+            Address = "New York",
+            Job = "doctor",
+            Phone = "15524367856"
+        };
+        Assert.Throws<Exception>(() => userService.UserUpdate(userInfo));
+    }
 
     private static Mock<IHttpContextAccessor> MockHttpContextAccessor()
     {
