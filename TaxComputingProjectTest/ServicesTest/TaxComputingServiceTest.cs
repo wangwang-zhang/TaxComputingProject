@@ -167,9 +167,15 @@ public class TaxComputingServiceTest
         };
         taxComputingService.ComputeTaxBySalaryAndMonth(monthSalaries);
         var records = taxComputingService.GetAnnualTaxRecords();
+        var monthTaxes = records?.MonthTaxes?.ToList();
         Assert.NotNull(records);
         Assert.Equal(82000, records?.TotalSalary);
         Assert.Equal(4680, records?.TotalTax);
+        if (monthTaxes != null)
+        {
+            Assert.Equal(41000, monthTaxes[0].Salary);
+            Assert.Equal(41000, monthTaxes[1].Salary);
+        }
     }
 
     [Fact]

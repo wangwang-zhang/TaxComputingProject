@@ -166,7 +166,7 @@ public class TaxComputingServiceImpl : ITaxComputingService
         var totalSalary = userTax.Taxes.Select(tax => tax.Salary).Sum();
         var totalTax = userTax.Taxes.Select(tax => tax.Tax).Sum();
         var monthTaxes = userTax.Taxes
-            .Select(taxOfMonth => new MonthTax { Month = taxOfMonth.Month, Tax = taxOfMonth.Tax }).ToList();
+            .Select(taxOfMonth => new MonthTax { Month = taxOfMonth.Month, Salary = taxOfMonth.Salary, Tax = taxOfMonth.Tax }).ToList();
         var records = new AnnualTaxRecords
         {
             Email = user.Email,
