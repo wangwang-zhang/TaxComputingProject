@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaxComputingProject.Model;
 using TaxComputingProject.Services;
+using TaxComputingProject.Utils;
 
 namespace TaxComputingProject.Controllers;
 
@@ -54,7 +55,8 @@ public class UserController : ControllerBase
     {
         try
         {
-            _userService.UserUpdate(userInfo);
+            var id = HttpContextAccessorUtil.GetId();
+            _userService.UserUpdate(id, userInfo);
         }
         catch (Exception e)
         {

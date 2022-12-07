@@ -17,7 +17,6 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ITaxComputingService, TaxComputingServiceImpl>();
 builder.Services.AddScoped<IUserDao, UserDaoImpl>();
 builder.Services.AddScoped<IUserService, UserServiceImpl>();
-builder.Services.AddScoped<HttpContextAccessorUtil>();
 builder.Services.AddDbContext<DataContext>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

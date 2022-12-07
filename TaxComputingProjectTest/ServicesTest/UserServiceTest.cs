@@ -1,5 +1,3 @@
-using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Moq;
@@ -7,7 +5,6 @@ using TaxComputingProject.Dao;
 using TaxComputingProject.DBContext;
 using TaxComputingProject.Model;
 using TaxComputingProject.Services;
-using TaxComputingProject.Utils;
 using TaxComputingProjectTest.MockData;
 
 namespace TaxComputingProjectTest.ServicesTest;
@@ -76,9 +73,7 @@ public class UserServiceTest
     public void Should_Return_NotNull_When_Find_User_By_Updated_Email()
     {
         var userDao = new UserDaoImpl(_context);
-        var accessorMock = MockHttpContextAccessor();
-        var httpContextAccessor = new HttpContextAccessorUtil(accessorMock.Object);
-        var userService = new UserServiceImpl(userDao, MockConfiguration(), httpContextAccessor);
+        var userService = new UserServiceImpl(userDao, MockConfiguration());
         UserRegisterRequest user = new UserRegisterRequest
         {
             Email = "initial@example.com",
@@ -96,7 +91,7 @@ public class UserServiceTest
             Job = "doctor",
             Phone = "15524367856"
         };
-        userService.UserUpdate(userInfo);
+        userService.UserUpdate(1, userInfo);
         User? result = userDao.FindUserByEmail(userInfo.Email);
         Assert.NotNull(result);
     }
@@ -105,9 +100,7 @@ public class UserServiceTest
     public void Should_Throw_Exception_When_Updated_Email_Have_Already_Existed()
     {
         var userDao = new UserDaoImpl(_context);
-        var accessorMock = MockHttpContextAccessor();
-        var httpContextAccessor = new HttpContextAccessorUtil(accessorMock.Object);
-        var userService = new UserServiceImpl(userDao, MockConfiguration(), httpContextAccessor);
+        var userService = new UserServiceImpl(userDao, MockConfiguration());
         var firstUser = new UserRegisterRequest
         {
             Email = "initial@example.com",
@@ -135,19 +128,7 @@ public class UserServiceTest
             Job = "doctor",
             Phone = "15524367856"
         };
-        Assert.Throws<Exception>(() => userService.UserUpdate(userInfo));
-    }
-
-    private static Mock<IHttpContextAccessor> MockHttpContextAccessor()
-    {
-        var accessorMock = new Mock<IHttpContextAccessor>();
-        var userClaimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new[]
-        {
-            new Claim(ClaimTypes.Sid, "1"),
-        }, "mock"));
-        HttpContext httpContext = new DefaultHttpContext { User = userClaimsPrincipal };
-        accessorMock.Setup(accessor => accessor.HttpContext).Returns(httpContext);
-        return accessorMock;
+        Assert.Throws<Exception>(() => userService.UserUpdate(1, userInfo));
     }
 
     private UserServiceImpl SetupService()
@@ -155,9 +136,7 @@ public class UserServiceTest
         var mockContext = MockDbContext();
         var userDaoImpl = new UserDaoImpl(mockContext.Object);
         var configuration = MockConfiguration();
-        var accessorMock = MockHttpContextAccessor();
-        var httpContextAccessor = new HttpContextAccessorUtil(accessorMock.Object);
-        var userServiceImpl = new UserServiceImpl(userDaoImpl, configuration, httpContextAccessor);
+        var userServiceImpl = new UserServiceImpl(userDaoImpl, configuration);
         return userServiceImpl;
     }
 

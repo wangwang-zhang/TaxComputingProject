@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaxComputingProject.Model;
 using TaxComputingProject.Services;
+using TaxComputingProject.Utils;
 
 namespace TaxComputingProject.Controllers;
 
@@ -23,7 +24,8 @@ public class TaxComputingController : ControllerBase
             return BadRequest(new { errorMessage = "The input is empty!" });
         try
         {
-            _taxComputingService.ComputeAndSaveTax(monthSalaries);
+            var id = HttpContextAccessorUtil.GetId();
+            _taxComputingService.ComputeAndSaveTax(id, monthSalaries);
             return Ok("Saved taxes successfully!");
         }
         catch (ArgumentException e)
@@ -42,7 +44,8 @@ public class TaxComputingController : ControllerBase
 
         try
         {
-            var taxOfMonth = _taxComputingService.GetTaxOfMonth(month);
+            var id = HttpContextAccessorUtil.GetId();
+            var taxOfMonth = _taxComputingService.GetTaxOfMonth(id, month);
             return Ok(taxOfMonth);
         }
         catch (BadHttpRequestException e)
@@ -54,7 +57,8 @@ public class TaxComputingController : ControllerBase
     [HttpGet("AnnualTaxRecords"), Authorize]
     public ActionResult GetAnnualTaxRecords()
     {
-        var taxRecords = _taxComputingService.GetAnnualTaxRecords();
+        var id = HttpContextAccessorUtil.GetId();
+        var taxRecords = _taxComputingService.GetAnnualTaxRecords(id);
         return Ok(taxRecords);
     }
 }

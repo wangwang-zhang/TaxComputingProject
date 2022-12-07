@@ -1,5 +1,3 @@
-using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -9,7 +7,6 @@ using TaxComputingProject.Dao;
 using TaxComputingProject.DBContext;
 using TaxComputingProject.Model;
 using TaxComputingProject.Services;
-using TaxComputingProject.Utils;
 using TaxComputingProjectTest.MockData;
 
 namespace TaxComputingProjectTest.ControllerTest;
@@ -92,22 +89,8 @@ public class UserControllerTest
         var mockContext = MockDbContext();
         var userDao = new UserDaoImpl(mockContext.Object);
         var configuration = MockConfiguration();
-        var accessorMock = MockHttpContextAccessor();
-        var httpContextAccessor = new HttpContextAccessorUtil(accessorMock.Object);
-        var userService = new UserServiceImpl(userDao, configuration, httpContextAccessor);
+        var userService = new UserServiceImpl(userDao, configuration);
         return userService;
-    }
-    
-    private static Mock<IHttpContextAccessor> MockHttpContextAccessor()
-    {
-        var accessorMock = new Mock<IHttpContextAccessor>();
-        var userClaimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new[]
-        {
-            new Claim(ClaimTypes.Sid, "1"),
-        }, "mock"));
-        HttpContext httpContext = new DefaultHttpContext { User = userClaimsPrincipal };
-        accessorMock.Setup(accessor => accessor.HttpContext).Returns(httpContext);
-        return accessorMock;
     }
 
     private static IConfiguration MockConfiguration()

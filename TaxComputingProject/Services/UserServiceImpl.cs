@@ -4,7 +4,6 @@ using System.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
 using TaxComputingProject.Dao;
 using TaxComputingProject.Model;
-using TaxComputingProject.Utils;
 
 namespace TaxComputingProject.Services;
 
@@ -12,13 +11,11 @@ public class UserServiceImpl : IUserService
 {
     private readonly IUserDao _userDao;
     private readonly IConfiguration _configuration;
-    private readonly HttpContextAccessorUtil _httpContextAccessorUtil;
 
-    public UserServiceImpl(IUserDao userDao, IConfiguration configuration, HttpContextAccessorUtil httpContextAccessorUtil)
+    public UserServiceImpl( IUserDao userDao, IConfiguration configuration )
     {
         _userDao = userDao;
         _configuration = configuration;
-        _httpContextAccessorUtil = httpContextAccessorUtil;
     }
 
     public string AddUser(UserRegisterRequest request)
@@ -77,11 +74,10 @@ public class UserServiceImpl : IUserService
         return CreateToken(user);
     }
 
-    public void UserUpdate(UserInfo userInfo)
+    public void UserUpdate(int id, UserInfo userInfo)
     {
-        int id = _httpContextAccessorUtil.GetId();
-        User? user1 = _userDao.GetUserById(id);
-        User? user2 = _userDao.FindUserByEmail(userInfo.Email);
+        var user1 = _userDao.GetUserById(id);
+        var user2 = _userDao.FindUserByEmail(userInfo.Email);
         if (userInfo.Email != user1?.Email && user2 != null)
         {
             throw new Exception("This user email have already existed!");

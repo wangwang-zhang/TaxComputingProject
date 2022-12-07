@@ -16,7 +16,7 @@ public class TaxComputingControllerTest
     public void Should_Return_Ok_When_Get_MonthOfTax_Correctly(int month)
     {
         var mockService = new Mock<ITaxComputingService>();
-        mockService.Setup(user => user.GetTaxOfMonth(It.IsIn(1, 6, 12))).Returns(It.IsAny<double>());
+        mockService.Setup(user => user.GetTaxOfMonth(1, It.IsIn(1, 6, 12))).Returns(It.IsAny<double>());
         var taxComputingController = new TaxComputingController(mockService.Object);
         var result = taxComputingController.GetMonthOfTax(month);
         Assert.IsType<OkObjectResult>(result);
@@ -66,7 +66,7 @@ public class TaxComputingControllerTest
     {
         var mockService = new Mock<ITaxComputingService>();
         AnnualTaxRecords annualTaxRecords = new AnnualTaxRecords();
-        mockService.Setup(tax => tax.GetAnnualTaxRecords()).Returns(annualTaxRecords);
+        mockService.Setup(tax => tax.GetAnnualTaxRecords(It.IsAny<int>())).Returns(annualTaxRecords);
         var taxComputingController = new TaxComputingController(mockService.Object);
         var result = taxComputingController.GetAnnualTaxRecords();
         Assert.IsType<OkObjectResult>(result);

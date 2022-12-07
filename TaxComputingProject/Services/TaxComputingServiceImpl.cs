@@ -7,22 +7,20 @@ namespace TaxComputingProject.Services;
 public class TaxComputingServiceImpl : ITaxComputingService
 {
     private readonly IUserDao _userDao;
-    private readonly HttpContextAccessorUtil _httpContextAccessorUtil;
     
     const int SalaryThreshold = 5000;
 
-    public TaxComputingServiceImpl( IUserDao userDao, HttpContextAccessorUtil httpContextAccessorUtil)
+    public TaxComputingServiceImpl( IUserDao userDao )
     {
         _userDao = userDao;
-        _httpContextAccessorUtil = httpContextAccessorUtil;
     }
 
-    public void ComputeAndSaveTax(List<MonthSalary> salaries)
+    public void ComputeAndSaveTax(int id, List<MonthSalary> salaries)
     {
         JudgeRepetitionMonth(salaries);
-        var prepareMonthSalaries = PrepareMonthSalaries(salaries);
+        var prepareMonthSalaries = PrepareMonthSalaries(id, salaries);
         ComputeTaxOfMonth(prepareMonthSalaries);
-        SaveRecord(prepareMonthSalaries);
+        SaveRecord(id, prepareMonthSalaries);
     }
 
     private static void JudgeRepetitionMonth(List<MonthSalary> salaries)
@@ -37,9 +35,8 @@ public class TaxComputingServiceImpl : ITaxComputingService
         }
     }
 
-    private List<MonthSalary> PrepareMonthSalaries(List<MonthSalary> salaries)
+    private List<MonthSalary> PrepareMonthSalaries(int id, List<MonthSalary> salaries)
     {
-        var id = _httpContextAccessorUtil.GetId();
         var userTax = _userDao.GetUserTaxById(id);
         if (userTax == null)
         {
@@ -76,13 +73,12 @@ public class TaxComputingServiceImpl : ITaxComputingService
         }
     }
 
-    private void SaveRecord(List<MonthSalary> salaries)
+    private void SaveRecord(int id, List<MonthSalary> salaries)
     {
-        var userid = _httpContextAccessorUtil.GetId();
-        var userTax = _userDao.GetUserTaxById(userid);
+        var userTax = _userDao.GetUserTaxById(id);
         if (userTax == null)
         {
-            userTax = CreateUserTax(salaries, userid);
+            userTax = CreateUserTax(salaries, id);
             _userDao.AddUserTax(userTax);
         }
         else
@@ -122,10 +118,9 @@ public class TaxComputingServiceImpl : ITaxComputingService
         return userTax;
     }
 
-    public double GetTaxOfMonth(int month)
+    public double GetTaxOfMonth(int id, int month)
     {
-        int userid = _httpContextAccessorUtil.GetId();
-        UserTax? userTax = _userDao.GetUserTaxById(userid);
+        UserTax? userTax = _userDao.GetUserTaxById(id);
         TaxOfMonth? taxOfMonth = userTax?.Taxes.FirstOrDefault(tax => tax.Month == month);
         if (taxOfMonth != null)
         {
@@ -136,9 +131,8 @@ public class TaxComputingServiceImpl : ITaxComputingService
         throw new BadHttpRequestException("The month of tax is not existed!");
     }
 
-    public AnnualTaxRecords? GetAnnualTaxRecords()
+    public AnnualTaxRecords? GetAnnualTaxRecords(int id)
     {
-        var id = _httpContextAccessorUtil.GetId();
         var user = _userDao.GetUserById(id);
         if (user == null) return null;
         var userTax = _userDao.GetUserTaxById(id);

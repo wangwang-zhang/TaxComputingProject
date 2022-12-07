@@ -2,21 +2,15 @@ using System.Security.Claims;
 
 namespace TaxComputingProject.Utils;
 
-public class HttpContextAccessorUtil
+public static class HttpContextAccessorUtil
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
-
-    public HttpContextAccessorUtil(IHttpContextAccessor httpContextAccessor)
+    public static int GetId()
     {
-        _httpContextAccessor = httpContextAccessor;
-    }
-
-    public int GetId()
-    {
+        var httpContextAccessor = new HttpContextAccessor();
         string result = string.Empty;
-        if (_httpContextAccessor.HttpContext != null)
+        if (httpContextAccessor.HttpContext != null)
         {
-            result = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Sid);
+            result = httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Sid);
         }
 
         int.TryParse(result, out var userId);

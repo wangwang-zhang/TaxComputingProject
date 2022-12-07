@@ -8,19 +8,19 @@ public static class TestMockData
     {
         new()
         {
-            Email = "Tom@email.com", PasswordHash = new byte[32], PasswordSalt = new byte[32],
+            Id = 1, Email = "Tom@email.com", PasswordHash = new byte[32], PasswordSalt = new byte[32],
             VerificationToken = "testToken",
             VerifiedAt = null
         },
         new()
         {
-            Email = "Amy@email.com", PasswordHash = new byte[32], PasswordSalt = new byte[32],
+            Id = 2, Email = "Amy@email.com", PasswordHash = new byte[32], PasswordSalt = new byte[32],
             VerificationToken = "testTokenTwo",
             VerifiedAt = null
         },
         new()
         {
-            Email = "Bob@email.com", PasswordHash = new byte[32], PasswordSalt = new byte[32],
+            Id = 3, Email = "Bob@email.com", PasswordHash = new byte[32], PasswordSalt = new byte[32],
             VerificationToken = "testTokenThree",
             VerifiedAt = null
         },
