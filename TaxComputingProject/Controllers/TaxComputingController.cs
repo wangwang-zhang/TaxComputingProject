@@ -23,7 +23,7 @@ public class TaxComputingController : ControllerBase
             return BadRequest(new { errorMessage = "The input is empty!" });
         try
         {
-            _taxComputingService.ComputeTaxBySalaryAndMonth(monthSalaries);
+            _taxComputingService.ComputeAndSaveTax(monthSalaries);
             return Ok("Saved taxes successfully!");
         }
         catch (ArgumentException e)

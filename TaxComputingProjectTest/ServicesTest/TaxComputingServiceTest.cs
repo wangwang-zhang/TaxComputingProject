@@ -49,7 +49,7 @@ public class TaxComputingServiceTest
         var accessorMock = MockHttpContextAccessor();
         var httpContextAccessor = new HttpContextAccessorUtil(accessorMock.Object);
         var taxComputingService = new TaxComputingServiceImpl(userDao, httpContextAccessor);
-        taxComputingService.ComputeTaxBySalaryAndMonth(testSalaries);
+        taxComputingService.ComputeAndSaveTax(testSalaries);
         Assert.Equal(tax, taxComputingService.GetTaxOfMonth(1));
     }
 
@@ -95,7 +95,7 @@ public class TaxComputingServiceTest
         var accessorMock = MockHttpContextAccessor();
         var httpContextAccessor = new HttpContextAccessorUtil(accessorMock.Object);
         var taxComputingService = new TaxComputingServiceImpl(userDao, httpContextAccessor);
-        taxComputingService.ComputeTaxBySalaryAndMonth(testSalaries);
+        taxComputingService.ComputeAndSaveTax(testSalaries);
         Assert.Equal(tax, taxComputingService.GetTaxOfMonth(month));
     }
 
@@ -139,7 +139,7 @@ public class TaxComputingServiceTest
             }
         };
         var taxComputingService = MockService();
-        Assert.Throws<ArgumentException>(() => taxComputingService.ComputeTaxBySalaryAndMonth(monthSalaries));
+        Assert.Throws<ArgumentException>(() => taxComputingService.ComputeAndSaveTax(monthSalaries));
     }
 
     [Fact]
@@ -165,7 +165,7 @@ public class TaxComputingServiceTest
             new() { Month = 1, Salary = 41000, Tax = 1080 },
             new() { Month = 2, Salary = 41000, Tax = 3600 }
         };
-        taxComputingService.ComputeTaxBySalaryAndMonth(monthSalaries);
+        taxComputingService.ComputeAndSaveTax(monthSalaries);
         var records = taxComputingService.GetAnnualTaxRecords();
         var monthTaxes = records?.MonthTaxes?.ToList();
         Assert.NotNull(records);
@@ -235,13 +235,13 @@ public class TaxComputingServiceTest
             new(){Month = 2, Salary = 41000},
             new(){Month = 5, Salary = 41000}
         };
-        taxComputingService.ComputeTaxBySalaryAndMonth(monthSalaries);
+        taxComputingService.ComputeAndSaveTax(monthSalaries);
         var monthSalariesLater = new List<MonthSalary>
         {
             new(){Month = 3, Salary = 41000},
             new(){Month = 4, Salary = 41000},
         };
-        taxComputingService.ComputeTaxBySalaryAndMonth(monthSalariesLater);
+        taxComputingService.ComputeAndSaveTax(monthSalariesLater);
         Assert.Equal(7200, taxComputingService.GetTaxOfMonth(5));
     }
 

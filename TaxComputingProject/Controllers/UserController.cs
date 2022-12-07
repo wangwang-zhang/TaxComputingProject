@@ -31,9 +31,9 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("verify")]
-    public IActionResult Verify(string token)
+    public IActionResult Verify(string activationCode)
     {
-        _userService.AddVerify(token);
+        _userService.AddVerify(activationCode);
         return Ok("User verified! :)");
     }
 

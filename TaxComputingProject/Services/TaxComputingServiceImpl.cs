@@ -17,7 +17,7 @@ public class TaxComputingServiceImpl : ITaxComputingService
         _httpContextAccessorUtil = httpContextAccessorUtil;
     }
 
-    public void ComputeTaxBySalaryAndMonth(List<MonthSalary> salaries)
+    public void ComputeAndSaveTax(List<MonthSalary> salaries)
     {
         JudgeRepetitionMonth(salaries);
         var prepareMonthSalaries = PrepareMonthSalaries(salaries);
