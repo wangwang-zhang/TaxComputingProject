@@ -12,6 +12,25 @@ namespace TaxComputingProjectTest.ServicesTest;
 public class UserServiceTest
 {
     private readonly DataContext _context;
+    private const int MockUserId = 1;
+
+    private readonly UserRegisterRequest _testMockUser = new()
+    {
+        Email = "initial@example.com",
+        Phone = "13812344321",
+        Job = "teacher",
+        Address = "Xi'an",
+        Password = "123456789",
+        ConfirmPassword = "123456789"
+    };
+
+    private readonly UserInfo _userUpdateMockInfo = new()
+    {
+        Email = "Updated@example.com",
+        Address = "New York",
+        Job = "doctor",
+        Phone = "15524367856"
+    };
 
     public UserServiceTest()
     {
@@ -74,61 +93,22 @@ public class UserServiceTest
     {
         var userDao = new UserDaoImpl(_context);
         var userService = new UserServiceImpl(userDao, MockConfiguration());
-        UserRegisterRequest user = new UserRegisterRequest
-        {
-            Email = "initial@example.com",
-            Phone = "13812344321",
-            Job = "teacher",
-            Address = "Xi'an",
-            Password = "123456789",
-            ConfirmPassword = "123456789"
-        };
-        userService.AddUser(user);
-        UserInfo userInfo = new UserInfo()
-        {
-            Email = "Updated@example.com",
-            Address = "New York",
-            Job = "doctor",
-            Phone = "15524367856"
-        };
-        userService.UserUpdate(1, userInfo);
-        User? result = userDao.FindUserByEmail(userInfo.Email);
+        userService.AddUser(_testMockUser);
+        userService.UserUpdate(MockUserId, _userUpdateMockInfo);
+        var result = userDao.FindUserByEmail(_userUpdateMockInfo.Email);
         Assert.NotNull(result);
     }
-    
+
     [Fact]
     public void Should_Throw_Exception_When_Updated_Email_Have_Already_Existed()
     {
         var userDao = new UserDaoImpl(_context);
         var userService = new UserServiceImpl(userDao, MockConfiguration());
-        var firstUser = new UserRegisterRequest
-        {
-            Email = "initial@example.com",
-            Phone = "13812344321",
-            Job = "teacher",
-            Address = "Xi'an",
-            Password = "123456789",
-            ConfirmPassword = "123456789"
-        };
-        var secondUser = new UserRegisterRequest
-        {
-            Email = "same@example.com",
-            Phone = "13812344321",
-            Job = "teacher",
-            Address = "Xi'an",
-            Password = "123456789",
-            ConfirmPassword = "123456789"
-        };
-        userService.AddUser(firstUser);
-        userService.AddUser(secondUser);
-        var userInfo = new UserInfo
-        {
-            Email = "same@example.com",
-            Address = "New York",
-            Job = "doctor",
-            Phone = "15524367856"
-        };
-        Assert.Throws<Exception>(() => userService.UserUpdate(1, userInfo));
+        userService.AddUser(_testMockUser);
+        _testMockUser.Email = "same@example.com";
+        userService.AddUser(_testMockUser);
+        _userUpdateMockInfo.Email = "same@example.com";
+        Assert.Throws<Exception>(() => userService.UserUpdate(MockUserId, _userUpdateMockInfo));
     }
 
     private UserServiceImpl SetupService()

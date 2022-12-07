@@ -13,6 +13,7 @@ namespace TaxComputingProjectTest.ServicesTest;
 public class TaxComputingServiceTest
 {
     private readonly DataContext _context;
+    private const int MockUserId = 1;
 
     public TaxComputingServiceTest()
     {
@@ -45,8 +46,8 @@ public class TaxComputingServiceTest
         };
         var userDao = new UserDaoImpl(_context);
         var taxComputingService = new TaxComputingServiceImpl(userDao);
-        taxComputingService.ComputeAndSaveTax(1, testSalaries);
-        Assert.Equal(tax, taxComputingService.GetTaxOfMonth(1, 1));
+        taxComputingService.ComputeAndSaveTax(MockUserId, testSalaries);
+        Assert.Equal(tax, taxComputingService.GetTaxOfMonth(MockUserId, 1));
     }
 
     [Theory]
@@ -89,8 +90,8 @@ public class TaxComputingServiceTest
 
         var userDao = new UserDaoImpl(_context);
         var taxComputingService = new TaxComputingServiceImpl(userDao);
-        taxComputingService.ComputeAndSaveTax(1, testSalaries);
-        Assert.Equal(tax, taxComputingService.GetTaxOfMonth(1, month));
+        taxComputingService.ComputeAndSaveTax(MockUserId, testSalaries);
+        Assert.Equal(tax, taxComputingService.GetTaxOfMonth(MockUserId, month));
     }
 
     [Theory]
@@ -100,7 +101,7 @@ public class TaxComputingServiceTest
     public void Should_Return_Correct_TaxOfMonth_By_Month(int month, double tax)
     {
         ITaxComputingService taxComputingService = MockUserTax();
-        double taxOfMonth = taxComputingService.GetTaxOfMonth(1, month);
+        double taxOfMonth = taxComputingService.GetTaxOfMonth(MockUserId, month);
         Assert.Equal(tax, taxOfMonth);
     }
 
@@ -111,7 +112,7 @@ public class TaxComputingServiceTest
     public void Should_Throw_Exception_When_Month_Tax_Not_Exist(int month)
     {
         ITaxComputingService taxComputingService = MockUserTax();
-        Assert.Throws<BadHttpRequestException>(() => taxComputingService.GetTaxOfMonth(1, month));
+        Assert.Throws<BadHttpRequestException>(() => taxComputingService.GetTaxOfMonth(MockUserId, month));
     }
 
     [Fact]
@@ -133,7 +134,7 @@ public class TaxComputingServiceTest
             }
         };
         var taxComputingService = MockService();
-        Assert.Throws<ArgumentException>(() => taxComputingService.ComputeAndSaveTax(1, monthSalaries));
+        Assert.Throws<ArgumentException>(() => taxComputingService.ComputeAndSaveTax(MockUserId, monthSalaries));
     }
 
     [Fact]
@@ -178,7 +179,7 @@ public class TaxComputingServiceTest
         var records = taxComputingService.GetAnnualTaxRecords(1);
         Assert.Null(records);
     }
-    
+
     [Fact]
     public void Should_Return_Null_If_UserTax_Not_Existed_When_Get_AnnualTaxRecords()
     {
@@ -217,18 +218,18 @@ public class TaxComputingServiceTest
         userService.AddUser(user);
         var monthSalaries = new List<MonthSalary>
         {
-            new(){Month = 1, Salary = 41000},
-            new(){Month = 2, Salary = 41000},
-            new(){Month = 5, Salary = 41000}
+            new() { Month = 1, Salary = 41000 },
+            new() { Month = 2, Salary = 41000 },
+            new() { Month = 5, Salary = 41000 }
         };
-        taxComputingService.ComputeAndSaveTax(1, monthSalaries);
+        taxComputingService.ComputeAndSaveTax(MockUserId, monthSalaries);
         var monthSalariesLater = new List<MonthSalary>
         {
-            new(){Month = 3, Salary = 41000},
-            new(){Month = 4, Salary = 41000},
+            new() { Month = 3, Salary = 41000 },
+            new() { Month = 4, Salary = 41000 },
         };
-        taxComputingService.ComputeAndSaveTax(1, monthSalariesLater);
-        Assert.Equal(1080, taxComputingService.GetTaxOfMonth(1, 1));
+        taxComputingService.ComputeAndSaveTax(MockUserId, monthSalariesLater);
+        Assert.Equal(1080, taxComputingService.GetTaxOfMonth(MockUserId, 1));
     }
 
     private static IConfiguration MockConfiguration()
