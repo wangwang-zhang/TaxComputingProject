@@ -72,7 +72,7 @@ public class TaxComputingServiceImpl : ITaxComputingService
             double tax = taxableSalary * taxLevel.TaxRate - taxLevel.Deduction;
             double preTaxes = monthSalaries.Take(count).Select(monthSalary => monthSalary.Tax).Sum();
             tax -= preTaxes;
-            monthSalaries[count].Tax = Math.Round(tax,2);
+            monthSalaries[count].Tax = MyRound(tax,2);
         }
     }
 
@@ -151,12 +151,17 @@ public class TaxComputingServiceImpl : ITaxComputingService
         {
             Email = user.Email,
             TotalSalary = totalSalary,
-            TotalTax = Math.Round(totalTax, 2),
+            TotalTax = MyRound(totalTax, 2),
             MonthTaxes = monthTaxes
         };
         return records;
     }
 
+    private static double MyRound(double input, int digits)
+    {
+        return Math.Round(input, digits);
+    }
+    
     public TaxLevel MatchTaxRateAndDeductionBySalary(double salary)
     {
         return salary switch
