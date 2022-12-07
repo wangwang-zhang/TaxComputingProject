@@ -74,15 +74,15 @@ public class UserServiceImpl : IUserService
         return CreateToken(user);
     }
 
-    public void UserUpdate(int id, UserInfo userInfo)
+    public void UserUpdate(int id, UserInfo userUpdateInfo)
     {
-        var user1 = _userDao.GetUserById(id);
-        var user2 = _userDao.FindUserByEmail(userInfo.Email);
-        if (userInfo.Email != user1?.Email && user2 != null)
+        var currentUser = _userDao.GetUserById(id);
+        var userWithSameEmail = _userDao.FindUserByEmail(userUpdateInfo.Email);
+        if (userUpdateInfo.Email != currentUser?.Email && userWithSameEmail != null)
         {
             throw new Exception("This user email have already existed!");
         } 
-        _userDao.UpdateUserInfo(id, userInfo);
+        _userDao.UpdateUserInfo(id, userUpdateInfo);
     }
 
     private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
