@@ -20,17 +20,9 @@ public class TaxComputingServiceImpl : ITaxComputingService
     public void ComputeTaxBySalaryAndMonth(List<MonthSalary> salaries)
     {
         JudgeRepetitionMonth(salaries);
-        int id = _httpContextAccessorUtil.GetId();
-        UserTax? userTax = _userDao.GetUserTaxById(id);
-        var salariesOrderedByMonth = salaries.OrderBy(monthSalary => monthSalary.Month).ToList();
-        if (userTax == null)
-        {
-            FirstSaveSalary(salariesOrderedByMonth);
-        }
-        else
-        {
-            LaterSaveSalary(userTax, salariesOrderedByMonth);
-        }
+        var prepareMonthSalaries = PrepareMonthSalaries(salaries);
+        ComputeTaxOfMonth(prepareMonthSalaries);
+        SaveRecord(prepareMonthSalaries);
     }
 
     private static void JudgeRepetitionMonth(List<MonthSalary> salaries)
@@ -45,36 +37,23 @@ public class TaxComputingServiceImpl : ITaxComputingService
         }
     }
 
-    private void LaterSaveSalary(UserTax userTax, List<MonthSalary> salariesOrderedByMonth)
+    private List<MonthSalary> PrepareMonthSalaries(List<MonthSalary> salaries)
     {
-        List<TaxOfMonth> existedTaxOfMonths = userTax.Taxes.ToList();
-        var months = salariesOrderedByMonth.Select(monthSalary => monthSalary.Month).ToList();
-        foreach (var month in months)
+        var id = _httpContextAccessorUtil.GetId();
+        var userTax = _userDao.GetUserTaxById(id);
+        if (userTax == null)
         {
-            existedTaxOfMonths = existedTaxOfMonths.Where(monthSalary => monthSalary.Month != month).ToList();
+            return salaries.OrderBy(monthSalary => monthSalary.Month).ToList();
         }
+        var taxOfMonthsInDatabase = userTax.Taxes.ToList();
+        var monthsNewlyInput = salaries.Select(monthSalary => monthSalary.Month).ToList();
+        taxOfMonthsInDatabase = monthsNewlyInput.Aggregate(taxOfMonthsInDatabase,
+            (current, month) => current.Where(taxOfMonth => taxOfMonth.Month != month).ToList());
 
+        salaries.AddRange(taxOfMonthsInDatabase.Select(existedItem =>
+            new MonthSalary { Month = existedItem.Month, Salary = existedItem.Salary, Tax = 0 }));
         _userDao.RemoveTaxItem(userTax.Id);
-        foreach (var existedItem in existedTaxOfMonths)
-        {
-            var monthSalary = new MonthSalary
-            {
-                Month = existedItem.Month,
-                Salary = existedItem.Salary,
-                Tax = 0
-            };
-            salariesOrderedByMonth.Add(monthSalary);
-        }
-
-        salariesOrderedByMonth = salariesOrderedByMonth.OrderBy(monthSalary => monthSalary.Month).ToList();
-        ComputeTaxOfMonth(salariesOrderedByMonth);
-        SaveRecord(salariesOrderedByMonth);
-    }
-
-    private void FirstSaveSalary(List<MonthSalary> salariesOrderedByMonth)
-    {
-        ComputeTaxOfMonth(salariesOrderedByMonth);
-        SaveRecord(salariesOrderedByMonth);
+        return salaries.OrderBy(monthSalary => monthSalary.Month).ToList();
     }
 
     private void ComputeTaxOfMonth(List<MonthSalary> monthSalaries)
@@ -99,8 +78,8 @@ public class TaxComputingServiceImpl : ITaxComputingService
 
     private void SaveRecord(List<MonthSalary> salaries)
     {
-        int userid = _httpContextAccessorUtil.GetId();
-        UserTax? userTax = _userDao.GetUserTaxById(userid);
+        var userid = _httpContextAccessorUtil.GetId();
+        var userTax = _userDao.GetUserTaxById(userid);
         if (userTax == null)
         {
             userTax = CreateUserTax(salaries, userid);
