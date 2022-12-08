@@ -141,7 +141,10 @@ public class TaxComputingServiceImpl : ITaxComputingService
             throw new Exception("User is not exist");
         }
         var userTax = _userDao.GetUserTaxById(id);
-        if (userTax == null) return null;
+        if (userTax == null)
+        {
+            throw new Exception("The user has no tax record");
+        }
         var totalSalary = userTax.Taxes.Select(tax => tax.Salary).Sum();
         var totalTax = userTax.Taxes.Select(tax => tax.Tax).Sum();
         var monthTaxes = userTax.Taxes
