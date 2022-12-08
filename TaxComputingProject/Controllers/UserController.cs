@@ -41,13 +41,15 @@ public class UserController : ControllerBase
     [HttpPost("login")]
     public IActionResult Login(UserLoginRequest request)
     {
-        var result = _userService.UserLogin(request);
-        if (result.Length == 0)
+        try
         {
-            return BadRequest("User not found or not verified");
+            var result = _userService.UserLogin(request);
+            return Ok($"Welcome back, {request.Email}! :), Your Token is\n {result}");
         }
-
-        return Ok($"Welcome back, {request.Email}! :), Your Token is\n {result}");
+        catch (Exception e)
+        {
+            return BadRequest(new { errorMessage = e.Message });
+        }
     }
 
     [HttpPut("userInfoUpdate"), Authorize]

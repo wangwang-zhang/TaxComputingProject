@@ -44,6 +44,23 @@ public class UserControllerTest
     }
 
     [Fact]
+    public void should_Return_BadRequest_If_User_Existed_Already_When_User_Login()
+    {
+        var userService = SetupService();
+        var userLoginRequest = new UserLoginRequest
+        {
+            Email = "Henry@email.com",
+            Password = "password",
+        };
+        var controller = new UserController(userService);
+        var result = controller.Login(userLoginRequest);
+        Assert.IsType<BadRequestObjectResult>(result);
+        var objectResult = result as BadRequestObjectResult;
+        var value = objectResult?.Value;
+        Assert.Equal("{ errorMessage = The user is not existed! }", value?.ToString());
+    }
+
+    [Fact]
     public void Should_Return_OK_When_Token_Is_Verified()
     {
         var userService = SetupService();
