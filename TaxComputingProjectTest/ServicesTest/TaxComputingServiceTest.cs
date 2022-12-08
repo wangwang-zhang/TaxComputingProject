@@ -173,12 +173,11 @@ public class TaxComputingServiceTest
     }
 
     [Fact]
-    public void Should_Return_Null_If_User_Not_Existed_When_Get_AnnualTaxRecords()
+    public void Should_Throw_Exception_If_User_Not_Existed_When_Get_AnnualTaxRecords()
     {
         var userDao = new UserDaoImpl(_context);
         var taxComputingService = new TaxComputingServiceImpl(userDao);
-        var records = taxComputingService.GetAnnualTaxRecords(1);
-        Assert.Null(records);
+        Assert.Throws<Exception>(() => taxComputingService.GetAnnualTaxRecords(1));
     }
 
     [Fact]

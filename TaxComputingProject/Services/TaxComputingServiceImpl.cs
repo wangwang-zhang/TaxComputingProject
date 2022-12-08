@@ -136,7 +136,10 @@ public class TaxComputingServiceImpl : ITaxComputingService
     public AnnualTaxRecords? GetAnnualTaxRecords(int id)
     {
         var user = _userDao.GetUserById(id);
-        if (user == null) return null;
+        if (user == null)
+        {
+            throw new Exception("User is not exist");
+        }
         var userTax = _userDao.GetUserTaxById(id);
         if (userTax == null) return null;
         var totalSalary = userTax.Taxes.Select(tax => tax.Salary).Sum();
