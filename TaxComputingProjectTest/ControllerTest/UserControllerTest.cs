@@ -154,6 +154,17 @@ public class UserControllerTest
         var result = controller.Update(userInfo);
         Assert.IsType<BadRequestObjectResult>(result);
     }
+
+    [Fact]
+    public void Should_Return_BadRequest_If_User_Not_Exist_When_Verify_User()
+    {
+        var userService = SetupService();
+        var controller = new UserController(userService);
+        var result = controller.Verify("");
+        Assert.IsType<BadRequestObjectResult>(result);
+        var objectResult = result as BadRequestObjectResult;
+        Assert.Equal("{ errorMessage = The user is not exist! }", objectResult?.Value?.ToString());
+    }
     
     private UserServiceImpl SetupService()
     {

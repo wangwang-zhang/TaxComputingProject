@@ -34,8 +34,15 @@ public class UserController : ControllerBase
     [HttpPost("verify")]
     public IActionResult Verify(string activationCode)
     {
-        _userService.AddVerify(activationCode);
-        return Ok("User verified! :)");
+        try
+        {
+            _userService.AddVerify(activationCode);
+            return Ok("User verified! :)");
+        }
+        catch (Exception e)
+        {
+            return new BadRequestObjectResult(new { errorMessage = e.Message });
+        }
     }
 
     [HttpPost("login")]
