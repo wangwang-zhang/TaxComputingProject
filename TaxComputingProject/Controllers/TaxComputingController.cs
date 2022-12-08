@@ -11,6 +11,7 @@ namespace TaxComputingProject.Controllers;
 public class TaxComputingController : ControllerBase
 {
     private readonly ITaxComputingService _taxComputingService;
+    private readonly int _id = HttpContextAccessorUtil.GetId();
 
     public TaxComputingController(ITaxComputingService taxComputingService)
     {
@@ -24,8 +25,7 @@ public class TaxComputingController : ControllerBase
             return BadRequest(new { errorMessage = "The input is empty!" });
         try
         {
-            var id = HttpContextAccessorUtil.GetId();
-            _taxComputingService.ComputeAndSaveTax(id, monthSalaries);
+            _taxComputingService.ComputeAndSaveTax(_id, monthSalaries);
             return Ok("Saved taxes successfully!");
         }
         catch (ArgumentException e)
@@ -44,8 +44,7 @@ public class TaxComputingController : ControllerBase
 
         try
         {
-            var id = HttpContextAccessorUtil.GetId();
-            var taxOfMonth = _taxComputingService.GetTaxOfMonth(id, month);
+            var taxOfMonth = _taxComputingService.GetTaxOfMonth(_id, month);
             return Ok(taxOfMonth);
         }
         catch (BadHttpRequestException e)
@@ -57,8 +56,7 @@ public class TaxComputingController : ControllerBase
     [HttpGet("AnnualTaxRecords"), Authorize]
     public ActionResult GetAnnualTaxRecords()
     {
-        var id = HttpContextAccessorUtil.GetId();
-        var taxRecords = _taxComputingService.GetAnnualTaxRecords(id);
+        var taxRecords = _taxComputingService.GetAnnualTaxRecords(_id);
         return Ok(taxRecords);
     }
 }
