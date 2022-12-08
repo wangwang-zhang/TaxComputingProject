@@ -13,6 +13,17 @@ namespace TaxComputingProjectTest.ControllerTest;
 
 public class UserControllerTest
 {
+    private readonly DataContext _context;
+
+    public UserControllerTest()
+    {
+        DbContextOptionsBuilder dbOptions = new DbContextOptionsBuilder()
+            .UseInMemoryDatabase(
+                Guid.NewGuid().ToString()
+            );
+        _context = new DataContext(dbOptions.Options);
+    }
+    
     [Fact]
     public void Should_Return_BadRequest_When_User_Existed_Already()
     {
@@ -75,6 +86,32 @@ public class UserControllerTest
         var objectResult = result as BadRequestObjectResult;
         var value = objectResult?.Value;
         Assert.Equal("{ errorMessage = The password is not correct! }", value?.ToString());
+    }
+    
+    [Fact]
+    public void should_Return_BadRequest_If_User_Not_Activated_When_User_Login()
+    {
+        var userDao = new UserDaoImpl(_context);
+        var configuration = MockConfiguration();
+        var userService = new UserServiceImpl(userDao, configuration);
+        var userRegisterRequest = new UserRegisterRequest
+        {
+            Email = "Tom@email.com",
+            Password = "password",
+            ConfirmPassword = "password"
+        };
+        userService.AddUser(userRegisterRequest);
+        var userLoginRequest = new UserLoginRequest
+        {
+            Email = "Tom@email.com",
+            Password = "password",
+        };
+        var controller = new UserController(userService);
+        var result = controller.Login(userLoginRequest);
+        Assert.IsType<BadRequestObjectResult>(result);
+        var objectResult = result as BadRequestObjectResult;
+        var value = objectResult?.Value;
+        Assert.Equal("{ errorMessage = The user is not activated }", value?.ToString());
     }
 
     [Fact]
