@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using TaxComputingProject.Controllers;
@@ -59,6 +60,21 @@ public class TaxComputingControllerTest
         var taxComputingController = new TaxComputingController(mockService.Object);
         var result = taxComputingController.GetMonthOfTax(month);
         Assert.IsType<BadRequestObjectResult>(result);
+    }
+
+    [Fact]
+    public void Should_Return_BadRequest_When_No_User_Tax_Record()
+    {
+        var mockService = new Mock<TaxComputingServiceImpl>();
+        mockService.Setup(taxComputingService =>
+                taxComputingService.GetTaxOfMonth(It.IsAny<int>(), It.IsAny<int>()))
+            .Throws<BadHttpRequestException>(() =>
+                throw new BadHttpRequestException("The user has no tax record"));
+        var taxComputingController = new TaxComputingController(mockService.Object);
+        var result = taxComputingController.GetMonthOfTax(1);
+        Assert.IsType<BadRequestObjectResult>(result);
+        var objectResult = result as BadRequestObjectResult;
+        Assert.Equal("{ errorMessage = The user has no tax record }", objectResult?.Value?.ToString());
     }
 
     [Fact]

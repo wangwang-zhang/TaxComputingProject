@@ -1,6 +1,5 @@
 using TaxComputingProject.Dao;
 using TaxComputingProject.Model;
-using TaxComputingProject.Utils;
 
 namespace TaxComputingProject.Services;
 
@@ -14,6 +13,7 @@ public class TaxComputingServiceImpl : ITaxComputingService
     {
         _userDao = userDao;
     }
+    public TaxComputingServiceImpl() {}
 
     public void ComputeAndSaveTax(int id, List<MonthSalary> salaries)
     {
@@ -118,7 +118,7 @@ public class TaxComputingServiceImpl : ITaxComputingService
         return userTax;
     }
 
-    public double GetTaxOfMonth(int id, int month)
+    public virtual double GetTaxOfMonth(int id, int month)
     {
         var userTax = _userDao.GetUserTaxById(id);
         if (userTax == null)
