@@ -11,11 +11,12 @@ namespace TaxComputingProject.Controllers;
 public class TaxComputingController : ControllerBase
 {
     private readonly ITaxComputingService _taxComputingService;
-    private readonly int _id = HttpContextAccessorUtil.GetId();
+    private readonly int _id;
 
     public TaxComputingController(ITaxComputingService taxComputingService)
     {
         _taxComputingService = taxComputingService;
+        _id = HttpContextAccessorUtil.GetId();
     }
 
     [HttpPost("recordTax"), Authorize]
