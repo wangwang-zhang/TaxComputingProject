@@ -87,30 +87,19 @@ public class TaxComputingControllerTest
         var result = taxComputingController.GetAnnualTaxRecords();
         Assert.IsType<OkObjectResult>(result);
     }
-    
-    [Fact]
-    public void Should_Return_BadRequest_If_No_User_When_Get_AnnualTaxRecords()
+
+    [Theory]
+    [InlineData("User is not exist")]
+    [InlineData("The user has no tax record")]
+    public void Should_Return_BadRequest_When_Get_AnnualTaxRecords_Failed(string exceptionMessage)
     {
         var mockService = new Mock<ITaxComputingService>();
         mockService.Setup(tax => tax.GetAnnualTaxRecords(It.IsAny<int>()))
-            .Throws<Exception>(()=> throw new Exception("User is not exist"));
+            .Throws<Exception>(() => throw new Exception(exceptionMessage));
         var taxComputingController = new TaxComputingController(mockService.Object);
         var result = taxComputingController.GetAnnualTaxRecords();
         Assert.IsType<BadRequestObjectResult>(result);
         var objectResult = result as BadRequestObjectResult;
-        Assert.Equal("{ errorMessage = User is not exist }", objectResult?.Value?.ToString());
-    }
-    
-    [Fact]
-    public void Should_Return_BadRequest_If_No_UserTax_When_Get_AnnualTaxRecords()
-    {
-        var mockService = new Mock<ITaxComputingService>();
-        mockService.Setup(tax => tax.GetAnnualTaxRecords(It.IsAny<int>()))
-            .Throws<Exception>(()=> throw new Exception("The user has no tax record"));
-        var taxComputingController = new TaxComputingController(mockService.Object);
-        var result = taxComputingController.GetAnnualTaxRecords();
-        Assert.IsType<BadRequestObjectResult>(result);
-        var objectResult = result as BadRequestObjectResult;
-        Assert.Equal("{ errorMessage = The user has no tax record }", objectResult?.Value?.ToString());
+        Assert.Equal("{ errorMessage = " + exceptionMessage + " }", objectResult?.Value?.ToString());
     }
 }
