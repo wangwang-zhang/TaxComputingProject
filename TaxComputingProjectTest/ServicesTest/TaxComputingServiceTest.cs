@@ -15,6 +15,16 @@ public class TaxComputingServiceTest
     private readonly DataContext _context;
     private const int MockUserId = 1;
 
+    private readonly UserRegisterRequest _mockRegisterUser = new()
+    {
+        Email = "initial@example.com",
+        Phone = "13812344321",
+        Job = "teacher",
+        Address = "Xi'an",
+        Password = "123456789",
+        ConfirmPassword = "123456789"
+    };
+
     public TaxComputingServiceTest()
     {
         DbContextOptionsBuilder dbOptions = new DbContextOptionsBuilder()
@@ -143,16 +153,7 @@ public class TaxComputingServiceTest
         var userDao = new UserDaoImpl(_context);
         var userService = new UserServiceImpl(userDao, MockConfiguration());
         var taxComputingService = new TaxComputingServiceImpl(userDao);
-        var user = new UserRegisterRequest
-        {
-            Email = "initial@example.com",
-            Phone = "13812344321",
-            Job = "teacher",
-            Address = "Xi'an",
-            Password = "123456789",
-            ConfirmPassword = "123456789"
-        };
-        userService.AddUser(user);
+        userService.AddUser(_mockRegisterUser);
         List<MonthSalary> monthSalaries = new List<MonthSalary>
         {
             new() { Month = 1, Salary = 41000, Tax = 1080 },
@@ -186,16 +187,7 @@ public class TaxComputingServiceTest
         var userDao = new UserDaoImpl(_context);
         var userService = new UserServiceImpl(userDao, MockConfiguration());
         var taxComputingService = new TaxComputingServiceImpl(userDao);
-        var user = new UserRegisterRequest
-        {
-            Email = "initial@example.com",
-            Phone = "13812344321",
-            Job = "teacher",
-            Address = "Xi'an",
-            Password = "123456789",
-            ConfirmPassword = "123456789"
-        };
-        userService.AddUser(user);
+        userService.AddUser(_mockRegisterUser);
         var records = taxComputingService.GetAnnualTaxRecords(1);
         Assert.Null(records);
     }
@@ -206,16 +198,7 @@ public class TaxComputingServiceTest
         var userDao = new UserDaoImpl(_context);
         var userService = new UserServiceImpl(userDao, MockConfiguration());
         var taxComputingService = new TaxComputingServiceImpl(userDao);
-        var user = new UserRegisterRequest
-        {
-            Email = "initial@example.com",
-            Phone = "13812344321",
-            Job = "teacher",
-            Address = "Xi'an",
-            Password = "123456789",
-            ConfirmPassword = "123456789"
-        };
-        userService.AddUser(user);
+        userService.AddUser(_mockRegisterUser);
         var monthSalaries = new List<MonthSalary>
         {
             new() { Month = 1, Salary = 41000 },
@@ -238,16 +221,7 @@ public class TaxComputingServiceTest
         var userDao = new UserDaoImpl(_context);
         var userService = new UserServiceImpl(userDao, MockConfiguration());
         var taxComputingService = new TaxComputingServiceImpl(userDao);
-        var user = new UserRegisterRequest
-        {
-            Email = "initial@example.com",
-            Phone = "13812344321",
-            Job = "teacher",
-            Address = "Xi'an",
-            Password = "123456789",
-            ConfirmPassword = "123456789"
-        };
-        userService.AddUser(user);
+        userService.AddUser(_mockRegisterUser);
         Assert.Throws<BadHttpRequestException>(() => taxComputingService.GetTaxOfMonth(MockUserId, 1));
     }
 
