@@ -43,14 +43,11 @@ public class UserServiceImpl : IUserService
     public bool AddVerify(string token)
     {
         var user = _userDao.FindUserByToken(token);
-        if (user != null)
-        {
-            user.VerifiedAt = DateTime.Now;
-            _userDao.SaveChanges();
-            return true;
-        }
+        if (user == null) throw new Exception("The user is not exist!");
+        user.VerifiedAt = DateTime.Now;
+        _userDao.SaveChanges();
+        return true;
 
-        return false;
     }
 
     public string UserLogin(UserLoginRequest request)

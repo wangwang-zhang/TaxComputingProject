@@ -110,6 +110,13 @@ public class UserServiceTest
         _userUpdateMockInfo.Email = "same@example.com";
         Assert.Throws<Exception>(() => userService.UserUpdate(MockUserId, _userUpdateMockInfo));
     }
+    
+    [Fact]
+    public void Should_Throw_Exception_If_User_Not_Exist_When_Verify_User()
+    {
+        var userService = SetupService();
+        Assert.Throws<Exception>(() => userService.AddVerify("fake"));
+    }
 
     private UserServiceImpl SetupService()
     {
