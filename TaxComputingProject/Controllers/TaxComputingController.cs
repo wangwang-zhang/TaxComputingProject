@@ -57,7 +57,14 @@ public class TaxComputingController : ControllerBase
     [HttpGet("AnnualTaxRecords"), Authorize]
     public ActionResult GetAnnualTaxRecords()
     {
-        var taxRecords = _taxComputingService.GetAnnualTaxRecords(_id);
-        return Ok(taxRecords);
+        try
+        {
+            var taxRecords = _taxComputingService.GetAnnualTaxRecords(_id);
+            return Ok(taxRecords);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(new { errorMessage = e.Message });
+        }
     }
 }
