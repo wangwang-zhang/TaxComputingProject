@@ -232,6 +232,25 @@ public class TaxComputingServiceTest
         Assert.Equal(1080, taxComputingService.GetTaxOfMonth(MockUserId, 1));
     }
 
+    [Fact]
+    public void Should_Throw_Exception_When_User_Has_No_Tax_Record()
+    {
+        var userDao = new UserDaoImpl(_context);
+        var userService = new UserServiceImpl(userDao, MockConfiguration());
+        var taxComputingService = new TaxComputingServiceImpl(userDao);
+        var user = new UserRegisterRequest
+        {
+            Email = "initial@example.com",
+            Phone = "13812344321",
+            Job = "teacher",
+            Address = "Xi'an",
+            Password = "123456789",
+            ConfirmPassword = "123456789"
+        };
+        userService.AddUser(user);
+        Assert.Throws<BadHttpRequestException>(() => taxComputingService.GetTaxOfMonth(MockUserId, 1));
+    }
+
     private static IConfiguration MockConfiguration()
     {
         var inMemorySettings = new Dictionary<string, string>

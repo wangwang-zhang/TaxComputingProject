@@ -120,15 +120,17 @@ public class TaxComputingServiceImpl : ITaxComputingService
 
     public double GetTaxOfMonth(int id, int month)
     {
-        UserTax? userTax = _userDao.GetUserTaxById(id);
-        TaxOfMonth? taxOfMonth = userTax?.Taxes.FirstOrDefault(tax => tax.Month == month);
-        if (taxOfMonth != null)
+        var userTax = _userDao.GetUserTaxById(id);
+        if (userTax == null)
+        {
+            throw new BadHttpRequestException("The user has no tax record");
+        }
+        var taxOfMonth = userTax.Taxes.FirstOrDefault(tax => tax.Month == month);
+        if (taxOfMonth == null) throw new BadHttpRequestException("The month of tax is not existed!");
         {
             var tax = taxOfMonth.Tax;
             return tax;
         }
-
-        throw new BadHttpRequestException("The month of tax is not existed!");
     }
 
     public AnnualTaxRecords? GetAnnualTaxRecords(int id)
