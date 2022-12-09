@@ -78,6 +78,32 @@ public class TaxComputingControllerTest
     }
 
     [Fact]
+    public void Should_Return_BadRequest_If_Duplicate_Months_Exist_When_SaveTaxByAccumulatedSalary()
+    {
+        var mockService = new Mock<ITaxComputingService>();
+        var monthSalaries = new List<MonthSalary>
+        {
+            new()
+            {
+                Month = 1,
+                Salary = 41000
+            },
+            new()
+            {
+                Month = 1,
+                Salary = 41000
+            }
+        };
+        mockService.Setup(tax => tax.ComputeAndSaveTax(It.IsAny<int>(), monthSalaries))
+            .Throws<ArgumentException>(() => throw new ArgumentException("There are duplicate months!"));
+        var taxComputingController = new TaxComputingController(mockService.Object);
+        var result = taxComputingController.SaveTaxByAccumulatedSalary(monthSalaries);
+        Assert.IsType<BadRequestObjectResult>(result);
+        var objectResult = result as BadRequestObjectResult;
+        Assert.Equal("{ errorMessage = There are duplicate months! }", objectResult?.Value?.ToString());
+    }
+
+    [Fact]
     public void Should_Return_OK_When_Get_AnnualTaxRecords_Successfully()
     {
         var mockService = new Mock<ITaxComputingService>();
