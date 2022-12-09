@@ -120,11 +120,17 @@ public class TaxComputingServiceImpl : ITaxComputingService
 
     public virtual double GetTaxOfMonth(int id, int month)
     {
+        if (month is < 1 or > 12)
+        {
+            throw new BadHttpRequestException("Month is not valid!");
+        }
+
         var userTax = _userDao.GetUserTaxById(id);
         if (userTax == null)
         {
             throw new BadHttpRequestException("The user has no tax record");
         }
+
         var taxOfMonth = userTax.Taxes.FirstOrDefault(tax => tax.Month == month);
         if (taxOfMonth == null) throw new BadHttpRequestException("The month of tax is not existed!");
         {

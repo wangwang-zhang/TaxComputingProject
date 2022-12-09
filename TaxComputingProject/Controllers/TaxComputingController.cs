@@ -38,11 +38,6 @@ public class TaxComputingController : ControllerBase
     [HttpGet("taxByMonth"), Authorize]
     public ActionResult GetMonthOfTax(int month)
     {
-        if (month is < 1 or > 12)
-        {
-            return BadRequest(new { errorMessage = "Month is not valid!" });
-        }
-
         try
         {
             var taxOfMonth = _taxComputingService.GetTaxOfMonth(_id, month);

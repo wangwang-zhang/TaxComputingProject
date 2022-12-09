@@ -9,7 +9,6 @@ namespace TaxComputingProjectTest.ControllerTest;
 
 public class TaxComputingControllerTest
 {
-    
     [Theory]
     [InlineData(-1)]
     [InlineData(0)]
@@ -17,6 +16,8 @@ public class TaxComputingControllerTest
     public void Should_Return_BadRequest_When_Request_Month_Not_Valid(int month)
     {
         var mockService = new Mock<ITaxComputingService>();
+        mockService.Setup(service => service.GetTaxOfMonth(It.IsAny<int>(), It.IsIn(-1, 0, 13)))
+            .Throws<BadHttpRequestException>(() => throw new BadHttpRequestException("Month is not valid!"));
         var taxComputingController = new TaxComputingController(mockService.Object);
         var result = taxComputingController.GetMonthOfTax(month);
         Assert.IsType<BadRequestObjectResult>(result);
