@@ -185,7 +185,7 @@ public class TaxComputingServiceTest
             new() { Month = 4, Salary = 41000 },
         };
         taxComputingService.ComputeAndSaveTax(MockUserId, monthSalariesLater);
-        Assert.Equal(1080, taxComputingService.GetTaxOfMonth(MockUserId, 1));
+        Assert.Equal(7200, taxComputingService.GetTaxOfMonth(MockUserId, 5));
     }
 
     [Fact]
