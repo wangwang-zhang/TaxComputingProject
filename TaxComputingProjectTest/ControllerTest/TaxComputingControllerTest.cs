@@ -11,6 +11,18 @@ public class TaxComputingControllerTest
 {
     
     [Theory]
+    [InlineData(-1)]
+    [InlineData(0)]
+    [InlineData(13)]
+    public void Should_Return_BadRequest_When_Request_Month_Not_Valid(int month)
+    {
+        var mockService = new Mock<ITaxComputingService>();
+        var taxComputingController = new TaxComputingController(mockService.Object);
+        var result = taxComputingController.GetMonthOfTax(month);
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
+    
+    [Theory]
     [InlineData(1)]
     [InlineData(6)]
     [InlineData(12)]
@@ -21,45 +33,6 @@ public class TaxComputingControllerTest
         var taxComputingController = new TaxComputingController(mockService.Object);
         var result = taxComputingController.GetMonthOfTax(month);
         Assert.IsType<OkObjectResult>(result);
-    }
-
-    [Fact]
-    public void Should_Return_BadRequest_When_Request_Failed()
-    {
-        var mockService = new Mock<ITaxComputingService>();
-        var taxComputingController = new TaxComputingController(mockService.Object);
-        List<MonthSalary> monthSalaries = new List<MonthSalary>();
-        var result = taxComputingController.SaveTaxByAccumulatedSalary(monthSalaries);
-        Assert.IsType<BadRequestObjectResult>(result);
-    }
-
-    [Fact]
-    public void Should_Return_Ok_When_Request_SaveTaxByAccumulatedSalary_Successfully()
-    {
-        var mockService = new Mock<ITaxComputingService>();
-        var taxComputingController = new TaxComputingController(mockService.Object);
-        List<MonthSalary> monthSalaries = new List<MonthSalary>
-        {
-            new()
-            {
-                Month = 1,
-                Salary = 41000
-            }
-        };
-        var result = taxComputingController.SaveTaxByAccumulatedSalary(monthSalaries);
-        Assert.IsType<OkObjectResult>(result);
-    }
-
-    [Theory]
-    [InlineData(-1)]
-    [InlineData(0)]
-    [InlineData(13)]
-    public void Should_Return_BadRequest_When_Request_Month_Not_Valid(int month)
-    {
-        var mockService = new Mock<ITaxComputingService>();
-        var taxComputingController = new TaxComputingController(mockService.Object);
-        var result = taxComputingController.GetMonthOfTax(month);
-        Assert.IsType<BadRequestObjectResult>(result);
     }
 
     [Fact]
@@ -75,6 +48,33 @@ public class TaxComputingControllerTest
         Assert.IsType<BadRequestObjectResult>(result);
         var objectResult = result as BadRequestObjectResult;
         Assert.Equal("{ errorMessage = The user has no tax record }", objectResult?.Value?.ToString());
+    }
+    
+    [Fact]
+    public void Should_Return_BadRequest_If_Input_is_Empty_When_SaveTaxByAccumulatedSalary()
+    {
+        var mockService = new Mock<ITaxComputingService>();
+        var taxComputingController = new TaxComputingController(mockService.Object);
+        var monthSalaries = new List<MonthSalary>();
+        var result = taxComputingController.SaveTaxByAccumulatedSalary(monthSalaries);
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
+
+    [Fact]
+    public void Should_Return_Ok_When_SaveTaxByAccumulatedSalary_Successfully()
+    {
+        var mockService = new Mock<ITaxComputingService>();
+        var taxComputingController = new TaxComputingController(mockService.Object);
+        var monthSalaries = new List<MonthSalary>
+        {
+            new()
+            {
+                Month = 1,
+                Salary = 41000
+            }
+        };
+        var result = taxComputingController.SaveTaxByAccumulatedSalary(monthSalaries);
+        Assert.IsType<OkObjectResult>(result);
     }
 
     [Fact]
