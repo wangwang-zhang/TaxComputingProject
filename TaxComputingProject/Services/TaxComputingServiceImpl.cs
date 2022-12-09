@@ -17,6 +17,10 @@ public class TaxComputingServiceImpl : ITaxComputingService
 
     public void ComputeAndSaveTax(int id, List<MonthSalary> salaries)
     {
+        if (salaries.Count == 0)
+        {
+            throw new ArgumentException("The input is empty!");
+        }
         JudgeRepetitionMonth(salaries);
         var prepareMonthSalaries = PrepareMonthSalaries(id, salaries);
         ComputeTaxOfMonth(prepareMonthSalaries);

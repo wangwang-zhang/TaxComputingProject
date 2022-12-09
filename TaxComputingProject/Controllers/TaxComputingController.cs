@@ -22,8 +22,6 @@ public class TaxComputingController : ControllerBase
     [HttpPost("recordTax"), Authorize]
     public IActionResult SaveTaxByAccumulatedSalary([FromBody] List<MonthSalary> monthSalaries)
     {
-        if (monthSalaries.Count == 0)
-            return BadRequest(new { errorMessage = "The input is empty!" });
         try
         {
             _taxComputingService.ComputeAndSaveTax(_id, monthSalaries);

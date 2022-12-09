@@ -55,10 +55,14 @@ public class TaxComputingControllerTest
     public void Should_Return_BadRequest_If_Input_is_Empty_When_SaveTaxByAccumulatedSalary()
     {
         var mockService = new Mock<ITaxComputingService>();
-        var taxComputingController = new TaxComputingController(mockService.Object);
         var monthSalaries = new List<MonthSalary>();
+        mockService.Setup(service => service.ComputeAndSaveTax(It.IsAny<int>(), monthSalaries))
+            .Throws<ArgumentException>(() => throw new ArgumentException("The input is empty!"));
+        var taxComputingController = new TaxComputingController(mockService.Object);
         var result = taxComputingController.SaveTaxByAccumulatedSalary(monthSalaries);
         Assert.IsType<BadRequestObjectResult>(result);
+        var objectResult = result as BadRequestObjectResult;
+        Assert.Equal("{ errorMessage = The input is empty! }", objectResult?.Value?.ToString());
     }
 
     [Fact]
