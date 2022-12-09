@@ -15,16 +15,6 @@ public class TaxComputingServiceTest
     private readonly DataContext _context;
     private const int MockUserId = 1;
 
-    private readonly UserRegisterRequest _mockRegisterUser = new()
-    {
-        Email = "initial@example.com",
-        Phone = "13812344321",
-        Job = "teacher",
-        Address = "Xi'an",
-        Password = "123456789",
-        ConfirmPassword = "123456789"
-    };
-
     public TaxComputingServiceTest()
     {
         DbContextOptionsBuilder dbOptions = new DbContextOptionsBuilder()
@@ -128,23 +118,8 @@ public class TaxComputingServiceTest
     [Fact]
     public void Should_Return_Exception_When_There_Are_Duplicate_Months()
     {
-        var monthSalaries = new List<MonthSalary>
-        {
-            new()
-            {
-                Month = 1,
-                Salary = 41000,
-                Tax = 1080
-            },
-            new()
-            {
-                Month = 1,
-                Salary = 41000,
-                Tax = 1080
-            }
-        };
         var taxComputingService = MockService();
-        Assert.Throws<ArgumentException>(() => taxComputingService.ComputeAndSaveTax(MockUserId, monthSalaries));
+        Assert.Throws<ArgumentException>(() => taxComputingService.ComputeAndSaveTax(MockUserId, TestMockData.MonthSalariesWithDuplicateMonths));
     }
 
     [Fact]
@@ -153,7 +128,7 @@ public class TaxComputingServiceTest
         var userDao = new UserDaoImpl(_context);
         var userService = new UserServiceImpl(userDao, MockConfiguration());
         var taxComputingService = new TaxComputingServiceImpl(userDao);
-        userService.AddUser(_mockRegisterUser);
+        userService.AddUser(TestMockData.MockRegisterUser);
         List<MonthSalary> monthSalaries = new List<MonthSalary>
         {
             new() { Month = 1, Salary = 41000, Tax = 1080 },
@@ -186,7 +161,7 @@ public class TaxComputingServiceTest
         var userDao = new UserDaoImpl(_context);
         var userService = new UserServiceImpl(userDao, MockConfiguration());
         var taxComputingService = new TaxComputingServiceImpl(userDao);
-        userService.AddUser(_mockRegisterUser);
+        userService.AddUser(TestMockData.MockRegisterUser);
         Assert.Throws<Exception>(() => taxComputingService.GetAnnualTaxRecords(1));
     }
 
@@ -196,7 +171,7 @@ public class TaxComputingServiceTest
         var userDao = new UserDaoImpl(_context);
         var userService = new UserServiceImpl(userDao, MockConfiguration());
         var taxComputingService = new TaxComputingServiceImpl(userDao);
-        userService.AddUser(_mockRegisterUser);
+        userService.AddUser(TestMockData.MockRegisterUser);
         var monthSalaries = new List<MonthSalary>
         {
             new() { Month = 1, Salary = 41000 },
@@ -219,7 +194,7 @@ public class TaxComputingServiceTest
         var userDao = new UserDaoImpl(_context);
         var userService = new UserServiceImpl(userDao, MockConfiguration());
         var taxComputingService = new TaxComputingServiceImpl(userDao);
-        userService.AddUser(_mockRegisterUser);
+        userService.AddUser(TestMockData.MockRegisterUser);
         Assert.Throws<BadHttpRequestException>(() => taxComputingService.GetTaxOfMonth(MockUserId, 1));
     }
 
@@ -246,7 +221,7 @@ public class TaxComputingServiceTest
     private static ITaxComputingService MockUserTax()
     {
         Mock<IUserDao> mockUserDao = new Mock<IUserDao>();
-        mockUserDao.Setup(user => user.GetUserTaxById(It.IsAny<int>())).Returns(UserTax);
+        mockUserDao.Setup(user => user.GetUserTaxById(It.IsAny<int>())).Returns(TestMockData.UserTaxes.First);
         ITaxComputingService taxComputingService = new TaxComputingServiceImpl(mockUserDao.Object);
         return taxComputingService;
     }
@@ -263,18 +238,4 @@ public class TaxComputingServiceTest
         mockContext.Setup(dataContext => dataContext.UserTaxes).Returns(mockSet.Object);
         return mockContext;
     }
-
-    private static readonly UserTax UserTax = new()
-    {
-        Id = 1,
-        UserId = 1,
-        Taxes = new List<TaxOfMonth>
-        {
-            new() { Id = 1, Month = 1, Salary = 41000, Tax = 1080 },
-            new() { Id = 2, Month = 2, Salary = 41000, Tax = 3600 },
-            new() { Id = 3, Month = 3, Salary = 41000, Tax = 3600 },
-            new() { Id = 4, Month = 4, Salary = 41000, Tax = 3600 },
-            new() { Id = 5, Month = 5, Salary = 41000, Tax = 7200 },
-        }
-    };
 }

@@ -42,4 +42,38 @@ public static class TestMockData
             }
         }
     }.AsQueryable();
+    
+    public static readonly List<MonthSalary> MonthSalariesWithDuplicateMonths = new List<MonthSalary>
+    {
+        new()
+        {
+            Month = 1,
+            Salary = 41000,
+            Tax = 1080
+        },
+        new()
+        {
+            Month = 1,
+            Salary = 41000,
+            Tax = 1080
+        }
+    };
+    
+    public static readonly UserRegisterRequest MockRegisterUser = new()
+    {
+        Email = "initial@example.com",
+        Phone = "13812344321",
+        Job = "teacher",
+        Address = "Xi'an",
+        Password = "123456789",
+        ConfirmPassword = "123456789"
+    };
+    
+    public static readonly UserInfo UserUpdateMockInfo = new()
+    {
+        Email = "Updated@example.com",
+        Address = "New York",
+        Job = "doctor",
+        Phone = "15524367856"
+    };
 }

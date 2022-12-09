@@ -14,24 +14,6 @@ public class UserServiceTest
     private readonly DataContext _context;
     private const int MockUserId = 1;
 
-    private readonly UserRegisterRequest _testMockUser = new()
-    {
-        Email = "initial@example.com",
-        Phone = "13812344321",
-        Job = "teacher",
-        Address = "Xi'an",
-        Password = "123456789",
-        ConfirmPassword = "123456789"
-    };
-
-    private readonly UserInfo _userUpdateMockInfo = new()
-    {
-        Email = "Updated@example.com",
-        Address = "New York",
-        Job = "doctor",
-        Phone = "15524367856"
-    };
-
     public UserServiceTest()
     {
         DbContextOptionsBuilder dbOptions = new DbContextOptionsBuilder()
@@ -93,9 +75,9 @@ public class UserServiceTest
     {
         var userDao = new UserDaoImpl(_context);
         var userService = new UserServiceImpl(userDao, MockConfiguration());
-        userService.AddUser(_testMockUser);
-        userService.UserUpdate(MockUserId, _userUpdateMockInfo);
-        var result = userDao.FindUserByEmail(_userUpdateMockInfo.Email);
+        userService.AddUser(TestMockData.MockRegisterUser);
+        userService.UserUpdate(MockUserId, TestMockData.UserUpdateMockInfo);
+        var result = userDao.FindUserByEmail(TestMockData.UserUpdateMockInfo.Email);
         Assert.NotNull(result);
     }
 
@@ -104,11 +86,11 @@ public class UserServiceTest
     {
         var userDao = new UserDaoImpl(_context);
         var userService = new UserServiceImpl(userDao, MockConfiguration());
-        userService.AddUser(_testMockUser);
-        _testMockUser.Email = "same@example.com";
-        userService.AddUser(_testMockUser);
-        _userUpdateMockInfo.Email = "same@example.com";
-        Assert.Throws<Exception>(() => userService.UserUpdate(MockUserId, _userUpdateMockInfo));
+        userService.AddUser(TestMockData.MockRegisterUser);
+        TestMockData.MockRegisterUser.Email = "same@example.com";
+        userService.AddUser(TestMockData.MockRegisterUser);
+        TestMockData.UserUpdateMockInfo.Email = "same@example.com";
+        Assert.Throws<Exception>(() => userService.UserUpdate(MockUserId, TestMockData.UserUpdateMockInfo));
     }
     
     [Fact]
