@@ -74,11 +74,31 @@ public class UserServiceImpl : IUserService
     public void UserUpdate(int id, UserInfo userUpdateInfo)
     {
         var currentUser = _userDao.GetUserById(id);
+        if (currentUser == null)
+        {
+            throw new Exception("The user is not existed!");
+        }
         var userWithSameEmail = _userDao.FindUserByEmail(userUpdateInfo.Email);
-        if (userUpdateInfo.Email != currentUser?.Email && userWithSameEmail != null)
+        if (userUpdateInfo.Email != currentUser.Email && userWithSameEmail != null)
         {
             throw new Exception("This user email have already existed!");
-        } 
+        }
+        if (userUpdateInfo.Email == "default@example.com")
+        {
+            userUpdateInfo.Email = currentUser.Email;
+        }
+        if (userUpdateInfo.Phone == string.Empty)
+        {
+            userUpdateInfo.Phone = currentUser.Phone;
+        }
+        if (userUpdateInfo.Job == string.Empty)
+        {
+            userUpdateInfo.Job = currentUser.Job;
+        }
+        if (userUpdateInfo.Address == string.Empty)
+        {
+            userUpdateInfo.Address = currentUser.Address;
+        }
         _userDao.UpdateUserInfo(id, userUpdateInfo);
     }
 

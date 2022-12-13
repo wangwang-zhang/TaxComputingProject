@@ -65,25 +65,11 @@ public class UserDaoImpl : IUserDao
         var user = _context.Users.FirstOrDefault(user => user.Id == id);
         if (user != null)
         {
-            if (userInfo.Email != "default@example.com")
-                user.Email = userInfo.Email;
-
-            if (userInfo.Address != string.Empty)
-            {
-                user.Address = userInfo.Address;
-            }
-
-            if (userInfo.Job != string.Empty)
-            {
-                user.Job = userInfo.Job;
-            }
-
-            if (userInfo.Phone != string.Empty)
-            {
-                user.Phone = userInfo.Phone;
-            }
+            user.Email = userInfo.Email;
+            user.Address = userInfo.Address;
+            user.Job = userInfo.Job;
+            user.Phone = userInfo.Phone;
         }
-
         _context.SaveChanges();
     }
 

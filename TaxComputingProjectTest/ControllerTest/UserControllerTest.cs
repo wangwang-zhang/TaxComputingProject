@@ -126,15 +126,16 @@ public class UserControllerTest
     [Fact]
     public void Should_Return_OK_When_Update_Successfully()
     {
-        var userService = SetupService();
-        var controller = new UserController(userService);
-        UserInfo userInfo = new UserInfo
+        var mockUserService = new Mock<IUserService>();
+        var userInfo = new UserInfo
         {
             Email = "update@email.com",
             Address = "Xi'an",
             Job = "doctor",
             Phone = "13526758976"
         };
+        mockUserService.Setup(user => user.UserUpdate(It.IsAny<int>(), userInfo));
+        var controller = new UserController(mockUserService.Object);
         var result = controller.Update(userInfo);
         Assert.IsType<OkObjectResult>(result);
     }
