@@ -124,6 +124,19 @@ public class UserControllerTest
     }
 
     [Fact]
+    public void Should_Return_BadRequest_If_User_Not_Exist_When_Update()
+    {
+        var mockUserService = new Mock<IUserService>();
+        mockUserService.Setup(user => user.UserUpdate(It.IsAny<int>(), It.IsAny<UserInfo>()))
+            .Throws<Exception>(() => throw new Exception("The user is not existed!"));
+        var userController = new UserController(mockUserService.Object);
+        var result = userController.Update(new UserInfo());
+        Assert.IsType<BadRequestObjectResult>(result);
+        var objectResult = result as BadRequestObjectResult;
+        Assert.Equal("{ errorMessage = The user is not existed! }", objectResult?.Value?.ToString());
+    }
+    
+    [Fact]
     public void Should_Return_OK_When_Update_Successfully()
     {
         var mockUserService = new Mock<IUserService>();
