@@ -46,16 +46,23 @@ public class UserDaoTest
     };
 
     [Fact]
-    public void Should_Return_True_When_User_Exist()
+    public void Should_Return_NotNull_If_User_Exist_When_FindUserByEmail()
     {
         var mockContext = MockContext();
         var userDao = new UserDaoImpl(mockContext.Object);
         Assert.NotNull(userDao.FindUserByEmail("Tom@email.com"));
+    }
+    
+    [Fact]
+    public void Should_Return_Null_If_User_Not_Exist_When_FindUserByEmail()
+    {
+        var mockContext = MockContext();
+        var userDao = new UserDaoImpl(mockContext.Object);
         Assert.Null(userDao.FindUserByEmail("Lucas@email.com"));
     }
 
     [Fact]
-    public void Should_Return_Correct_Count_When_Add_One_User()
+    public void Should_Return_Count_1_When_Added_One_User()
     {
         var userDao = new UserDaoImpl(_context);
         userDao.AddUser(_testUser);
@@ -80,7 +87,7 @@ public class UserDaoTest
     }
 
     [Fact]
-    public void Should_Return_Correct_UserTax_By_Id()
+    public void Should_Return_Correct_Tax_Count_When_GetUserTaxById()
     {
         var userDao = new UserDaoImpl(_context);
         userDao.AddUserTax(_testUserTax);
@@ -89,7 +96,7 @@ public class UserDaoTest
     }
 
     [Fact]
-    public void Should_Return_Zero_When_Remove_Tax_Items_By_Id()
+    public void Should_Return_Empty_Taxes_When_Removed_Tax_Items_By_Id()
     {
         var userDao = new UserDaoImpl(_context);
         userDao.AddUserTax(_testUserTax);
@@ -99,7 +106,7 @@ public class UserDaoTest
     }
 
     [Fact]
-    public void Should_Return_Non_Empty_User_When_Find_User_By_Updated_Info()
+    public void Should_Return_NotNull_When_Find_User_By_Updated_Info()
     {
         UserDaoImpl userDao = new UserDaoImpl(_context);
         userDao.AddUser(_testUser);
@@ -140,7 +147,7 @@ public class UserDaoTest
     }
 
     [Fact]
-    public void Should_Return_User_When_Find_User_By_Id_Successfully()
+    public void Should_Return_NotNull_When_Find_User_By_Id_Successfully()
     {
         UserDaoImpl userDao = new UserDaoImpl(_context);
         userDao.AddUser(_testUser);
@@ -148,7 +155,7 @@ public class UserDaoTest
         Assert.NotNull(user);
     }
 
-    private Mock<DataContext> MockContext()
+    private static Mock<DataContext> MockContext()
     {
         var mockSet = new Mock<DbSet<User>>();
         mockSet.As<IQueryable<User>>().Setup(m => m.Provider).Returns(TestMockData.Users.Provider);
