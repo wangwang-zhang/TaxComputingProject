@@ -54,7 +54,7 @@ public class UserServiceTest
     public void Should_Return_True_When_Verified_Correctly()
     {
         var userService = SetupService();
-        var result = userService.AddVerify("testToken");
+        var result = userService.AddVerify("testActivationCode");
         Assert.True(result);
     }
 

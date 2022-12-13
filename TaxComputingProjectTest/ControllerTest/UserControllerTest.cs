@@ -25,7 +25,7 @@ public class UserControllerTest
     }
     
     [Fact]
-    public void Should_Return_BadRequest_When_User_Existed_Already()
+    public void Should_Return_BadRequest_If_User_Existed_Already_When_Register()
     {
         var userService = SetupService();
         var userRegisterRequest = new UserRegisterRequest
@@ -40,7 +40,7 @@ public class UserControllerTest
     }
 
     [Fact]
-    public void Should_Return_OK_When_User_Not_Existed()
+    public void Should_Return_OK_If_User_Not_Existed_When_Register()
     {
         var userService = SetupService();
         var userRegisterRequest = new UserRegisterRequest
@@ -55,7 +55,7 @@ public class UserControllerTest
     }
 
     [Fact]
-    public void should_Return_BadRequest_If_User_Existed_Already_When_User_Login()
+    public void Should_Return_BadRequest_If_User_Not_Existed_When_Login()
     {
         var userService = SetupService();
         var userLoginRequest = new UserLoginRequest
@@ -63,16 +63,15 @@ public class UserControllerTest
             Email = "Henry@email.com",
             Password = "password",
         };
-        var controller = new UserController(userService);
-        var result = controller.Login(userLoginRequest);
+        var userController = new UserController(userService);
+        var result = userController.Login(userLoginRequest);
         Assert.IsType<BadRequestObjectResult>(result);
         var objectResult = result as BadRequestObjectResult;
-        var value = objectResult?.Value;
-        Assert.Equal("{ errorMessage = The user is not existed! }", value?.ToString());
+        Assert.Equal("{ errorMessage = The user is not existed! }", objectResult?.Value?.ToString());
     }
     
     [Fact]
-    public void should_Return_BadRequest_If_Password_Is_Not_Correct_When_User_Login()
+    public void should_Return_BadRequest_If_Password_Is_Not_Correct_When_Login()
     {
         var userService = SetupService();
         var userLoginRequest = new UserLoginRequest
@@ -80,8 +79,8 @@ public class UserControllerTest
             Email = "Tom@email.com",
             Password = "",
         };
-        var controller = new UserController(userService);
-        var result = controller.Login(userLoginRequest);
+        var userController = new UserController(userService);
+        var result = userController.Login(userLoginRequest);
         Assert.IsType<BadRequestObjectResult>(result);
         var objectResult = result as BadRequestObjectResult;
         var value = objectResult?.Value;
@@ -115,11 +114,11 @@ public class UserControllerTest
     }
 
     [Fact]
-    public void Should_Return_OK_When_Token_Is_Verified()
+    public void Should_Return_OK_When_ActivationCode_Is_Verified()
     {
         var userService = SetupService();
         var controller = new UserController(userService);
-        var result = controller.Verify("testToken");
+        var result = controller.Verify("testActivationCode");
         Assert.IsType<OkObjectResult>(result);
     }
 
@@ -154,10 +153,10 @@ public class UserControllerTest
     }
 
     [Fact]
-    public void Should_Return_BadRequest_When_Updated_Email_Already_Existed()
+    public void Should_Return_BadRequest_If_Email_Already_Existed_When_Update()
     {
         var userService = SetupService();
-        var controller = new UserController(userService);
+        var userController = new UserController(userService);
         UserInfo userInfo = new UserInfo
         {
             Email = "Amy@email.com",
@@ -165,7 +164,7 @@ public class UserControllerTest
             Job = "doctor",
             Phone = "13526758976"
         };
-        var result = controller.Update(userInfo);
+        var result = userController.Update(userInfo);
         Assert.IsType<BadRequestObjectResult>(result);
     }
 
@@ -180,7 +179,7 @@ public class UserControllerTest
         Assert.Equal("{ errorMessage = The user is not exist! }", objectResult?.Value?.ToString());
     }
     
-    private UserServiceImpl SetupService()
+    private static UserServiceImpl SetupService()
     {
         var mockContext = MockDbContext();
         var userDao = new UserDaoImpl(mockContext.Object);
@@ -201,7 +200,7 @@ public class UserControllerTest
         return configuration;
     }
 
-    private Mock<DataContext> MockDbContext()
+    private static Mock<DataContext> MockDbContext()
     {
         var mockSet = new Mock<DbSet<User>>();
         mockSet.As<IQueryable<User>>().Setup(m => m.Provider).Returns(TestMockData.Users.Provider);

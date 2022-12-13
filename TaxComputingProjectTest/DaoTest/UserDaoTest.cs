@@ -67,7 +67,7 @@ public class UserDaoTest
     {
         var mockContext = MockContext();
         var userDao = new UserDaoImpl(mockContext.Object);
-        var user = userDao.FindUserByToken("testToken");
+        var user = userDao.FindUserByToken("testActivationCode");
         Assert.Equal("Tom@email.com", user?.Email);
     }
 

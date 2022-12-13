@@ -9,19 +9,19 @@ public static class TestMockData
         new()
         {
             Id = 1, Email = "Tom@email.com", PasswordHash = new byte[32], PasswordSalt = new byte[32],
-            VerificationToken = "testToken",
+            VerificationToken = "testActivationCode",
             VerifiedAt = null
         },
         new()
         {
             Id = 2, Email = "Amy@email.com", PasswordHash = new byte[32], PasswordSalt = new byte[32],
-            VerificationToken = "testTokenTwo",
+            VerificationToken = "testActivationCodeTwo",
             VerifiedAt = null
         },
         new()
         {
             Id = 3, Email = "Bob@email.com", PasswordHash = new byte[32], PasswordSalt = new byte[32],
-            VerificationToken = "testTokenThree",
+            VerificationToken = "testActivationCodeThree",
             VerifiedAt = null
         },
     }.AsQueryable();
