@@ -71,6 +71,15 @@ public class UserServiceTest
     }
 
     [Fact]
+    public void Should_Throw_Exception_If_User_Not_Exist_When_Update()
+    {
+        var userService = SetupService();
+        var userInfo = new UserInfo();
+        var id = TestMockData.Users.Count() + 1;
+        Assert.Throws<Exception>(() => userService.UserUpdate(id, userInfo));
+    }
+
+    [Fact]
     public void Should_Return_NotNull_When_Find_User_By_Updated_Email()
     {
         var userDao = new UserDaoImpl(_context);
@@ -103,10 +112,10 @@ public class UserServiceTest
     private UserServiceImpl SetupService()
     {
         var mockContext = MockDbContext();
-        var userDaoImpl = new UserDaoImpl(mockContext.Object);
+        var userDao = new UserDaoImpl(mockContext.Object);
         var configuration = MockConfiguration();
-        var userServiceImpl = new UserServiceImpl(userDaoImpl, configuration);
-        return userServiceImpl;
+        var userService = new UserServiceImpl(userDao, configuration);
+        return userService;
     }
 
     private static IConfiguration MockConfiguration()
@@ -121,7 +130,7 @@ public class UserServiceTest
         return configuration;
     }
 
-    private Mock<DataContext> MockDbContext()
+    private static Mock<DataContext> MockDbContext()
     {
         var mockSet = new Mock<DbSet<User>>();
         mockSet.As<IQueryable<User>>().Setup(m => m.Provider).Returns(TestMockData.Users.Provider);
