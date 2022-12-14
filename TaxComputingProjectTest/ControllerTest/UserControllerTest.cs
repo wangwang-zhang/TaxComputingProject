@@ -122,17 +122,19 @@ public class UserControllerTest
         Assert.IsType<OkObjectResult>(result);
     }
 
-    [Fact]
-    public void Should_Return_BadRequest_If_User_Not_Exist_When_Update()
+    [Theory]
+    [InlineData("The user is not existed!")]
+    [InlineData("This user email have already existed!")]
+    public void Should_Return_BadRequest_When_Update_Failed(string exceptionMessage)
     {
         var mockUserService = new Mock<IUserService>();
         mockUserService.Setup(user => user.UserUpdate(It.IsAny<int>(), It.IsAny<UserInfo>()))
-            .Throws<Exception>(() => throw new Exception("The user is not existed!"));
+            .Throws<Exception>(() => throw new Exception(exceptionMessage));
         var userController = new UserController(mockUserService.Object);
         var result = userController.Update(new UserInfo());
         Assert.IsType<BadRequestObjectResult>(result);
         var objectResult = result as BadRequestObjectResult;
-        Assert.Equal("{ errorMessage = The user is not existed! }", objectResult?.Value?.ToString());
+        Assert.Equal("{ errorMessage = " + exceptionMessage + " }", objectResult?.Value?.ToString());
     }
     
     [Fact]
@@ -150,19 +152,6 @@ public class UserControllerTest
         var controller = new UserController(mockUserService.Object);
         var result = controller.Update(userInfo);
         Assert.IsType<OkObjectResult>(result);
-    }
-
-    [Fact]
-    public void Should_Return_BadRequest_If_Email_Already_Existed_When_Update()
-    {
-        var mockUserService = new Mock<IUserService>();
-        mockUserService.Setup(user => user.UserUpdate(It.IsAny<int>(), It.IsAny<UserInfo>()))
-            .Throws<Exception>(() => throw new Exception("This user email have already existed!"));
-        var userController = new UserController(mockUserService.Object);
-        var result = userController.Update(new UserInfo());
-        Assert.IsType<BadRequestObjectResult>(result);
-        var objectResult = result as BadRequestObjectResult;
-        Assert.Equal("{ errorMessage = This user email have already existed! }", objectResult?.Value?.ToString());
     }
 
     [Fact]
