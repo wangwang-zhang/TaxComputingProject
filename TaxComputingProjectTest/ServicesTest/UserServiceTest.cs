@@ -24,7 +24,7 @@ public class UserServiceTest
     }
 
     [Fact]
-    public void Should_Return_Empty_String_When_User_Existed_Already()
+    public void Should_Throw_Exception_If_User_Existed_Already_When_AddUser()
     {
         var userService = SetupService();
         var userRegisterRequest = new UserRegisterRequest
@@ -37,7 +37,7 @@ public class UserServiceTest
     }
 
     [Fact]
-    public void Should_Return_String_NotEmpty_When_User_Not_Existed()
+    public void Should_Return_Non_Empty_String_If_User_Not_Existed_When_AddUser()
     {
         var userService = SetupService();
         var userRegisterRequest = new UserRegisterRequest
@@ -80,14 +80,17 @@ public class UserServiceTest
     }
 
     [Fact]
-    public void Should_Return_NotNull_When_Find_User_By_Updated_Email()
+    public void Should_Return_NotNull_User_When_Find_User_By_Updated_Email_Successfully()
     {
         var userDao = new UserDaoImpl(_context);
         var userService = new UserServiceImpl(userDao, MockConfiguration());
         userService.AddUser(TestMockData.MockRegisterUser);
         userService.UserUpdate(MockUserId, TestMockData.UserUpdateMockInfo);
-        var result = userDao.FindUserByEmail(TestMockData.UserUpdateMockInfo.Email);
-        Assert.NotNull(result);
+        if (TestMockData.UserUpdateMockInfo.Email != null)
+        {
+            var user = userDao.FindUserByEmail(TestMockData.UserUpdateMockInfo.Email);
+            Assert.NotNull(user);
+        }
     }
 
     [Fact]
@@ -109,7 +112,7 @@ public class UserServiceTest
         Assert.Throws<Exception>(() => userService.AddVerify("fake"));
     }
 
-    private UserServiceImpl SetupService()
+    private static UserServiceImpl SetupService()
     {
         var mockContext = MockDbContext();
         var userDao = new UserDaoImpl(mockContext.Object);
