@@ -88,11 +88,16 @@ public class UserServiceImpl : IUserService
             }
         }
 
+        MapUserInfo(userUpdateInfo, currentUser);
+        _userDao.UpdateUserInfo(id, userUpdateInfo);
+    }
+
+    private static void MapUserInfo(UserInfo userUpdateInfo, User currentUser)
+    {
         userUpdateInfo.Email ??= currentUser.Email;
         userUpdateInfo.Phone ??= currentUser.Phone;
         userUpdateInfo.Address ??= currentUser.Address;
         userUpdateInfo.Job ??= currentUser.Job;
-        _userDao.UpdateUserInfo(id, userUpdateInfo);
     }
 
     private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
