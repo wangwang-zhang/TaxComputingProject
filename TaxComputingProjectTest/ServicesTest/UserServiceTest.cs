@@ -100,6 +100,23 @@ public class UserServiceTest
         };
         Assert.Throws<Exception>(() => userService.UserLogin(userLoginRequest));
     }
+    
+    [Fact]
+    public void Should_Return_Non_Empty_Token_When_Login_Successfully()
+    {
+        var userDao = new UserDaoImpl(_context);
+        var mockConfiguration = MockConfiguration();
+        var userService = new UserServiceImpl(userDao, mockConfiguration);
+        var activationCode = userService.AddUser(TestMockData.MockRegisterUser);
+        userService.AddVerify(activationCode);
+        var userLoginRequest = new UserLoginRequest
+        {
+            Email = TestMockData.MockRegisterUser.Email,
+            Password = TestMockData.MockRegisterUser.Password
+        };
+        var token = userService.UserLogin(userLoginRequest);
+        Assert.NotEmpty(token);
+    }
 
     [Fact]
     public void Should_Throw_Exception_If_User_Not_Exist_When_Update()
