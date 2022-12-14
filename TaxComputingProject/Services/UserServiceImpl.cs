@@ -11,6 +11,7 @@ public class UserServiceImpl : IUserService
 {
     private readonly IUserDao _userDao;
     private readonly IConfiguration _configuration;
+    private const int ExpirationTime = 50;
 
     public UserServiceImpl( IUserDao userDao, IConfiguration configuration )
     {
@@ -136,7 +137,7 @@ public class UserServiceImpl : IUserService
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
         var token = new JwtSecurityToken(
             claims: claims,
-            expires: DateTime.Now.AddDays(50),
+            expires: DateTime.Now.AddDays(ExpirationTime),
             signingCredentials: credentials);
         var jwt = new JwtSecurityTokenHandler().WriteToken(token);
         return jwt;
