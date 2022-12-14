@@ -84,6 +84,22 @@ public class UserServiceTest
         };
         Assert.Throws<Exception>(() => userService.UserLogin(userLoginRequest));
     }
+    
+    [Fact]
+    public void Should_Throw_Exception_If_Password_Not_Correct_When_Login()
+    {
+        var userDao = new UserDaoImpl(_context);
+        var mockConfiguration = MockConfiguration();
+        var userService = new UserServiceImpl(userDao, mockConfiguration);
+        var activationCode = userService.AddUser(TestMockData.MockRegisterUser);
+        userService.AddVerify(activationCode);
+        var userLoginRequest = new UserLoginRequest
+        {
+            Email = TestMockData.MockRegisterUser.Email,
+            Password = TestMockData.MockRegisterUser.Password + "flag"
+        };
+        Assert.Throws<Exception>(() => userService.UserLogin(userLoginRequest));
+    }
 
     [Fact]
     public void Should_Throw_Exception_If_User_Not_Exist_When_Update()
