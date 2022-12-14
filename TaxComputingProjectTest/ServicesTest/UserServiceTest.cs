@@ -59,13 +59,28 @@ public class UserServiceTest
     }
 
     [Fact]
-    public void Should_Return_False_When_Login_User_Not_Existed()
+    public void Should_Throw_Exception_If_User_Not_Existed_When_Login()
     {
         var userService = SetupService();
         var userLoginRequest = new UserLoginRequest
         {
             Email = "Hello@example.email",
             Password = "password"
+        };
+        Assert.Throws<Exception>(() => userService.UserLogin(userLoginRequest));
+    }
+    
+    [Fact]
+    public void Should_Throw_Exception_If_User_Not_Activated_When_Login()
+    {
+        var userDao = new UserDaoImpl(_context);
+        var mockConfiguration = MockConfiguration();
+        var userService = new UserServiceImpl(userDao, mockConfiguration);
+        userService.AddUser(TestMockData.MockRegisterUser);
+        var userLoginRequest = new UserLoginRequest
+        {
+            Email = TestMockData.MockRegisterUser.Email,
+            Password = TestMockData.MockRegisterUser.Password
         };
         Assert.Throws<Exception>(() => userService.UserLogin(userLoginRequest));
     }

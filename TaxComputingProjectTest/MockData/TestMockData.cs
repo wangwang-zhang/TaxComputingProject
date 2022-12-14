@@ -10,7 +10,7 @@ public static class TestMockData
         {
             Id = 1, Email = "Tom@email.com", PasswordHash = new byte[32], PasswordSalt = new byte[32],
             VerificationToken = "testActivationCode",
-            VerifiedAt = null
+            VerifiedAt = DateTime.Now
         },
         new()
         {

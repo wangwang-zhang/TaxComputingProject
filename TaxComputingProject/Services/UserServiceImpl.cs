@@ -58,15 +58,15 @@ public class UserServiceImpl : IUserService
         {
             throw new Exception("The user is not existed!");
         }
-
-        if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
-        {
-            throw new Exception("The password is not correct!");
-        }
-
+        
         if (user.VerifiedAt == null)
         {
             throw new Exception("The user is not activated");
+        }
+        
+        if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
+        {
+            throw new Exception("The password is not correct!");
         }
 
         return CreateToken(user);
