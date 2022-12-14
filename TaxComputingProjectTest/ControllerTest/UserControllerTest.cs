@@ -155,17 +155,14 @@ public class UserControllerTest
     [Fact]
     public void Should_Return_BadRequest_If_Email_Already_Existed_When_Update()
     {
-        var userService = SetupService();
-        var userController = new UserController(userService);
-        UserInfo userInfo = new UserInfo
-        {
-            Email = "Amy@email.com",
-            Address = "Xi'an",
-            Job = "doctor",
-            Phone = "13526758976"
-        };
-        var result = userController.Update(userInfo);
+        var mockUserService = new Mock<IUserService>();
+        mockUserService.Setup(user => user.UserUpdate(It.IsAny<int>(), It.IsAny<UserInfo>()))
+            .Throws<Exception>(() => throw new Exception("This user email have already existed!"));
+        var userController = new UserController(mockUserService.Object);
+        var result = userController.Update(new UserInfo());
         Assert.IsType<BadRequestObjectResult>(result);
+        var objectResult = result as BadRequestObjectResult;
+        Assert.Equal("{ errorMessage = This user email have already existed! }", objectResult?.Value?.ToString());
     }
 
     [Fact]
