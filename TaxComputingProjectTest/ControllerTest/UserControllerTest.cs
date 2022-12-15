@@ -101,6 +101,17 @@ public class UserControllerTest
     }
 
     [Fact]
+    public void Should_Return_OK_When_Login_Successfully()
+    {
+        var mockUserService = new Mock<IUserService>();
+        mockUserService.Setup(user => user.UserLogin(It.IsAny<UserLoginRequest>()))
+            .Returns("Success");
+        var userController = new UserController(mockUserService.Object);
+        var result = userController.Login(new UserLoginRequest());
+        Assert.IsType<OkObjectResult>(result);
+    }
+
+    [Fact]
     public void Should_Return_OK_When_ActivationCode_Is_Verified()
     {
         var mockUserService = new Mock<IUserService>();
