@@ -45,17 +45,13 @@ public class UserControllerTest
     }
 
     [Fact]
-    public void Should_Return_OK_If_User_Not_Existed_When_Register()
+    public void Should_Return_OK_When_Register_Successfully()
     {
-        var userService = SetupService();
-        var userRegisterRequest = new UserRegisterRequest
-        {
-            Email = "Henry@email.com",
-            Password = "password",
-            ConfirmPassword = "password"
-        };
-        var controller = new UserController(userService);
-        var result = controller.Register(userRegisterRequest);
+        var mockUserService = new Mock<IUserService>();
+        mockUserService.Setup(user => user.AddUser(It.IsAny<UserRegisterRequest>()))
+            .Returns("success");
+        var userController = new UserController(mockUserService.Object);
+        var result = userController.Register(new UserRegisterRequest());
         Assert.IsType<OkObjectResult>(result);
     }
 
