@@ -54,63 +54,20 @@ public class UserControllerTest
         Assert.IsType<OkObjectResult>(result);
     }
 
-    [Fact]
-    public void Should_Return_BadRequest_If_User_Not_Existed_When_Login()
+    [Theory]
+    [InlineData("The user is not existed!")]
+    [InlineData("The user is not activated")]
+    [InlineData("The password is not correct!")]
+    public void Should_Return_BadRequest_When_Login_Failed(string exceptionMessage)
     {
-        var userService = SetupService();
-        var userLoginRequest = new UserLoginRequest
-        {
-            Email = "Henry@email.com",
-            Password = "password",
-        };
-        var userController = new UserController(userService);
-        var result = userController.Login(userLoginRequest);
+        var mockUserService = new Mock<IUserService>();
+        mockUserService.Setup(user => user.UserLogin(It.IsAny<UserLoginRequest>()))
+            .Throws(() => new Exception(exceptionMessage));
+        var userController = new UserController(mockUserService.Object);
+        var result = userController.Login(new UserLoginRequest());
         Assert.IsType<BadRequestObjectResult>(result);
         var objectResult = result as BadRequestObjectResult;
-        Assert.Equal("{ errorMessage = The user is not existed! }", objectResult?.Value?.ToString());
-    }
-    
-    [Fact]
-    public void should_Return_BadRequest_If_Password_Is_Not_Correct_When_Login()
-    {
-        var userService = SetupService();
-        var userLoginRequest = new UserLoginRequest
-        {
-            Email = "Tom@email.com",
-            Password = "",
-        };
-        var userController = new UserController(userService);
-        var result = userController.Login(userLoginRequest);
-        Assert.IsType<BadRequestObjectResult>(result);
-        var objectResult = result as BadRequestObjectResult;
-        var value = objectResult?.Value;
-        Assert.Equal("{ errorMessage = The password is not correct! }", value?.ToString());
-    }
-    
-    [Fact]
-    public void should_Return_BadRequest_If_User_Not_Activated_When_User_Login()
-    {
-        var userDao = new UserDaoImpl(_context);
-        var configuration = MockConfiguration();
-        var userService = new UserServiceImpl(userDao, configuration);
-        var userRegisterRequest = new UserRegisterRequest
-        {
-            Email = "Tom@email.com",
-            Password = "password",
-            ConfirmPassword = "password"
-        };
-        userService.AddUser(userRegisterRequest);
-        var userLoginRequest = new UserLoginRequest
-        {
-            Email = "Tom@email.com",
-            Password = "password",
-        };
-        var controller = new UserController(userService);
-        var result = controller.Login(userLoginRequest);
-        Assert.IsType<BadRequestObjectResult>(result);
-        var objectResult = result as BadRequestObjectResult;
-        var value = objectResult?.Value;
-        Assert.Equal("{ errorMessage = The user is not activated }", value?.ToString());
+        Assert.Equal("{ errorMessage = " + exceptionMessage +" }", objectResult?.Value?.ToString());
     }
 
     [Fact]
