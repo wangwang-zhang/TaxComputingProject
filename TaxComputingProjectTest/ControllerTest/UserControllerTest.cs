@@ -25,18 +25,23 @@ public class UserControllerTest
     }
     
     [Fact]
-    public void Should_Return_BadRequest_If_User_Existed_Already_When_Register()
+    public void Should_Return_BadRequest_If_User_Existed_Already_When_Register_Integration()
     {
-        var userService = SetupService();
+        var userDao = new UserDaoImpl(_context);
+        var mockConfiguration = MockConfiguration();
+        var userService = new UserServiceImpl(userDao, mockConfiguration);
         var userRegisterRequest = new UserRegisterRequest
         {
             Email = "Tom@email.com",
             Password = "password",
             ConfirmPassword = "password"
         };
-        var controller = new UserController(userService);
-        var result = controller.Register(userRegisterRequest);
+        userService.AddUser(userRegisterRequest);
+        var userController = new UserController(userService);
+        var result = userController.Register(userRegisterRequest);
         Assert.IsType<BadRequestObjectResult>(result);
+        var objectResult = result as BadRequestObjectResult;
+        Assert.Equal("{ errorMessage = User already exists. }",  objectResult?.Value?.ToString());
     }
 
     [Fact]
