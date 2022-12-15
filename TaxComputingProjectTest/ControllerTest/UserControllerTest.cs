@@ -137,6 +137,32 @@ public class UserControllerTest
         var objectResult = result as BadRequestObjectResult;
         Assert.Equal("{ errorMessage = The user is not activated }", objectResult?.Value?.ToString());
     }
+    
+    [Fact]
+    public void Should_Return_BadRequest_If_User_Not_Ativated_When_Login_Integration()
+    {
+        var userDao = new UserDaoImpl(_context);
+        var mockConfiguration = MockConfiguration();
+        var userService = new UserServiceImpl(userDao, mockConfiguration);
+        var userController = new UserController(userService);
+        var userRegisterRequest = new UserRegisterRequest
+        {
+            Email = "Tom@email.com",
+            Password = "password",
+            ConfirmPassword = "password"
+        };
+        var activationCode = userService.AddUser(userRegisterRequest);
+        userService.AddVerify(activationCode);
+        var userLoginRequest = new UserLoginRequest
+        {
+            Email = "Tom@email.com",
+            Password = "wrong password"
+        };
+        var result = userController.Login(userLoginRequest);
+        Assert.IsType<BadRequestObjectResult>(result);
+        var objectResult = result as BadRequestObjectResult;
+        Assert.Equal("{ errorMessage = The password is not correct! }", objectResult?.Value?.ToString());
+    }
 
     [Fact]
     public void Should_Return_OK_When_Login_Successfully()
