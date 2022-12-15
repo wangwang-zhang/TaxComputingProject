@@ -101,6 +101,19 @@ public class UserControllerTest
     }
 
     [Fact]
+    public void Should_Return_BadRequest_If_User_Not_Exist_When_Login_Integration()
+    {
+        var userDao = new UserDaoImpl(_context);
+        var mockConfiguration = MockConfiguration();
+        var userService = new UserServiceImpl(userDao, mockConfiguration);
+        var userController = new UserController(userService);
+        var result = userController.Login(new UserLoginRequest());
+        Assert.IsType<BadRequestObjectResult>(result);
+        var objectResult = result as BadRequestObjectResult;
+        Assert.Equal("{ errorMessage = The user is not existed! }", objectResult?.Value?.ToString());
+    }
+
+    [Fact]
     public void Should_Return_OK_When_Login_Successfully()
     {
         var mockUserService = new Mock<IUserService>();
