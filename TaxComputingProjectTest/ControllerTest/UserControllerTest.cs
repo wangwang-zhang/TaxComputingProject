@@ -55,6 +55,19 @@ public class UserControllerTest
         Assert.IsType<OkObjectResult>(result);
     }
 
+    [Fact]
+    public void Should_Return_BadRequest_If_User_Existed_Already_When_Register()
+    {
+        var mockUserService = new Mock<IUserService>();
+        mockUserService.Setup(user => user.AddUser(It.IsAny<UserRegisterRequest>()))
+            .Throws(() => new Exception("User already exists."));
+        var userController = new UserController(mockUserService.Object);
+        var result = userController.Register(new UserRegisterRequest());
+        Assert.IsType<BadRequestObjectResult>(result);
+        var objectResult = result as BadRequestObjectResult;
+        Assert.Equal("{ errorMessage = User already exists. }",  objectResult?.Value?.ToString());
+    }
+
     [Theory]
     [InlineData("The user is not existed!")]
     [InlineData("The user is not activated")]
@@ -75,8 +88,8 @@ public class UserControllerTest
     public void Should_Return_OK_When_ActivationCode_Is_Verified()
     {
         var userService = SetupService();
-        var controller = new UserController(userService);
-        var result = controller.Verify("testActivationCode");
+        var userController = new UserController(userService);
+        var result = userController.Verify("testActivationCode");
         Assert.IsType<OkObjectResult>(result);
     }
 
@@ -109,8 +122,8 @@ public class UserControllerTest
     public void Should_Return_BadRequest_If_User_Not_Exist_When_Verify_User()
     {
         var userService = SetupService();
-        var controller = new UserController(userService);
-        var result = controller.Verify("");
+        var userController = new UserController(userService);
+        var result = userController.Verify("");
         Assert.IsType<BadRequestObjectResult>(result);
         var objectResult = result as BadRequestObjectResult;
         Assert.Equal("{ errorMessage = The user is not exist! }", objectResult?.Value?.ToString());
