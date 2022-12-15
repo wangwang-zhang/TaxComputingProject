@@ -7,7 +7,6 @@ using TaxComputingProject.Dao;
 using TaxComputingProject.DBContext;
 using TaxComputingProject.Model;
 using TaxComputingProject.Services;
-using TaxComputingProjectTest.MockData;
 
 namespace TaxComputingProjectTest.ControllerTest;
 
@@ -133,15 +132,6 @@ public class UserControllerTest
         Assert.IsType<OkObjectResult>(result);
     }
 
-    private static UserServiceImpl SetupService()
-    {
-        var mockContext = MockDbContext();
-        var userDao = new UserDaoImpl(mockContext.Object);
-        var configuration = MockConfiguration();
-        var userService = new UserServiceImpl(userDao, configuration);
-        return userService;
-    }
-
     private static IConfiguration MockConfiguration()
     {
         var inMemorySettings = new Dictionary<string, string>
@@ -152,17 +142,5 @@ public class UserControllerTest
             .AddInMemoryCollection(inMemorySettings)
             .Build();
         return configuration;
-    }
-
-    private static Mock<DataContext> MockDbContext()
-    {
-        var mockSet = new Mock<DbSet<User>>();
-        mockSet.As<IQueryable<User>>().Setup(m => m.Provider).Returns(TestMockData.Users.Provider);
-        mockSet.As<IQueryable<User>>().Setup(m => m.Expression).Returns(TestMockData.Users.Expression);
-        mockSet.As<IQueryable<User>>().Setup(m => m.ElementType).Returns(TestMockData.Users.ElementType);
-        mockSet.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(() => TestMockData.Users.GetEnumerator());
-        var mockContext = new Mock<DataContext>();
-        mockContext.Setup(dataContext => dataContext.Users).Returns(mockSet.Object);
-        return mockContext;
     }
 }
