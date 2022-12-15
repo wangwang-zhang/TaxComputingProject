@@ -87,10 +87,25 @@ public class UserControllerTest
     [Fact]
     public void Should_Return_OK_When_ActivationCode_Is_Verified()
     {
-        var userService = SetupService();
-        var userController = new UserController(userService);
+        var mockUserService = new Mock<IUserService>();
+        mockUserService.Setup(user => user.AddVerify(It.IsAny<string>()))
+            .Returns(true);
+        var userController = new UserController(mockUserService.Object);
         var result = userController.Verify("testActivationCode");
         Assert.IsType<OkObjectResult>(result);
+    }
+    
+    [Fact]
+    public void Should_Return_BadRequest_If_User_Not_Exist_When_Verify_User()
+    {
+        var mockUserService = new Mock<IUserService>();
+        mockUserService.Setup(user => user.AddVerify(It.IsAny<string>()))
+            .Throws(() => new Exception("The user is not exist!"));
+        var userController = new UserController(mockUserService.Object);
+        var result = userController.Verify("");
+        Assert.IsType<BadRequestObjectResult>(result);
+        var objectResult = result as BadRequestObjectResult;
+        Assert.Equal("{ errorMessage = The user is not exist! }", objectResult?.Value?.ToString());
     }
 
     [Theory]
@@ -118,17 +133,6 @@ public class UserControllerTest
         Assert.IsType<OkObjectResult>(result);
     }
 
-    [Fact]
-    public void Should_Return_BadRequest_If_User_Not_Exist_When_Verify_User()
-    {
-        var userService = SetupService();
-        var userController = new UserController(userService);
-        var result = userController.Verify("");
-        Assert.IsType<BadRequestObjectResult>(result);
-        var objectResult = result as BadRequestObjectResult;
-        Assert.Equal("{ errorMessage = The user is not exist! }", objectResult?.Value?.ToString());
-    }
-    
     private static UserServiceImpl SetupService()
     {
         var mockContext = MockDbContext();
