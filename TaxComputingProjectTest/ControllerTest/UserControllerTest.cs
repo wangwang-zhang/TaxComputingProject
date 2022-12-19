@@ -139,7 +139,7 @@ public class UserControllerTest
     }
     
     [Fact]
-    public void Should_Return_BadRequest_If_User_Not_Ativated_When_Login_Integration()
+    public void Should_Return_BadRequest_If_Password_Not_Correct_When_Login_Integration()
     {
         var userDao = new UserDaoImpl(_context);
         var mockConfiguration = MockConfiguration();
