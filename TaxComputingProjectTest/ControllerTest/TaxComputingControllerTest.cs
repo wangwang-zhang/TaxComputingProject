@@ -69,6 +69,7 @@ public class TaxComputingControllerTest
     public void Should_Return_Ok_When_SaveTaxByAccumulatedSalary_Successfully()
     {
         var mockService = new Mock<ITaxComputingService>();
+        mockService.Setup(user => user.ComputeAndSaveTax(It.IsAny<int>(), It.IsAny<List<MonthSalary>>()));
         var taxComputingController = new TaxComputingController(mockService.Object);
         var monthSalaries = new List<MonthSalary>
         {
@@ -80,6 +81,8 @@ public class TaxComputingControllerTest
         };
         var result = taxComputingController.SaveTaxByAccumulatedSalary(monthSalaries);
         Assert.IsType<OkObjectResult>(result);
+        var objectResult = result as OkObjectResult;
+        Assert.Equal("Saved taxes successfully!", objectResult?.Value?.ToString());
     }
 
     [Fact]
